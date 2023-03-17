@@ -47,7 +47,7 @@ In the following, you are going to set up the basic ROS environment on the JetBo
 The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. The each side of the arena is build by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena`.
 The global coordinate system's origin is set in one corner of the arena.
 
-![Arena layout](https://github.com/NikHoh/jetbot_ros/arena/arena_setup.pdf)
+![Arena layout](https://github.com/NikHoh/jetbot_ros/blob/melodic/arena/arena_setup.pdf)
 
 ## The robot
 
@@ -408,7 +408,7 @@ $ rviz
 
 In the appearing RVIZ window you can add the an image view to view the `tag_detections_image` topic and adding a `TF` visualization. Holding one of the arena's wall elements in front of the camera, there should now be tags detected, and a respective coordinate frame should appear. 
 
-![RVIZ window](https://github.com/NikHoh/blob/melodic/jetbot_ros/images/rviz.png)
+![RVIZ window](https://github.com/NikHoh/jetbot_ros/blob/melodic/images/rviz.png)
 
 Helpful tools for your further work with ROS are:
 - rqt 
