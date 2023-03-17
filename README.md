@@ -4,7 +4,7 @@ This repo is originally a fork from dusty-nv/jetbot_ros that was extended to ser
 https://www.etit.tu-darmstadt.de/ris/lehre_ris/lehrveranstaltungen_ris/pro_robo_ris/index.de.jsp
 
 
-# Basic Knodledge (all of you should know)
+# Basic Knowledge (all of you should know)
 
 Before starting, some basic knowledge should be available. In case you are not familiar with the following, read or watch some tutorials:
 - some basics in Linux (you will use Ubuntu 18.04)
@@ -22,7 +22,7 @@ Before starting, some basic knowledge should be available. In case you are not f
     - RVIZ
     - rqt (e.g. `rqt_graph` )
 
-# Distributed Knodledge (at least one person per group should know)
+# Distributed Knowledge (at least one person per group should know)
 
 At least one group participant should be familiar with:
 - basic image processing routines
