@@ -408,16 +408,16 @@ $ rviz
 
 In the appearing RVIZ window you can add the an image view to view the `tag_detections_image` topic and adding a `TF` visualization. Holding one of the arena's wall elements in front of the camera, there should now be tags detected, and a respective coordinate frame should appear. 
 
-![RVIZ window](https://github.com/NikHoh/jetbot_ros/images/rviz.png)
+![RVIZ window](https://github.com/NikHoh/blob/melodic/jetbot_ros/images/rviz.png)
 
 Helpful tools for your further work with ROS are:
 - rqt 
     - run `rqt_graph` to visualize how nodes interact with each other
-    ![rqt graph](https://github.com/NikHoh/jetbot_ros/images/rqt_graph.png)
+    ![rqt graph](https://github.com/NikHoh/jetbot_ros/blob/melodic/images/rqt_graph.png)
 
     - run `rosrun rqt_tf_tree rqt_tf_tree` to see current TFs
         - if an apriltag is in the image, there should appear a TF from the camera frame `csi://0` to the arena frame `arena`, which is the arena's origin
-        ![rqt tf tree](https://github.com/NikHoh/jetbot_ros/images/rqt_tf_tree.png)
+        ![rqt tf tree](https://github.com/NikHoh/jetbot_ros/blob/melodic/images/rqt_tf_tree.png)
 
 
 
