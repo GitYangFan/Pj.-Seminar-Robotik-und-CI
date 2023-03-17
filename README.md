@@ -33,7 +33,7 @@ At least one group participant should be familiar with:
 - coordinate systems and transforms in ROS
     - the helpful tool rqt_tf_tree
 
-- the purpose of apriltags
+- the purpose of AprilTags
     - https://github.com/AprilRobotics/apriltag
     - *there are also some papers ...*
 
@@ -44,7 +44,7 @@ In the following, you are going to set up the basic ROS environment on the JetBo
 
 ## The arena
 
-The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. The each side of the arena is build by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena`.
+The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. Each side of the arena is built by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena`.
 The global coordinate system's origin is set in one corner of the arena.
 
 ![Arena layout](https://github.com/NikHoh/jetbot_ros/blob/melodic/arena/arena_setup.png)
@@ -60,7 +60,7 @@ The global coordinate system's origin is set in one corner of the arena.
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise flash with L4T using the -S option (example given for 64GB SD card):  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `sudo ./flash.sh -S 58GiB jetson-nano-sd mmcblk0p1` 
 
-- connect the jetBot to power, mouse, keyboard and a monitor
+- connect the JetBot to power, mouse, keyboard and a monitor
 
 - you should now be able to direclty boot Ubuntu 18.04 on the JetBot
 
@@ -103,7 +103,7 @@ def in_case_of_error():
     
     read_the_error_message # very important!!!
     
-    if you can find out where the error originates from:
+    if you_can_find_out_where_the_error_originates_from:
         solve_the_error()
         return
 
@@ -270,9 +270,9 @@ $ rospack find ros_deep_learning
 Clone and build the [`jetbot_ros`](https://github.com/dusty-nv/jetbot_ros) repo:
 
 ```bash
-# clone the repo
+# clone the repo (this repo)
 $ cd ~/workspace/catkin_ws/src
-$ git clone https://github.com/dusty-nv/jetbot_ros
+$ git clone https://github.com/NikHoh/jetbot_ros.git
 
 # build the package
 $ cd ../    # cd ~/workspace/catkin_ws
@@ -309,6 +309,7 @@ The `jetbot_motors` node will listen on the following topics:
 
 #### Test Motor Commands
 Open a new terminal, and run some test commands:
+(it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
 
 ```bash
 $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "forward"
@@ -317,7 +318,7 @@ $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "left"
 $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "right"
 $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "stop"
 ```
-(it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
+
 
 
 #### Using the Debug OLED
@@ -344,12 +345,12 @@ To begin streaming the JetBot camera, start the `jetbot_camera` node:
 $ rosrun jetbot_ros jetbot_camera
 ```
 
-The video frames will be published to the `/jetbot_camera/raw` topic as [`sensor_msgs::Image`](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html) messages with BGR8 encoding.  To test the camera feed, install the [`image_view`](http://wiki.ros.org/image_view?distro=melodic) package and then subscribe to `/jetbot_camera/raw` from a new terminal:
+The video frames will be published to the `/camera/image_raw` topic as [`sensor_msgs::Image`](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html) messages with BGR8 encoding.  To test the camera feed, install the [`image_view`](http://wiki.ros.org/image_view?distro=melodic) package and then subscribe to `/camera/image_raw` from a new terminal:
 
 ```bash
 # first open a new terminal
 $ sudo apt-get install ros-melodic-image-view
-$ rosrun image_view image_view image:=/jetbot_camera/raw
+$ rosrun image_view image_view image:=/camera/image_raw
 ```
 
 A window should then open displaying the live video from the camera.  By default, the window may appear smaller than the video feed.  Click on the terminal or maximize button on the window to enlarge the window to show the entire frame.
@@ -374,6 +375,7 @@ To work properly, apriltag_ros needs:
     - a default camera calibration is already available in the repo (ost.yaml)
     - **BUT**: every camera behaves differently, so you should calibrate your camera yourselves following
     - http://library.isr.ist.utl.pt/docs/roswiki/camera_calibration(2f)Tutorials(2f)MonocularCalibration.html
+    - Hint: large checkerboards for calibration are available at the institute, you can use them there (write an e-mail before)
     - Hint: make sure the camera node is running and publishing image_raw and camera_info topics
     - replace the existing ost.yaml
     - **Important**: 
@@ -383,6 +385,9 @@ To work properly, apriltag_ros needs:
     - the image `image_raw` can be rectified with the help of the ROS image_proc library: http://wiki.ros.org/image_proc?distro=melodic
     - the respective node is already included in the launch file, which is described next
     - you don't have to do something here but should understand how image_proc is integrated into the launch file
+- a settings.yaml and tags.yaml configuration set
+    - you can find them both in the folder `apriltag_ros_config` in this repo
+    - **Important**: copy them to the correct position at `workspace/catkin_ws/src/apriltag_ros/apriltag_ros/config`
 
 ### Testing JetBot (Part II)
 
@@ -431,3 +436,16 @@ Helpful tools for your further work with ROS are:
 
 See the [`gazebo`](gazebo) directory of the repo for instructions on loading the JetBot simulator model for Gazebo.
 
+For example, you could build the arena in gazebo (PDF files of the arena walls available in the folder `arena`), simulate the camera there, and set up the localization there as well. Then you would be able to do further developments solely in the simulation.
+
+# Things you could/should do next
+
+- install Ubuntu 18.04 and ROS melodic on another computer (virtual maschine possible) and try to connect the robot the the computer via ROS:
+    - http://wiki.ros.org/ROS/Tutorials/MultipleMachines
+    - then you can test the JetBot without using its GUI
+
+- implement Extended Kalman Filter for localization and SLAM algorithm
+    - find inspiration: https://github.com/gargrohin/ROS-Navigation-and-Planning-with-SLAM
+
+- implement other stuff like a keyboard control
+    - find inspiration at other forks from the original repo: https://github.com/dusty-nv/jetbot_ros/forks
