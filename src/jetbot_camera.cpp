@@ -77,8 +77,6 @@ bool aquireFrame()
     camera_calibration_parsers::readCalibrationYml(
     calib_path, camera_name, cam_info_msg);
 	
-	ROS_INFO("Load calibration info from %s", calib_path);
-	
 	//ROS_INFO(cam_info_msg);
 
 	if( !camera_cvt->Convert(msg, sensor_msgs::image_encodings::BGR8, imgRGBA) )
