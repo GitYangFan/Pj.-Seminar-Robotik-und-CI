@@ -12,6 +12,8 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   sensor_msgs
+  image_transport
+  camera_calibration_parsers
 )
 
 ## System dependencies are found with CMake's conventions
