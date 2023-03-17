@@ -8,34 +8,34 @@ https://www.etit.tu-darmstadt.de/ris/lehre_ris/lehrveranstaltungen_ris/pro_robo_
 
 Before starting, some basic knowledge should be available. In case you are not familiar with the following, read or watch some tutorials:
 - some basics in Linux (you will use Ubuntu 18.04)
- - basic console commands `cd`, `ls`, `mkdir`, `source`, `cp`, `mv`, `rm`, `chmod`, ...
- - the purpose of `sudo`
- - the purpose of `apt-get`
+    - basic console commands `cd`, `ls`, `mkdir`, `source`, `cp`, `mv`, `rm`, `chmod`, ...
+    - the purpose of `sudo`
+    - the purpose of `apt-get`
 - some basics in C/C++
- - C/C++ compiling procedure including the purpose of `cmake`, `make` and `CmakeLists.txt`
+    - C/C++ compiling procedure including the purpose of `cmake`, `make` and `CmakeLists.txt`
 - some basics in Python
- - the purpose of `pip`
+    - the purpose of `pip`
 - the purpose of Git as well as basic commands `commit`, `push`, `pull`, `clone`, `fork`, ...
 - ROS (you will use the ROS1 version `melodic`)
- - *Note: How ROS is installed on the JetBot will be explained further below*
- - do the tutorials at http://wiki.ros.org/ROS/Tutorials
- - RVIZ
- - rqt (e.g. `rqt_graph` )
+    - *Note: How ROS is installed on the JetBot will be explained further below*
+    - do the tutorials at http://wiki.ros.org/ROS/Tutorials
+    - RVIZ
+    - rqt (e.g. `rqt_graph` )
 
 # Distributed Knodledge (at least one person per group should know)
 
 At least one group participant should be familiar with:
 - basic image processing routines
- - pinhole model: http://wiki.ros.org/image_pipeline/CameraInfo
- - camera calibration: http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration
- - rectification: http://wiki.ros.org/image_proc
+    - pinhole model: http://wiki.ros.org/image_pipeline/CameraInfo
+    - camera calibration: http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration
+    - rectification: http://wiki.ros.org/image_proc
 
 - coordinate systems and transforms in ROS
- - the helpful tool rqt_tf_tree
+    - the helpful tool rqt_tf_tree
 
 - the purpose of apriltags
- - https://github.com/AprilRobotics/apriltag
- - *there are also some papers ...*
+    - https://github.com/AprilRobotics/apriltag
+    - *there are also some papers ...*
 
 
 # Getting started
@@ -66,6 +66,8 @@ The global coordinate system's origin is set in one corner of the arena.
 
 - during the following guide you will create a file structure that looks like:  
 
+
+### File structure
 ```
 |-- workspace
   |-- jetson-inference
@@ -94,7 +96,7 @@ The global coordinate system's origin is set in one corner of the arena.
 ```
 
 Carefully follow the the following instructions. **IMPORTANT: Don't copy paste commands blindfold. Try to understand what's the purpose of the command and also read what happens in the console output.** In case of some errors:
-```
+```python
 def in_case_of_error():
     if an_error_occured_before_that_you_missed:
         in_case_of_error()
@@ -359,7 +361,61 @@ Follow the instructions from:
 
 https://github.com/AprilRobotics/apriltag_ros
 
-Make sure that you don't copy paste comments from the Quickstart there blindfold. Use the correct `src` folder (see the file structure above).
+Make sure that you don't copy/paste comments from the section "Quickstart" blindfold. Use the correct `src` folder (see the file structure above).
+
+#### Test apriltag
+
+More information about apriltag_ros: http://wiki.ros.org/apriltag_ros
+
+Have a look at the tutorial to get an idea of what is happening: http://wiki.ros.org/apriltag_ros/Tutorials/Detection%20in%20a%20video%20stream
+
+To work properly, apriltag_ros needs:
+- a **calibrated camera**
+    - a default camera calibration is already available in the repo (ost.yaml)
+    - **BUT**: every camera behaves differently, so you should calibrate your camera yourselves following
+    - http://library.isr.ist.utl.pt/docs/roswiki/camera_calibration(2f)Tutorials(2f)MonocularCalibration.html
+    - Hint: make sure the camera node is running and publishing image_raw and camera_info topics
+    - replace the existing ost.yaml
+    - **Important**: 
+        - change line 75 in `src/jetbot_camera.cpp` to match the correct path
+        - rebuild the catkin_ws: `catkin build`
+- a **rectified image**
+    - the image `image_raw` can be rectified with the help of the ROS image_proc library: http://wiki.ros.org/image_proc?distro=melodic
+    - the respective node is already included in the launch file, which is described next
+    - you don't have to do something here but should understand how image_proc is integrated into the launch file
+
+### Testing JetBot (Part II)
+
+Now everything should be ready to test the localization of the JetBot in the arena. 
+
+All needed ROS nodes are started with a single launch file: `/launch/visual_localization.launch`
+
+```bash
+# in a terminal window
+$ roscore
+
+# in another terminal window
+$ roslaunch jetbot_ros visual_localization.launch
+
+# in another terminal window, test if all topics and nodes work
+$ rostopic list
+$ rosnode list
+
+# visualize the results with RVIZ
+# in another terminal window, run
+$ rviz
+```
+
+In the appearing RVIZ window you can add the an image view to view the `tag_detections_image` topic and adding a `TF` visualization. Holding one of the arena's wall elements in front of the camera, there should now be tags detected, and a respective coordinate frame should appear. 
+
+Helpful tools for your further work with ROS are:
+- rqt 
+    - run `rqt_graph` to visualize how nodes interact with each other
+    - run `rosrun rqt_tf_tree rqt_tf_tree` to see current TFs
+        - if an apriltag is in the image, there should appear a TF from the camera frame `csi://0` to the arena frame `arena`, which is the arena's origin
+
+
+
 
 
 
