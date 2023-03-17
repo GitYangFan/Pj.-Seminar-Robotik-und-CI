@@ -1,16 +1,136 @@
-# jetbot_ros
-ROS nodes and Gazebo model for NVIDIA JetBot with Jetson Nano
+# Project Seminar ris | Technical University of Darmstadt
+
+This repo is originally a fork from dusty-nv/jetbot_ros that was extended to serve as starting base for the students in the project seminar
+https://www.etit.tu-darmstadt.de/ris/lehre_ris/lehrveranstaltungen_ris/pro_robo_ris/index.de.jsp
 
 
-## System Configuration
+# Basic Knodledge (all of you should know)
 
-It is assumed that your Nano's SD card was flashed with NVIDIA's JetPack image - see the [Getting Started](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit) guide.
+Before starting, some basic knowledge should be available. In case you are not familiar with the following, read or watch some tutorials:
+- some basics in Linux (you will use Ubuntu 18.04)
+ - basic console commands `cd`, `ls`, `mkdir`, `source`, `cp`, `mv`, `rm`, `chmod`, ...
+ - the purpose of `sudo`
+ - the purpose of `apt-get`
+- some basics in C/C++
+ - C/C++ compiling procedure including the purpose of `cmake`, `make` and `CmakeLists.txt`
+- some basics in Python
+ - the purpose of `pip`
+- the purpose of Git as well as basic commands `commit`, `push`, `pull`, `clone`, `fork`, ...
+- ROS (you will use the ROS1 version `melodic`)
+ - *Note: How ROS is installed on the JetBot will be explained further below*
+ - do the tutorials at http://wiki.ros.org/ROS/Tutorials
+ - RVIZ
+ - rqt (e.g. `rqt_graph` )
+
+# Distributed Knodledge (at least one person per group should know)
+
+At least one group participant should be familiar with:
+- basic image processing routines
+ - pinhole model: http://wiki.ros.org/image_pipeline/CameraInfo
+ - camera calibration: http://wiki.ros.org/camera_calibration/Tutorials/MonocularCalibration
+ - rectification: http://wiki.ros.org/image_proc
+
+- coordinate systems and transforms in ROS
+ - the helpful tool rqt_tf_tree
+
+- the purpose of apriltags
+ - https://github.com/AprilRobotics/apriltag
+ - *there are also some papers ...*
+
+
+# Getting started
+
+In the following, you are going to set up the basic ROS environment on the JetBot so that the robot will be able to localize itself visually (only with the help of its camera) within a given arena. 
+
+## The arena
+
+The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. The each side of the arena is build by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena`.
+The global coordinate system's origin is set in one corner of the arena.
+
+![Arena layout](https://github.com/NikHoh/jetbot_ros/blob/melodic/arena/arena_setup.pdf)
+
+## The robot
+
+
+- flash your Nano's SD card with NVIDIA's JetPack image - see the [Getting Started](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit) guide.
 
 > **Note**:  the process below will likely exceed the disk capacity of a 16GB filesystem,  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; so a larger SD card should be used.  If using the 'Etcher' method with JetPack-L4T image,  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; the APP partition will automatically be resized to fill the SD card upon first booting the system.  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Otherwise flash with L4T using the -S option (example given for 64GB SD card):  
-> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `sudo ./flash.sh -S 58GiB jetson-nano-sd mmcblk0p1`  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `sudo ./flash.sh -S 58GiB jetson-nano-sd mmcblk0p1` 
+
+- connect the jetBot to power, mouse, keyboard and a monitor
+
+- you should now be able to direclty boot Ubuntu 18.04 on the JetBot
+
+- during the following guide you will create a file structure that looks like:  
+
+```
+|-- workspace
+  |-- jetson-inference
+  |   |-- ```
+  |-- catkin_ws
+  |   |-- build
+  |   |   |-- ```
+  |   |-- devel
+  |   |   |-- ```
+  |   |-- logs
+  |   |   |-- ```
+  |   |-- src
+  |   |   |-- jetbot_ros (*this repo*)
+  |   |   |   |-- gazebo
+  |   |   |   |-- launch
+  |   |   |   |-- scripts
+  |   |   |   |-- src
+  |   |   |   |-- CMakeLists.txt
+  |   |   |   |-- ost.yaml
+  |   |   |   |-- package.xml
+  |   |   |   |-- README.md
+  |   |   |-- ros_deep_learning
+  |   |   |-- apriltag
+  |   |   |-- apriltag_ros
+
+```
+
+Carefully follow the the following instructions. **IMPORTANT: Don't copy paste commands blindfold. Try to understand what's the purpose of the command and also read what happens in the console output.** In case of some errors:
+```
+def in_case_of_error():
+    if an_error_occured_before_that_you_missed:
+        in_case_of_error()
+    
+    read_the_error_message # very important!!!
+    
+    if you can find out where the error originates from:
+        solve_the_error()
+        return
+
+    for _ in range(5):
+        if you_can_google_the_error_and_find_some_help_in_an_online_forum:
+            solve_the_error()
+            return 
+
+    post_a_message_in_the_moodle_forum()
+
+    if get_help_from_moodle_forum:
+        solve_the_error()
+        return
+    else: 
+        solve_the_error()
+        write_answer_to_moodle_forum()
+        return
+```
+
+### Install catkin_tools 
+(https://catkin-tools.readthedocs.io/en/latest/installing.html)
+```bash
+$ sudo sh \
+    -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" \
+        > /etc/apt/sources.list.d/ros-latest.list'
+$ wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+$ sudo apt-get update
+$ sudo apt-get install python3-catkin-tools
+```
 
 
 ### Install ROS Melodic
@@ -34,6 +154,23 @@ sudo sh -c 'echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc'
 ```
 
 Close and restart the terminal.
+
+### Installing some other packages
+```bash
+# http://wiki.ros.org/rosdep
+sudo apt-get install python-rosdep
+sudo rosdep init
+rosdep update
+
+# http://wiki.ros.org/image_pipeline
+sudo apt-get install ros-melodic-image-pipeline
+
+# http://wiki.ros.org/rviz
+sudo apt-get install ros-melodic-rviz
+
+# http://wiki.ros.org/rqt
+sudo apt-get install ros-melodic-rqt ros-melodic-rqt-common-plugins ros-melodic-rqt-robot-plugins
+```
 
 
 ### Install Adafruit Libraries
@@ -65,13 +202,14 @@ Create a ROS Catkin workspace to contain our ROS packages:
 # create the catkin workspace
 $ mkdir -p ~/workspace/catkin_ws/src
 $ cd ~/workspace/catkin_ws
-$ catkin_make
+$ catkin init
+$ catkin build
 
 # add catkin_ws path to bashrc
 $ sudo sh -c 'echo "source ~/workspace/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 
 ```
-> Note:  out of personal preference, my catkin_ws is created as a subdirectory under ~/workspace
+> Note:  out of personal preference, the catkin_ws is created as a subdirectory under ~/workspace
 
 Close and open a new terminal window.
 Verify that your catkin_ws is visible to ROS:
@@ -118,7 +256,7 @@ git clone https://github.com/dusty-nv/ros_deep_learning
 
 # make ros_deep_learning
 cd ../    # cd ~/workspace/catkin_ws
-catkin_make
+catkin build
 
 # confirm that the package can be found
 $ rospack find ros_deep_learning
@@ -136,14 +274,14 @@ $ git clone https://github.com/dusty-nv/jetbot_ros
 
 # build the package
 $ cd ../    # cd ~/workspace/catkin_ws
-$ catkin_make
+$ catkin build
 
 # confirm that jetbot_ros package can be found
 $ rospack find jetbot_ros
 /home/nvidia/workspace/catkin_ws/src/jetbot_ros
 ```
 
-## Testing JetBot
+### Testing JetBot (Part I)
 
 Next, let's check that the different components of the robot are working under ROS.
 
@@ -152,7 +290,7 @@ First open a new terminal, and start `roscore`
 $ roscore
 ```
 
-### Running the Motors
+#### Running the Motors
 
 Open a new terminal, and start the `jetbot_motors` node:
 ```bash
@@ -180,7 +318,7 @@ $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "stop"
 (it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
 
 
-### Using the Debug OLED
+#### Using the Debug OLED
 
 If you have an SSD1306 debug OLED on your JetBot, you can run the `jetbot_oled` node to display system information and user-defined text:
 
@@ -196,7 +334,7 @@ The node will also listen on the `/jetbot_oled/user_text` topic to recieve strin
 rostopic pub /jetbot_oled/user_text std_msgs/String --once "HELLO!"
 ```
 
-### Using the Camera
+#### Using the Camera
 
 To begin streaming the JetBot camera, start the `jetbot_camera` node:
 
@@ -215,7 +353,19 @@ $ rosrun image_view image_view image:=/jetbot_camera/raw
 A window should then open displaying the live video from the camera.  By default, the window may appear smaller than the video feed.  Click on the terminal or maximize button on the window to enlarge the window to show the entire frame.
 
 
-## JetBot Model for Gazebo Robotics Simulator
+### Build apriltag
+
+Follow the instructions from:
+
+https://github.com/AprilRobotics/apriltag_ros
+
+Make sure that you don't copy paste comments from the Quickstart there blindfold. Use the correct `src` folder (see the file structure above).
+
+
+
+
+
+## Not tested but recommended: JetBot Model for Gazebo Robotics Simulator
 
 <img src="https://github.com/dusty-nv/jetbot_ros/raw/master/gazebo/jetbot_gazebo_0.png" width="700">
 
