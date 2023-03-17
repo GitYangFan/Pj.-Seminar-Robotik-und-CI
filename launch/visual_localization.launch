@@ -1,0 +1,52 @@
+<launch> 
+<!-- <remap from="/jetbot_camera/image_raw" to="/camera/image_mono"/>  -->
+<!-- <remap from="/jetbot_camera/camera_info" to="/camera/camera_info"/> -->
+<!--arguments to roslunch-->
+  <!-- <arg name="cparam" default="$(find jetbot_ros)/ost.yaml" /> --> 
+
+  <node name="camera" pkg="jetbot_ros" type="jetbot_camera">
+  </node>
+  <!--<node name="camera_info" pkg="ros_jetbot" type="camera_info.py">
+  <param name="param" value="$(arg cparam)"/>
+  </node> -->
+  <!--node for image rectification  (copy from image_proc.launch and adapted input topic names)-->
+  
+  <node name="image_proc" pkg="image_proc" type="image_proc" ns="camera">
+  <param name="queue_size" value="5" />
+</node>
+
+
+  <node pkg="tf" type="static_transform_publisher" name="map2apriltag_origin" 
+    args="0.0 0.0 0.0 0 0 0 1 arena map 100" />
+<!-- start rviz -->
+  <node pkg="rviz" type="rviz" name="my_rviz" 
+    args="-f map"/>
+
+<!-- copy from continuous_detection.launch from apriltag_ros-->
+<!-- set to value="gdbserver localhost:10000" for remote debugging -->
+  <arg name="launch_prefix" default="" />
+
+  <!-- configure camera input -->
+  <arg name="camera_name" default="/camera" />
+  <arg name="image_topic" default="image_rect" />
+  <arg name="queue_size" default="1" />
+
+  <!-- apriltag_ros continuous detection node -->
+  <node pkg="apriltag_ros" type="apriltag_ros_continuous_node" name="apriltag_ros_continuous_node" clear_params="true" output="screen" launch-prefix="$(arg launch_prefix)">
+    <!-- Remap topics from those used in code to those on the ROS network -->
+    <remap from="image_rect" to="$(arg camera_name)/$(arg image_topic)" />
+    <remap from="camera_info" to="$(arg camera_name)/camera_info" />
+
+    <param name="publish_tag_detections_image" type="bool" value="true" /><!-- default: false -->
+    <param name="queue_size" type="int" value="$(arg queue_size)" />
+
+    <!-- load parameters (incl. tag family, tags, etc.) -->
+    <rosparam command="load" file="$(find apriltag_ros)/config/settings.yaml"/>
+    <rosparam command="load" file="$(find apriltag_ros)/config/tags.yaml"/>
+  </node>
+
+  
+
+ 
+  
+</launch>
