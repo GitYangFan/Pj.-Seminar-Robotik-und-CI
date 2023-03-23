@@ -164,6 +164,9 @@ sudo apt-get install python-rosdep
 sudo rosdep init
 rosdep update
 
+# http://wiki.ros.org/image_common
+sudo apt-get install ros-melodic-image-common
+
 # http://wiki.ros.org/image_pipeline
 sudo apt-get install ros-melodic-image-pipeline
 
@@ -230,14 +233,14 @@ sudo apt-get install git cmake
 
 # clone the repo and submodules
 cd ~/workspace
-git clone https://github.com/dusty-nv/jetson-inference
+git clone https://github.com/dusty-nv/jetson-inference -b nvmm-disabled
 cd jetson-inference
 git submodule update --init
 
 # build from source
 mkdir build
 cd build
-cmake ../
+cmake ../  # during this command a dialog window will open, you can preceed with the preselected neural networks, select pytorch (maybe you will need this later)
 make
 
 # install libraries
