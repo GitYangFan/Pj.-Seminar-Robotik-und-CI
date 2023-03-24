@@ -23,10 +23,20 @@
 #ifndef __ROS_DEEP_LEARNING_IMAGE_CONVERTER_H_
 #define __ROS_DEEP_LEARNING_IMAGE_CONVERTER_H_
 
-#include <jetson-utils/cudaUtility.h>
-#include <jetson-utils/imageFormat.h>
+#include <cuda_runtime.h>
 
-#include "ros_compat.h"
+#include <sensor_msgs/Image.h>
+
+
+/**
+ * Complete functions missing from <jetson-utils/cudaRGB.h>
+ */
+
+cudaError_t cudaBGR8ToRGBA32( uchar3* input, float4* output, size_t width, size_t height );
+
+cudaError_t cudaRGBA32ToBGR8( float4* input, uchar3* output, size_t width, size_t height, const float2& pixelRange=make_float2(0,255) );
+
+cudaError_t cudaRGBA32ToBGRA8( float4* input, uchar4* output, size_t width, size_t height, const float2& pixelRange=make_float2(0,255) );
 
 
 /**
@@ -35,21 +45,6 @@
 class imageConverter
 {
 public:
-	/**
-	 * Output image pixel type
-	 */
-	typedef float4 PixelType;
-
-	/**
-	 * Image format used for internal CUDA processing
-	 */
-	static const imageFormat InternalFormat = IMAGE_RGBA32F;
-
-	/**
-	 * Image format used for outputting ROS image messages
-	 */
-	static const imageFormat ROSOutputFormat = IMAGE_BGR8;
-
 	/**
 	 * Constructor
 	 */
@@ -61,29 +56,24 @@ public:
 	~imageConverter();
 
 	/**
-	 * Free the memory
-	 */
-	void Free();
-
-	/**
 	 * Convert to 32-bit RGBA floating point
 	 */
 	bool Convert( const sensor_msgs::ImageConstPtr& input );
 
 	/**
-	 * Convert to ROS sensor_msgs::Image message
+	 * Convert float4 RGBA image from ImageGPU() to ROS sensor_msgs::Image message
 	 */
-	bool Convert( sensor_msgs::Image& msg_out, imageFormat outputFormat );
+	bool Convert( sensor_msgs::Image& msg_out, const std::string& encoding );
 
 	/**
-	 * Convert to ROS sensor_msgs::Image message
+	 * Convert float4 RGBA image to ROS sensor_msgs::Image message
 	 */
-	bool Convert( sensor_msgs::Image& msg_out, imageFormat outputFormat, PixelType* imageGPU );
+	bool Convert( sensor_msgs::Image& msg_out, const std::string& encoding, float* imageGPU );
 
 	/**
 	 * Resize the memory (if necessary)
 	 */
-	bool Resize( uint32_t width, uint32_t height, imageFormat inputFormat );
+	bool Resize( uint32_t width, uint32_t height );
 
 	/**
 	 * Retrieve the converted image width
@@ -96,22 +86,26 @@ public:
 	inline uint32_t GetHeight() const		{ return mHeight; }
 
 	/**
+	 * Retrieve the size of the converted image (in bytes)
+	 */
+	inline size_t GetSize() const			{ return mSize; }
+
+	/**
 	 * Retrieve the GPU pointer of the converted image
 	 */
-	inline PixelType* ImageGPU() const		{ return mOutputGPU; }
+	inline float* ImageGPU() const		{ return mOutputGPU; }
 
 private:
 
 	uint32_t mWidth;
-	uint32_t mHeight;	
-	size_t   mSizeInput;
-	size_t   mSizeOutput;
+	uint32_t mHeight;
+	size_t   mSize;
 
-	void* mInputCPU;
-	void* mInputGPU;
+	uint8_t* mInputCPU;
+	uint8_t* mInputGPU;
 
-	PixelType* mOutputCPU;
-	PixelType* mOutputGPU;
+	float*   mOutputCPU;
+	float*   mOutputGPU;
 };
 
 #endif
