@@ -449,8 +449,7 @@ Helpful tools for your further work with ROS are:
         ![rqt tf tree](https://github.com/NikHoh/jetbot_ros/blob/melodic/images/rqt_tf_tree.png)
 
 
-
-
+Close everything by hitting Strg+C in the console where you launched the launch file.
 
 
 
