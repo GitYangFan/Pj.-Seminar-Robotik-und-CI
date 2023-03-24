@@ -340,6 +340,25 @@ The node will also listen on the `/jetbot_oled/user_text` topic to recieve strin
 rostopic pub /jetbot_oled/user_text std_msgs/String --once "HELLO!"
 ```
 
+#### Using the Keyboard control
+
+(it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
+Open a console and start a motor controller that listens to a /cmd_vel topic by
+```bash
+$ rosrun jetbot_ros motors_waveshare.py
+```
+
+Next, in another console start a node that publishes /cmd_vel messages by pressind the W A S D X keys. 
+W: positive linear velocity increment
+A: negative angular velocity increment
+S: stop all velocities
+D: positive angular velocity increment
+X: negative linear velocity increment
+```bash
+$ rosrun jetbot_ros teleop_keyboard.py
+```
+In the active, console pressing the WASDX keys, the JetBot now move it's wheels accordingly.
+
 #### Using the Camera
 
 To begin streaming the JetBot camera, start the `jetbot_camera` node:
@@ -450,5 +469,6 @@ For example, you could build the arena in gazebo (PDF files of the arena walls a
 - implement Extended Kalman Filter for localization and SLAM algorithm
     - find inspiration: https://github.com/gargrohin/ROS-Navigation-and-Planning-with-SLAM
 
-- implement other stuff like a keyboard control
+- implement other stuff
     - find inspiration at other forks from the original repo: https://github.com/dusty-nv/jetbot_ros/forks
+    or the dusty-nv/jetbot_ros master branch (note that this repo is a fork of the branch "melodic")
