@@ -240,7 +240,7 @@ git submodule update --init
 # build from source
 mkdir build
 cd build
-cmake ../  # during this command a dialog window will open, you can preceed with the preselected neural networks, select pytorch (maybe you will need this later)
+cmake ../  # during this command a dialog window will open, you can proceed with the preselected neural networks, select pytorch (maybe you will need this later)
 make
 
 # install libraries
@@ -321,7 +321,7 @@ $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "left"
 $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "right"
 $ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "stop"
 ```
-
+Terminate the jetbot_motors node by hitting Strg+C in the respective console window.
 
 
 #### Using the Debug OLED
@@ -343,12 +343,12 @@ rostopic pub /jetbot_oled/user_text std_msgs/String --once "HELLO!"
 #### Using the Keyboard control
 
 (it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
-Open a console and start a motor controller that listens to a /cmd_vel topic by
+Open a console and start a motor controller that listens to a `/cmd_vel` topic by
 ```bash
 $ rosrun jetbot_ros motors_waveshare.py
 ```
 
-Next, in another console start a node that publishes /cmd_vel messages by pressind the W A S D X keys. 
+Next, in another console start a node that publishes `/cmd_vel` messages by pressind the W A S D X keys. 
 W: positive linear velocity increment
 A: negative angular velocity increment
 S: stop all velocities
@@ -357,7 +357,7 @@ X: negative linear velocity increment
 ```bash
 $ rosrun jetbot_ros teleop_keyboard.py
 ```
-In the active, console pressing the WASDX keys, the JetBot now move it's wheels accordingly.
+In the active console by pressing the WASDX keys the JetBot now move its wheels accordingly.
 
 #### Using the Camera
 
@@ -416,6 +416,8 @@ To work properly, apriltag_ros needs:
 Now everything should be ready to test the localization of the JetBot in the arena. 
 
 All needed ROS nodes are started with a single launch file: `/launch/visual_localization.launch`
+
+(This will also launch the keyboard control. To avoid this comment out the according lines in the launch file.)
 
 ```bash
 # in a terminal window
