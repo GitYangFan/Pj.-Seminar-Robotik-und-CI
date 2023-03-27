@@ -62,7 +62,7 @@ The global coordinate system's origin is set in one corner of the arena.
 
 - connect the JetBot to power, mouse, keyboard and a monitor
 
-- you should now be able to direclty boot Ubuntu 18.04 on the JetBot
+- you should now be able to direclty boot Ubuntu 18.04 on the JetBot (Attention: the following instruction only work on Ubuntu 18.04)
 
 - during the following guide you will create a file structure that looks like:  
 
@@ -126,12 +126,12 @@ def in_case_of_error():
 ### Install catkin_tools 
 (https://catkin-tools.readthedocs.io/en/latest/installing.html)
 ```bash
-$ sudo sh \
+sudo sh \
     -c 'echo "deb http://packages.ros.org/ros/ubuntu `lsb_release -sc` main" \
         > /etc/apt/sources.list.d/ros-latest.list'
-$ wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
-$ sudo apt-get update
-$ sudo apt-get install python3-catkin-tools
+wget http://packages.ros.org/ros.key -O - | sudo apt-key add -
+sudo apt-get update
+sudo apt-get install python3-catkin-tools
 ```
 
 
@@ -139,17 +139,17 @@ $ sudo apt-get install python3-catkin-tools
 
 ```bash
 # enable all Ubuntu packages:
-$ sudo apt-add-repository universe
-$ sudo apt-add-repository multiverse
-$ sudo apt-add-repository restricted
+sudo apt-add-repository universe
+sudo apt-add-repository multiverse
+sudo apt-add-repository restricted
 
 # add ROS repository to apt sources
-$ sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
-$ sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
+sudo sh -c 'echo "deb http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list'
+sudo apt-key adv --keyserver 'hkp://keyserver.ubuntu.com:80' --recv-key C1CF6E31E6BADE8868B172B4F42ED6FBAB17C654
 
 # install ROS Base
-$ sudo apt-get update
-$ sudo apt-get install ros-melodic-ros-base
+sudo apt-get update
+sudo apt-get install ros-melodic-ros-base
 
 # add ROS paths to environment
 sudo sh -c 'echo "source /opt/ros/melodic/setup.bash" >> ~/.bashrc'
@@ -184,17 +184,17 @@ These Python libraries from Adafruit support the TB6612/PCA9685 motor drivers an
 
 ```bash
 # pip should be installed
-$ sudo apt-get install python-pip
+sudo apt-get install python-pip
 
 # install Adafruit libraries
-$ pip install Adafruit-MotorHAT
-$ pip install Adafruit-SSD1306
+pip install Adafruit-MotorHAT
+pip install Adafruit-SSD1306
 ```
 
 Grant your user access to the i2c bus:
 
 ```bash
-$ sudo usermod -aG i2c $USER
+sudo usermod -aG i2c $USER
 ```
 
 Reboot the system for the changes to take effect.
@@ -205,13 +205,13 @@ Create a ROS Catkin workspace to contain our ROS packages:
 
 ```bash
 # create the catkin workspace
-$ mkdir -p ~/workspace/catkin_ws/src
-$ cd ~/workspace/catkin_ws
-$ catkin init
-$ catkin build
+mkdir -p ~/workspace/catkin_ws/src
+cd ~/workspace/catkin_ws
+catkin init
+catkin build
 
 # add catkin_ws path to bashrc
-$ sudo sh -c 'echo "source ~/workspace/catkin_ws/devel/setup.bash" >> ~/.bashrc'
+sudo sh -c 'echo "source ~/workspace/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 
 ```
 > Note:  out of personal preference, the catkin_ws is created as a subdirectory under ~/workspace
@@ -219,7 +219,7 @@ $ sudo sh -c 'echo "source ~/workspace/catkin_ws/devel/setup.bash" >> ~/.bashrc'
 Close and open a new terminal window.
 Verify that your catkin_ws is visible to ROS:
 ```bash
-$ echo $ROS_PACKAGE_PATH 
+echo $ROS_PACKAGE_PATH 
 /home/nvidia/workspace/catkin_ws/src:/opt/ros/melodic/share
 ```
 
@@ -264,7 +264,7 @@ cd ../    # cd ~/workspace/catkin_ws
 catkin build
 
 # confirm that the package can be found
-$ rospack find ros_deep_learning
+rospack find ros_deep_learning
 /home/nvidia/workspace/catkin_ws/src/ros_deep_learning
 ```
 
@@ -274,15 +274,15 @@ Clone and build the [`jetbot_ros`](https://github.com/dusty-nv/jetbot_ros) repo:
 
 ```bash
 # clone the repo (this repo)
-$ cd ~/workspace/catkin_ws/src
-$ git clone https://github.com/NikHoh/jetbot_ros.git
+cd ~/workspace/catkin_ws/src
+git clone https://github.com/NikHoh/jetbot_ros.git
 
 # build the package
-$ cd ../    # cd ~/workspace/catkin_ws
-$ catkin build
+cd ../    # cd ~/workspace/catkin_ws
+catkin build
 
 # confirm that jetbot_ros package can be found
-$ rospack find jetbot_ros
+rospack find jetbot_ros
 /home/nvidia/workspace/catkin_ws/src/jetbot_ros
 ```
 
@@ -292,14 +292,14 @@ Next, let's check that the different components of the robot are working under R
 
 First open a new terminal, and start `roscore`
 ```bash
-$ roscore
+roscore
 ```
 
 #### Running the Motors
 
 Open a new terminal, and start the `jetbot_motors` node:
 ```bash
-$ rosrun jetbot_ros jetbot_motors.py
+rosrun jetbot_ros jetbot_motors.py
 ```
 
 The `jetbot_motors` node will listen on the following topics:
@@ -315,11 +315,11 @@ Open a new terminal, and run some test commands:
 (it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
 
 ```bash
-$ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "forward"
-$ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "backward"
-$ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "left"
-$ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "right"
-$ rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "stop"
+rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "forward"
+rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "backward"
+rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "left"
+rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "right"
+rostopic pub /jetbot_motors/cmd_str std_msgs/String --once "stop"
 ```
 Terminate the jetbot_motors node by hitting Strg+C in the respective console window.
 
@@ -329,7 +329,7 @@ Terminate the jetbot_motors node by hitting Strg+C in the respective console win
 If you have an SSD1306 debug OLED on your JetBot, you can run the `jetbot_oled` node to display system information and user-defined text:
 
 ```bash
-$ rosrun jetbot_ros jetbot_oled.py
+rosrun jetbot_ros jetbot_oled.py
 ```
 
 By default, `jetbot_oled` will refresh the display every second with the latest memory usage, disk space, and IP addresses.
@@ -345,7 +345,7 @@ rostopic pub /jetbot_oled/user_text std_msgs/String --once "HELLO!"
 (it is recommended to initially test with JetBot up on blocks, wheels not touching the ground)  
 Open a console and start a motor controller that listens to a `/cmd_vel` topic by
 ```bash
-$ rosrun jetbot_ros motors_waveshare.py
+rosrun jetbot_ros motors_waveshare.py
 ```
 
 Next, in another console start a node that publishes `/cmd_vel` messages by pressind the W A S D X keys. 
@@ -355,7 +355,7 @@ S: stop all velocities
 D: positive angular velocity increment
 X: negative linear velocity increment
 ```bash
-$ rosrun jetbot_ros teleop_keyboard.py
+rosrun jetbot_ros teleop_keyboard.py
 ```
 In the active console by pressing the WASDX keys the JetBot now move its wheels accordingly.
 
@@ -364,15 +364,15 @@ In the active console by pressing the WASDX keys the JetBot now move its wheels 
 To begin streaming the JetBot camera, start the `jetbot_camera` node:
 
 ```bash
-$ rosrun jetbot_ros jetbot_camera
+rosrun jetbot_ros jetbot_camera
 ```
 
 The video frames will be published to the `/camera/image_raw` topic as [`sensor_msgs::Image`](http://docs.ros.org/melodic/api/sensor_msgs/html/msg/Image.html) messages with BGR8 encoding.  To test the camera feed, install the [`image_view`](http://wiki.ros.org/image_view?distro=melodic) package and then subscribe to `/camera/image_raw` from a new terminal:
 
 ```bash
 # first open a new terminal
-$ sudo apt-get install ros-melodic-image-view
-$ rosrun image_view image_view image:=/camera/image_raw
+sudo apt-get install ros-melodic-image-view
+rosrun image_view image_view image:=/camera/image_raw
 ```
 
 A window should then open displaying the live video from the camera.  By default, the window may appear smaller than the video feed.  Click on the terminal or maximize button on the window to enlarge the window to show the entire frame.
@@ -421,18 +421,18 @@ All needed ROS nodes are started with a single launch file: `/launch/visual_loca
 
 ```bash
 # in a terminal window
-$ roscore
+roscore
 
 # in another terminal window
-$ roslaunch jetbot_ros visual_localization.launch
+roslaunch jetbot_ros visual_localization.launch
 
 # in another terminal window, test if all topics and nodes work
-$ rostopic list
-$ rosnode list
+rostopic list
+rosnode list
 
 # visualize the results with RVIZ
 # in another terminal window, run
-$ rviz
+rviz
 ```
 
 In the appearing RVIZ window you can add the an image view to view the `tag_detections_image` topic and adding a `TF` visualization. Holding one of the arena's wall elements in front of the camera, there should now be tags detected, and a respective coordinate frame should appear. 
