@@ -469,6 +469,18 @@ For example, you could build the arena in gazebo (PDF files of the arena walls a
 
 - install Ubuntu 18.04 and ROS melodic on another computer (virtual maschine possible) and try to connect the robot the the computer via ROS:
     - http://wiki.ros.org/ROS/Tutorials/MultipleMachines
+    - Hints:
+        - both machines must run Ubuntu 18.04 
+        - check that openssh-client and openssh-server are installed (https://www.cyberciti.biz/faq/how-to-install-ssh-on-ubuntu-linux-using-apt-get/)
+        - check with `sudo service ssh status` on both devices (https://kinsta.com/knowledgebase/ssh-connection-refused/)
+        - if JetBot and your PC are connectd to the same network and you have retrieved the IP adressed of both devices for example as:
+            - JetBot: `172.25.1.217` and
+            - PC: `172.25.1.108`
+        - you should then be able to ssh from your PC to the JetBot by `ssh jetbot@172.25.1.217`
+
+        - for more troubleshotting this may be helpful: 
+            - http://wiki.ros.org/ROS/NetworkSetup
+            - http://wiki.ros.org/ROS/Troubleshooting
     - then you can test the JetBot without using its GUI
 
 - implement Extended Kalman Filter for localization and SLAM algorithm
