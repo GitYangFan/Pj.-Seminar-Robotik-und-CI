@@ -471,9 +471,9 @@ For example, you could build the arena in gazebo (PDF files of the arena walls a
     - http://wiki.ros.org/ROS/Tutorials/MultipleMachines
     - Hints:
         - both machines must run Ubuntu 18.04 
-        - check that openssh-client and openssh-server are installed (https://www.cyberciti.biz/faq/how-to-install-ssh-on-ubuntu-linux-using-apt-get/)
+        - check that openssh-client and openssh-server are installed on both devices (https://www.cyberciti.biz/faq/how-to-install-ssh-on-ubuntu-linux-using-apt-get/)
         - check with `sudo service ssh status` on both devices (https://kinsta.com/knowledgebase/ssh-connection-refused/)
-        - if JetBot and your PC are connectd to the same network and you have retrieved the IP adressed of both devices for example as:
+        - if JetBot and your PC are connectd to the same network and you have retrieved the IP adresses of both devices for example as:
             - JetBot: `172.25.1.217` and
             - PC: `172.25.1.108`
         - you should then be able to ssh from your PC to the JetBot by `ssh jetbot@172.25.1.217`
