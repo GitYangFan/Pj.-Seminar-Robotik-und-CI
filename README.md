@@ -134,6 +134,10 @@ sudo apt-get update
 sudo apt-get install python3-catkin-tools
 ```
 
+### Install git
+```bash
+sudo apt install git
+```
 
 ### Install ROS Melodic
 
