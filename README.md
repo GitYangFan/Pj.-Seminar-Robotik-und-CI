@@ -44,8 +44,10 @@ In the following, you are going to set up the basic ROS environment on the JetBo
 
 ## The arena
 
-The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. Each side of the arena is built by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena`.
+The size of the arena is 1.485m x 1.485m, which equals the length of 5 sheets of DIN A4 paper. Each side of the arena is built by five sheets. The sheets of paper are equipped with recursive AprilTags that are used by the JetBot to localize itself. The sheets of paper in PDF format are located in the folder `arena` and are supposed to be printed on DIN A4 sheets of paper.
 The global coordinate system's origin is set in one corner of the arena.
+
+There are differently colored bases distribued in the arena that are either located in the arena's corners or in the middle of one of the arena's sides. All bases can be printed on DIN A4 sheets of paper and cut by a pair of scissors along the dotted line to their final shape of 21cm x 21cm. The colored circles are centered in the base squares and have a radius of 6cm. The Start - Goal - circle is centered in its base square and measures 7cm in radius. The sheet of paper with the bases in PDF format is located in the folder `arena`.
 
 ![Arena layout](https://github.com/NikHoh/jetbot_ros/blob/melodic/images/arena_setup.png)
 
