@@ -54,7 +54,7 @@ There are differently colored bases distribued in the arena that are either loca
 ## The robot
 
 
-- flash your Nano's SD card with NVIDIA's JetPack image - see the [Getting Started](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit) guide.
+- flash your Nano's SD card with NVIDIA's JetPack image - see the [Getting Started](https://developer.nvidia.com/embedded/learn/get-started-jetson-nano-devkit) guide. (The SD card image file should be named `jetson-nano-jp461-sd-card-image.zip`)
 
 > **Note**:  the process below will likely exceed the disk capacity of a 16GB filesystem,  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; so a larger SD card should be used.  If using the 'Etcher' method with JetPack-L4T image,  
@@ -264,6 +264,9 @@ sudo apt-get install ros-melodic-vision-msgs ros-melodic-image-transport ros-mel
 # clone the repo
 cd ~/workspace/catkin_ws/src
 git clone https://github.com/dusty-nv/ros_deep_learning
+cd ros_deep_learning
+git checkout a58d696
+cd ../   # cd ~/workspace/catkin_ws/ros_deep_learning
 
 # make ros_deep_learning
 cd ../    # cd ~/workspace/catkin_ws
