@@ -247,7 +247,7 @@ def drawBalls(src, balls):
 
 
 # test
-path = "./colorCube/blue_cube0.png"
+path = "./data/cube_yellow0.png"
 window_name = "image"
 
 src = cv2.imread(path);
