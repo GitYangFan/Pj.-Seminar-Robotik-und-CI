@@ -17,9 +17,40 @@ def get_focal_length():
 
 # The function to calculate the distance from object to camera
 def distance_to_camera(height_real, focal_length, height_pixel):
+    """
+    Parameters
+    ------------
+    height_real : the real height(or radius) of the object
+    focal_length : the focal length of the camera
+    height_pixel : the height in the image, the unit should be pixel
+
+    Returns
+    ------------
+    distance : the distance from object to camera
+    """
     distance = (height_real * focal_length) / height_pixel
     return distance
 
+# The function to calculate the angle in camera coordinate
+def angle_to_camera(focal_length, position_pixel = [0, 0], camera_frame = [1080, 720]):
+    """
+    Parameters
+    ------------
+    focal_length : the focal length of the camera
+    position_pixel : the postion(x,y) in the image coordinate system, The origin is the upper left corner
+    camera_frame : the image width and heigth, the default value is (1080x720)
+
+    Returns
+    ------------
+    angle_horizon : the deflection angle in the horizon plane of the camera coordinate, positive value means left
+    angle_vertical : the deflection angle in the vertical plane of the camera coordinate, positive value means upon
+    """
+    angle_horizon = np.arctan((camera_frame[0]/2 - position_pixel[0])/focal_length)
+    angle_vertical = np.arctan((camera_frame[1]/2 - position_pixel[1])/focal_length)
+    return angle_horizon, angle_vertical
+
+
+# template function to find the marker, will be removed after the detector finished
 def find_marker(image):
     # convert the image to grayscale, blur it, and detect edges
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -53,6 +84,11 @@ for imagePath in sorted(paths.list_images("./data/distance")):
     image = cv2.imread(imagePath)
     marker = find_marker(image)
     distance = distance_to_camera(KNOWN_WIDTH, focalLength, marker[1][0])
+
+    # angle to the marker from the camera
+    angle = angle_to_camera(focalLength, [1162, 1326], [1872, 4032])
+    print(angle[0])
+    print(angle[1])
 
     # draw a bounding box around the image and display it
     box = cv2.cv.BoxPoints(marker) if imutils.is_cv2() else cv2.boxPoints(marker)
