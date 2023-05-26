@@ -86,9 +86,11 @@ for imagePath in sorted(paths.list_images("./data/distance")):
     distance = distance_to_camera(KNOWN_WIDTH, focalLength, marker[1][0])
 
     # angle to the marker from the camera
-    angle = angle_to_camera(focalLength, [1162, 1326], [1872, 4032])
+    angle = angle_to_camera(focalLength, [330, 1406], [4032, 1872])
     print(angle[0])
     print(angle[1])
+    distance_test = distance_to_camera(30, focalLength, 321)
+    print(distance_test)
 
     # draw a bounding box around the image and display it
     box = cv2.cv.BoxPoints(marker) if imutils.is_cv2() else cv2.boxPoints(marker)
