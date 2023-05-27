@@ -6,17 +6,14 @@ import math
 color_dict = collections.defaultdict(list)
 lower_red1 = np.array([0, 43, 46])
 upper_red1 = np.array([10, 255, 255])
-red1_list = []
-red1_list.append(lower_red1)
-red1_list.append(upper_red1)
-color_dict['red1'] = red1_list
-
 lower_red2 = np.array([156, 43, 46])
 upper_red2 = np.array([180, 255, 255])
-red2_list = []
-red2_list.append(lower_red2)
-red2_list.append(upper_red2)
-color_dict['red2'] = red2_list
+red_list = []
+red_list.append(lower_red1)
+red_list.append(upper_red1)
+red_list.append(lower_red2)
+red_list.append(upper_red2)
+color_dict['red'] = red_list
 
 lower_green = np.array([35, 43, 46])
 upper_green = np.array([77, 255, 255])
@@ -151,70 +148,156 @@ def filterRepeatedContours(contours, mc):
 
     return contours, mc
 
-def increaseBrightness(hsv, beta=30):
+def increaseBrightness(img, beta=30):
     """
     Function to increase brightness of the image
 
     Args:
-        hsv: the image in HSV color
+        img: the image in BGR color
         beta: the value of the brightness to increase
 
     Return:
-        hsv: the new image in HSV color
+        output_img: the new image in BGR color
     """
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
 
     lim = 255 - beta
     v[v > lim] = 255
     v[v <= lim] += beta
 
-    return cv2.merge((h, s, v))
+    hsv = cv2.merge((h, s, v))
+    output_img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 
-def decreaseBrightness(hsv, beta=30):
+
+    return output_img
+
+def decreaseBrightness(img, beta=30):
     """
     Function to decrease brightness of the image
 
     Args:
-        hsv: the image in HSV color
+        img: the image in BGR color
         beta: the value of the brightness to decrease
 
     Return:
-        hsv: the new image in HSV color
+        output_img: the new image in BGR color
     """
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     h, s, v = cv2.split(hsv)
 
     v[v >= beta] -= beta
     v[v < beta] = 0
 
-    return cv2.merge((h, s, v))
+    hsv = cv2.merge((h, s, v))
+    output_img = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 
-# def increaseContrast(hsv, alpha=1.0, beta=50):
-#     """
-#     Function to increase or decrease the contrast of the image
-#
-#     Args:
-#         hsv: the image in HSV color
-#         alpha: the coefficient, alpha > 1 increase the contrast, alpha < 1 decrease the contrast
-#
-#     Return:
-#         hsv: the new image in HSV color
-#     """
-#     h, s, v = cv2.split(hsv)
-#     lim = math.ceil(255 / alpha)
-#     for i in range(len(v)):
-#         for j in range(len(v[0])):
-#             if v[i][j] < lim:
-#                 v[i][j] = round(v[i][j] * alpha)
-#             else:
-#                 v[i][j] = 255
-#     # v[v < lim] *= alpha
-#     # v[v >= lim] = 255
-#
-#     v[v >= beta] -= beta
-#     v[v < beta] = 0
-#
-#     return cv2.merge((h, s, v))
-#ISSUE: this function is too slow to use
+    return output_img
+
+def colorBalance(src, mode):
+    """
+    Function to adjust glo3.6bally the intensities of the color
+
+    Args:
+        src: the image need to process
+        mode: the mode of the process
+
+    Return:
+        the image after processing
+    """
+
+    output_img = src.copy()
+    b, g, r = cv2.split(src)
+    h, w, c = src.shape
+    if mode == 0:
+        sum_ = np.double() + b + g + r
+        hists, _ = np.histogram(sum_.flatten(), 766, [0, 766])
+        Y = 765
+        num, key = 0, 0
+        ratio = 0.05
+        while Y >= 0:
+            num += hists[Y]
+            if num > h * w * ratio / 100:
+                key = Y
+                break
+            Y = Y - 1
+
+        sumkey = np.where(sum_ >= key)
+        sum_b, sum_g, sum_r = np.sum(b[sumkey]), np.sum(g[sumkey]), np.sum(r[sumkey])
+        times = len(sumkey[0])
+        avg_b, avg_g, avg_r = sum_b / times, sum_g / times, sum_r / times
+
+        maxvalue = float(np.max(output_img))
+        output_img[:, :, 0] = output_img[:, :, 0] * maxvalue / int(avg_b)
+        output_img[:, :, 1] = output_img[:, :, 1] * maxvalue / int(avg_g)
+        output_img[:, :, 2] = output_img[:, :, 2] * maxvalue / int(avg_r)
+    elif mode == 1:
+        I_b_2, I_r_2 = np.double(b) ** 2, np.double(r) ** 2
+        sum_I_b_2, sum_I_r_2 = np.sum(I_b_2), np.sum(I_r_2)
+        sum_I_b, sum_I_g, sum_I_r = np.sum(b), np.sum(g), np.sum(r)
+        max_I_b, max_I_g, max_I_r = np.max(b), np.max(g), np.max(r)
+        max_I_b_2, max_I_r_2 = np.max(I_b_2), np.max(I_r_2)
+        [u_b, v_b] = np.matmul(np.linalg.inv([[sum_I_b_2, sum_I_b], [max_I_b_2, max_I_b]]), [sum_I_g, max_I_g])
+        [u_r, v_r] = np.matmul(np.linalg.inv([[sum_I_r_2, sum_I_r], [max_I_r_2, max_I_r]]), [sum_I_g, max_I_g])
+        b0 = np.uint8(u_b * (np.double(b) ** 2) + v_b * b)
+        r0 = np.uint8(u_r * (np.double(r) ** 2) + v_r * r)
+        output_img = cv2.merge([b0, g, r0])
+
+    elif mode == 2:
+        def con_num(x):
+            if x > 0:
+                return 1
+            if x < 0:
+                return -1
+            if x == 0:
+                return 0
+
+        yuv_img = cv2.cvtColor(src, cv2.COLOR_BGR2YCrCb)
+        # YUV空间
+        (y, u, v) = cv2.split(yuv_img)
+        max_y = np.max(y.flatten())
+        sum_u, sum_v = np.sum(u), np.sum(v)
+        avl_u, avl_v = sum_u / (h * w), sum_v / (h * w)
+        du, dv = np.sum(np.abs(u - avl_u)), np.sum(np.abs(v - avl_v))
+        avl_du, avl_dv = du / (h * w), dv / (h * w)
+        radio = 0.5 # 如果该值过大过小，色温向两极端发展
+
+        valuekey = np.where((np.abs(u - (avl_u + avl_du * con_num(avl_u))) < radio * avl_du)
+                             | (np.abs(v - (avl_v + avl_dv * con_num(avl_v))) < radio * avl_dv))
+        num_y, yhistogram = np.zeros((h, w)), np.zeros(256)
+        num_y[valuekey] = np.uint8(y[valuekey])
+        yhistogram = np.bincount(np.uint8(num_y[valuekey].flatten()), minlength=256)
+        ysum = len(valuekey[0])
+        Y = 255
+        num, key = 0, 0
+        while Y >= 0:
+            num += yhistogram[Y]
+            if num > 0.1 * ysum:  # 取前10%的亮点为计算值，如果该值过大易过曝光，该值过小调整幅度小
+                key = Y
+                break
+            Y = Y - 1
+
+        sumkey = np.where(num_y > key)
+        sum_b, sum_g, sum_r = np.sum(b[sumkey]), np.sum(g[sumkey]), np.sum(r[sumkey])
+        num_rgb = len(sumkey[0])
+
+        b0 = np.double(b) * int(max_y) / (sum_b / num_rgb)
+        g0 = np.double(g) * int(max_y) / (sum_g / num_rgb)
+        r0 = np.double(r) * int(max_y) / (sum_r / num_rgb)
+
+        output_img = cv2.merge([b0, g0, r0])
+    else:
+        b_avg, g_avg, r_avg = cv2.mean(b)[0], cv2.mean(g)[0], cv2.mean(r)[0]
+        k = (b_avg + g_avg + r_avg) / 3
+        kb, kg, kr = k / b_avg, k / g_avg, k / r_avg
+        b = cv2.addWeighted(src1=b, alpha=kb, src2=0, beta=0, gamma=0)
+        g = cv2.addWeighted(src1=g, alpha=kg, src2=0, beta=0, gamma=0)
+        r = cv2.addWeighted(src1=r, alpha=kr, src2=0, beta=0, gamma=0)
+        output_img = cv2.merge([b, g, r])
+
+    output_img = np.uint8(np.clip(output_img, 0, 255))
+    return output_img
+
 
 def cubeDetection(blurred, color_dict):
     """
@@ -229,18 +312,16 @@ def cubeDetection(blurred, color_dict):
     """
     cubes = []
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    # hsv = increaseContrast(hsv, 1.25, 50)
-    hsv = increaseBrightness(hsv, 50)
     hsv_morph = cv2.dilate(hsv, None, iterations=2)
     hsv_morph = cv2.erode(hsv, None, iterations=2)
 
     for color in color_dict:
         print(color)
-        print(color_dict[color][0])
-        print(color_dict[color][1])
         mask = cv2.inRange(hsv_morph, color_dict[color][0], color_dict[color][1])
-        # mask = cv2.inRange(hsv, color_dict[color][0], color_dict[color][1])
-        # cvImshow(window_name, mask)
+        if color == "red":
+            mask += cv2.inRange(hsv_morph, color_dict[color][2], color_dict[color][3])
+            # mask = cv2.bitwise_or(mask, cv2.inRange(hsv_morph, color[color][2], color_dict[color][3]))
+        cvImshow(window_name, mask)
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         # contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         mc = getMassCenter(contours)
@@ -248,15 +329,17 @@ def cubeDetection(blurred, color_dict):
 
         for i in range(len(contours)):
             area = cv2.contourArea(contours[i])
-            if area < 300 or area > 0.6 * blurred.shape[0] * blurred.shape[1]:
+            if area < 300 or area > 0.1 * blurred.shape[0] * blurred.shape[1]:
                 continue
-            epsilon = 0.03*cv2.arcLength(contours[i], True)
+            epsilon = 0.02*cv2.arcLength(contours[i], True)
             approx = cv2.approxPolyDP(contours[i], epsilon,True)
             if cv2.isContourConvex(approx):
                 if len(approx) == 4 or len(approx) == 6:
-                    # cube = Cube(contours[i], mc[i], color)
-                    cube = Cube(approx, color)
-                    cubes.append(cube)
+                    contour_area = cv2.contourArea(contours[i])
+                    approx_area = cv2.contourArea(approx)
+                    if math.fabs(contour_area - approx_area) / contour_area < 0.05: # to adjust
+                        cube = Cube(approx, color)
+                        cubes.append(cube)
 
     return cubes
 
@@ -272,13 +355,11 @@ def ballDetection(blurred):
     """
 
     balls = []
-    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    # hsv = increaseContrast(hsv, 1.25, 50)
-    hsv = decreaseBrightness(hsv, 50)
-    bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(blurred, cv2.COLOR_BGR2GRAY)
+    # gray = cv2.equalizeHist(gray)
     gray_morph = cv2.dilate(gray, None, iterations=2)
     gray_morph = cv2.erode(gray, None, iterations=2)
+    cvImshow(window_name, gray_morph)
 
     # gray: Input image (grayscale).
     #  circles: A vector that stores sets of 3 values: *c, Yc, r for each detected circle.
@@ -290,8 +371,8 @@ def ballDetection(blurred):
     #  min_radius = 0: Minimum radius to be detected. If unknown, put zero as default.
     #  max_radius = 0: Maximum radius to be detected. If unknown, put zero as default.
     circles = cv2.HoughCircles(gray_morph, cv2.HOUGH_GRADIENT, 1, gray.shape[0] / 8,
-                                param1=240, param2=45,
-                                minRadius=8, maxRadius=np.uint16(math.sqrt(gray.shape[0]**2 + gray.shape[1]**2) / 4))
+                                param1=300, param2=60,
+                                minRadius=5, maxRadius=np.uint16(math.sqrt(gray.shape[0]**2 + gray.shape[1]**2) / 8))
     # circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, gray.shape[0] / 8,
     #                             param1=240, param2=35,
     #                             minRadius=8, maxRadius=500)
@@ -328,27 +409,38 @@ def drawBalls(src, balls):
     """
     for ball in balls:
         cv2.circle(src, ball.center, ball.radius, (255, 0, 255), 3)
-        cv2.circle(src, ball.center, 1, (255, 0, 255), 3)
+        cv2.circle(src, ball.center, 1, (255, 5, 255), 3)
 
 
 # test
-path = "./img/img2.png"
+path = "./img/4.jpg"
 window_name = "image"
 
 src = cv2.imread(path)
-# cvImshow(window_name, src)
+src = src[int(src.shape[0] / 2.5) : src.shape[0], int(src.shape[1] / 6) : int(src.shape[1] / 6 * 5)]
+# src = src[int(src.shape[0] / 2.7) : src.shape[0], 0 : src.shape[1]]
+src = colorBalance(src, 1)
+
+# b, g, r = cv2.split(src)
+# r = cv2.addWeighted(r, 0.5, g, 0.5, 0)
+# b = cv2.addWeighted(b, 0.5, g, 0.5, 0)
+# src = cv2.merge((b, g, r))
+
+
+# lab
+# lab = cv2.cvtColor(src, cv2.COLOR_BGR2LAB)
+# l_channel, a_channel, b_channel = cv2.split(lab)
+# clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(5, 5))
+# l_channel_eq = clahe.apply(l_channel)
+# lab_eq = cv2.merge((l_channel_eq, a_channel, b_channel))
+# src = cv2.cvtColor(lab_eq, cv2.COLOR_LAB2BGR)
+
+cvImshow(window_name, src)
 blurred = cv2.GaussianBlur(src, (5, 5), 0)
 
-# test some functions
-# hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-# cvImshow(window_name, src)
-# hsv = increaseContrast(hsv, 1.22, 50)
-# hsv = increaseBrightness(hsv, 30)
-# hsv = decreaseBrightness(hsv, 30)
-# bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-# cvImshow(window_name, bgr)
-
-cubes = cubeDetection(blurred, color_dict)
+cubes = cubeDetection(increaseBrightness(blurred, 30), color_dict)
+# cubes = cubeDetection(blurred, color_dict)
+# balls = ballDetection(decreaseBrightness(blurred, 30))
 balls = ballDetection(blurred)
 
 print("number of cubes: ", len(cubes))
