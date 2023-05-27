@@ -337,7 +337,7 @@ def cubeDetection(blurred, color_dict):
                 if len(approx) == 4 or len(approx) == 6:
                     contour_area = cv2.contourArea(contours[i])
                     approx_area = cv2.contourArea(approx)
-                    if math.fabs(contour_area - approx_area) / contour_area < 0.05: # to adjust
+                    if math.fabs(contour_area - approx_area) / contour_area < 0.05: # too strict? maybe delete this condition later
                         cube = Cube(approx, color)
                         cubes.append(cube)
 
@@ -419,7 +419,7 @@ window_name = "image"
 src = cv2.imread(path)
 src = src[int(src.shape[0] / 2.5) : src.shape[0], int(src.shape[1] / 6) : int(src.shape[1] / 6 * 5)]
 # src = src[int(src.shape[0] / 2.7) : src.shape[0], 0 : src.shape[1]]
-src = colorBalance(src, 1)
+# src = colorBalance(src, 1)
 
 # b, g, r = cv2.split(src)
 # r = cv2.addWeighted(r, 0.5, g, 0.5, 0)
