@@ -62,9 +62,9 @@ class Cube:
         mc: mass center of the cube
         color: color of the cube
     """
-    def __init__(self, contour, mc, color):
-        self.contour = contour
-        self.mc = mc
+    def __init__(self, approx, color):
+        self.approx = approx
+        # self.mc = mc
         self.color = color
 
 class Ball:
@@ -151,6 +151,70 @@ def filterRepeatedContours(contours, mc):
 
     return contours, mc
 
+def increaseBrightness(hsv, beta=30):
+    """
+    Function to increase brightness of the image
+
+    Args:
+        hsv: the image in HSV color
+        beta: the value of the brightness to increase
+
+    Return:
+        hsv: the new image in HSV color
+    """
+    h, s, v = cv2.split(hsv)
+
+    lim = 255 - beta
+    v[v > lim] = 255
+    v[v <= lim] += beta
+
+    return cv2.merge((h, s, v))
+
+def decreaseBrightness(hsv, beta=30):
+    """
+    Function to decrease brightness of the image
+
+    Args:
+        hsv: the image in HSV color
+        beta: the value of the brightness to decrease
+
+    Return:
+        hsv: the new image in HSV color
+    """
+    h, s, v = cv2.split(hsv)
+
+    v[v >= beta] -= beta
+    v[v < beta] = 0
+
+    return cv2.merge((h, s, v))
+
+# def increaseContrast(hsv, alpha=1.0, beta=50):
+#     """
+#     Function to increase or decrease the contrast of the image
+#
+#     Args:
+#         hsv: the image in HSV color
+#         alpha: the coefficient, alpha > 1 increase the contrast, alpha < 1 decrease the contrast
+#
+#     Return:
+#         hsv: the new image in HSV color
+#     """
+#     h, s, v = cv2.split(hsv)
+#     lim = math.ceil(255 / alpha)
+#     for i in range(len(v)):
+#         for j in range(len(v[0])):
+#             if v[i][j] < lim:
+#                 v[i][j] = round(v[i][j] * alpha)
+#             else:
+#                 v[i][j] = 255
+#     # v[v < lim] *= alpha
+#     # v[v >= lim] = 255
+#
+#     v[v >= beta] -= beta
+#     v[v < beta] = 0
+#
+#     return cv2.merge((h, s, v))
+#ISSUE: this function is too slow to use
 
 def cubeDetection(blurred, color_dict):
     """
@@ -165,23 +229,34 @@ def cubeDetection(blurred, color_dict):
     """
     cubes = []
     hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-    hsv_erode = cv2.erode(hsv, None, iterations=2)
+    # hsv = increaseContrast(hsv, 1.25, 50)
+    hsv = increaseBrightness(hsv, 50)
+    hsv_morph = cv2.dilate(hsv, None, iterations=2)
+    hsv_morph = cv2.erode(hsv, None, iterations=2)
 
     for color in color_dict:
-        mask = cv2.inRange(hsv_erode, color_dict[color][0], color_dict[color][1])
-        contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
+        print(color)
+        print(color_dict[color][0])
+        print(color_dict[color][1])
+        mask = cv2.inRange(hsv_morph, color_dict[color][0], color_dict[color][1])
+        # mask = cv2.inRange(hsv, color_dict[color][0], color_dict[color][1])
+        # cvImshow(window_name, mask)
+        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # contours, _ = cv2.findContours(mask, cv2.RETR_TREE, cv2.CHAIN_APPROX_SIMPLE)
         mc = getMassCenter(contours)
         contours, mc = filterRepeatedContours(contours, mc)
 
         for i in range(len(contours)):
             area = cv2.contourArea(contours[i])
-            if area < 100 or area > 0.95 * blurred.shape[0] * blurred.shape[1]:
+            if area < 300 or area > 0.6 * blurred.shape[0] * blurred.shape[1]:
                 continue
-            epsilon = 0.01*cv2.arcLength(contours[i], True)
+            epsilon = 0.03*cv2.arcLength(contours[i], True)
             approx = cv2.approxPolyDP(contours[i], epsilon,True)
-            if len(approx) == 4 or len(approx) == 6:
-                cube = Cube(contours[i], mc[i], color)
-                cubes.append(cube)
+            if cv2.isContourConvex(approx):
+                if len(approx) == 4 or len(approx) == 6:
+                    # cube = Cube(contours[i], mc[i], color)
+                    cube = Cube(approx, color)
+                    cubes.append(cube)
 
     return cubes
 
@@ -197,7 +272,13 @@ def ballDetection(blurred):
     """
 
     balls = []
-    gray = cv2.cvtColor(blurred, cv2.COLOR_BGR2GRAY)
+    hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    # hsv = increaseContrast(hsv, 1.25, 50)
+    hsv = decreaseBrightness(hsv, 50)
+    bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    gray = cv2.cvtColor(bgr, cv2.COLOR_BGR2GRAY)
+    gray_morph = cv2.dilate(gray, None, iterations=2)
+    gray_morph = cv2.erode(gray, None, iterations=2)
 
     # gray: Input image (grayscale).
     #  circles: A vector that stores sets of 3 values: *c, Yc, r for each detected circle.
@@ -208,11 +289,14 @@ def ballDetection(blurred):
     #  param_2 = 100*: Threshold for center detection.
     #  min_radius = 0: Minimum radius to be detected. If unknown, put zero as default.
     #  max_radius = 0: Maximum radius to be detected. If unknown, put zero as default.
-    circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, gray.shape[0] / 8,
-                                param1=200, param2=50,
-                                minRadius=5, maxRadius=300)
+    circles = cv2.HoughCircles(gray_morph, cv2.HOUGH_GRADIENT, 1, gray.shape[0] / 8,
+                                param1=240, param2=45,
+                                minRadius=8, maxRadius=np.uint16(math.sqrt(gray.shape[0]**2 + gray.shape[1]**2) / 4))
+    # circles = cv2.HoughCircles(gray, cv2.HOUGH_GRADIENT, 1, gray.shape[0] / 8,
+    #                             param1=240, param2=35,
+    #                             minRadius=8, maxRadius=500)
 
-    if circles != None:
+    if circles is not None:
         for circle in circles[0, :]:
             center = np.uint16(np.around((circle[0], circle[1])))
             ball = Ball(center, np.uint16(circle[2]))
@@ -230,8 +314,9 @@ def drawCubes(src, cubes):
         cubes (list): list of cube
     """
     for cube in cubes:
-        cv2.drawContours(src, [cube.contour], -1, (255, 255,0), 3)
-        cv2.circle(src, cube.mc, 1, (255, 255, 0), 3) #type: ignore
+        cv2.drawContours(src, [cube.approx], -1, (255, 255,0), 3)
+        cv2.putText(src, str(cube.color), (cube.approx[0][0][0], cube.approx[0][0][1]), cv2.FONT_HERSHEY_COMPLEX, 0.8, (0, 180, 255), 2)
+        # cv2.circle(src, cube.mc, 1, (255, 255, 0), 3) #type: ignore
 
 def drawBalls(src, balls):
     """
@@ -247,21 +332,33 @@ def drawBalls(src, balls):
 
 
 # test
-path = "./data/cube_yellow0.png"
+path = "./img/img2.png"
 window_name = "image"
 
-src = cv2.imread(path);
+src = cv2.imread(path)
+# cvImshow(window_name, src)
 blurred = cv2.GaussianBlur(src, (5, 5), 0)
+
+# test some functions
+# hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+# cvImshow(window_name, src)
+# hsv = increaseContrast(hsv, 1.22, 50)
+# hsv = increaseBrightness(hsv, 30)
+# hsv = decreaseBrightness(hsv, 30)
+# bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+# cvImshow(window_name, bgr)
 
 cubes = cubeDetection(blurred, color_dict)
 balls = ballDetection(blurred)
 
-print("number of cube: ", len(cubes))
+print("number of cubes: ", len(cubes))
 for cube in cubes:
-    print(cube.mc, cube.color)
-print("number of ball: ", len(balls))
+    print("approx: \n", cube.approx)
+    print("color: ", cube.color, '\n')
+print("number of balls: ", len(balls))
 for ball in balls:
-    print(ball.center)
+    print("center: ", ball.center)
+    print("radius: ", ball.radius, '\n')
 
 drawCubes(src, cubes)
 drawBalls(src, balls)
