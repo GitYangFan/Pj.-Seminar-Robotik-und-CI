@@ -331,8 +331,11 @@ def drawBalls(src, balls):
         cv2.circle(src, ball.center, 1, (255, 0, 255), 3)
 
 
-# test
-path = "./img/img2.png"
+"""
+------------ test of detector -----------------
+"""
+
+path = "./data/detection_real/1_cut.jpg"
 window_name = "image"
 
 src = cv2.imread(path)
@@ -348,8 +351,13 @@ blurred = cv2.GaussianBlur(src, (5, 5), 0)
 # bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
 # cvImshow(window_name, bgr)
 
-cubes = cubeDetection(blurred, color_dict)
-balls = ballDetection(blurred)
+kernel = np.ones((5, 5), np.uint8)
+opened = cv2.morphologyEx(blurred,cv2.MORPH_OPEN,kernel,iterations=1)
+
+# img = cv2.cvtColor(opened, cv2.COLOR_BGR2HSV)
+
+cubes = cubeDetection(opened, color_dict)
+balls = ballDetection(opened)
 
 print("number of cubes: ", len(cubes))
 for cube in cubes:
@@ -364,3 +372,4 @@ drawCubes(src, cubes)
 drawBalls(src, balls)
 
 cvImshow(window_name, src)
+cvImshow(window_name, img)
