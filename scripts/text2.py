@@ -40,8 +40,8 @@ def euler_from_quaternion(quaternion):
     euler = [roll_x, pitch_y, yaw_z]
     return euler  # in radians
 
-# 调用示例
-file_path = r'D:\TU-Darmstadt\siminar\1.txt.txt' # 替换为实际的文件路径
+
+file_path = r'D:\TU-Darmstadt\siminar\1.txt.txt' 
 quaternion=read_last_seven_numbers(file_path)
 euler = euler_from_quaternion(quaternion)
 print(euler)
