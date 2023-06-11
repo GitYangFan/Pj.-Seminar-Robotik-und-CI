@@ -1,0 +1,99 @@
+<annotation>
+    <filename>20230611-013350.jpg</filename>
+    <folder>dataset_self</folder>
+    <source>
+        <database>dataset_self</database>
+        <annotation>custom</annotation>
+        <image>custom</image>
+    </source>
+    <size>
+        <width>1280</width>
+        <height>720</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+    <object>
+        <name>cube_orange</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>579</xmin>
+            <ymin>19</ymin>
+            <xmax>705</xmax>
+            <ymax>170</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>cube_red</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>864</xmin>
+            <ymin>135</ymin>
+            <xmax>967</xmax>
+            <ymax>259</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>cube_blue</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>338</xmin>
+            <ymin>201</ymin>
+            <xmax>423</xmax>
+            <ymax>306</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>cube_purple</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>638</xmin>
+            <ymin>292</ymin>
+            <xmax>709</xmax>
+            <ymax>369</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>cube_green</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>783</xmin>
+            <ymin>271</ymin>
+            <xmax>856</xmax>
+            <ymax>352</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>cube_yellow</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>1009</xmin>
+            <ymin>310</ymin>
+            <xmax>1071</xmax>
+            <ymax>379</ymax>
+        </bndbox>
+    </object>
+    <object>
+        <name>ball</name>
+        <pose>unspecified</pose>
+        <truncated>0</truncated>
+        <difficult>0</difficult>
+        <bndbox>
+            <xmin>1067</xmin>
+            <ymin>230</ymin>
+            <xmax>1136</xmax>
+            <ymax>300</ymax>
+        </bndbox>
+    </object>
+</annotation>

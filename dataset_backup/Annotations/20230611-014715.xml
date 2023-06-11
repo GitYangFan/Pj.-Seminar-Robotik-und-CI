@@ -1,0 +1,15 @@
+<annotation>
+    <filename>20230611-014715.jpg</filename>
+    <folder>dataset_self</folder>
+    <source>
+        <database>dataset_self</database>
+        <annotation>custom</annotation>
+        <image>custom</image>
+    </source>
+    <size>
+        <width>1280</width>
+        <height>720</height>
+        <depth>3</depth>
+    </size>
+    <segmented>0</segmented>
+</annotation>
