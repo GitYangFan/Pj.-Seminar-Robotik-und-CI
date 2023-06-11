@@ -3,6 +3,8 @@ import rospy
 import math
 from apriltag_ros.msg import AprilTagDetectionArray
 
+apriltag = []
+
 def euler_from_quaternion(quaternion):
     """
     Convert a quaternion into euler angles (roll, pitch, yaw)
@@ -34,30 +36,31 @@ def euler_from_quaternion(quaternion):
 
 def tag_callback(data):
     global apriltag
-    apriltag = data.detections[0].pose.pose
+    if data.detections != []:
+        apriltag = data.detections[0].pose.pose.pose
+        print(apriltag.position.x)
+        # print(data.detections[0].pose.pose.pose)
 
 def get_apriltag():
-    apriltag = None
     rospy.init_node('apriltag_listener')
     rospy.Subscriber('/tag_detections', AprilTagDetectionArray, tag_callback)
 
     # Loop waiting to receive data
-    while not rospy.is_shutdown() and apriltag is None:
+    while not rospy.is_shutdown():
+        if apriltag !=[]:
+            print(apriltag)
+            position = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
+            orientation = euler_from_quaternion([apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z, apriltag.orientation.w])
+            return position, orientation
         rospy.sleep(0.1)
 
-    # print received data from AprilTag
-    if apriltag is not None:
-        print(apriltag)
-        position = apriltag.position
-        orientation = euler_from_quaternion(apriltag.orientation)
-        return position, orientation
 
 
 
 """
 -------------------- test ----------------------------
 """
-if __name__ == '__main__':
-    position, orientation = get_apriltag()
-    print('position:', position, 'orientation:',orientation)
-    rospy.spin()
+
+
+position, orientation = get_apriltag()
+print('position:', position, 'orientation:',orientation)
