@@ -20,6 +20,8 @@ def turn_clockwise(jetbot_motor):
     stop(jetbot_motor)
     jetbot_motor.set_speed(0.2, 0.1)  # turn one circle clockwise
     time.sleep(5.5)
+    jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
+    time.sleep(1)
     stop(jetbot_motor)
 
 
@@ -29,6 +31,8 @@ def turn_counterclockwise(jetbot_motor):
     stop(jetbot_motor)
     jetbot_motor.set_speed(0.1, 0.2)  # turn one circle counterclockwise
     time.sleep(5.5)
+    jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to middle
+    time.sleep(1)
     stop(jetbot_motor)
 
 def ahead_distance(jetbot_motor, distance):
@@ -38,17 +42,16 @@ def ahead_distance(jetbot_motor, distance):
     time.sleep(duration)
     stop(jetbot_motor)
 
-def turn_to_direction(direction):
+def turn_to_direction(jetbot_motor, direction):
     # direction: desired gradient angle
     position, orientation = apriltag.get_apriltag()
-    difference = direction - orientation[2]
-    duration = 4 * abs(difference) / (2 * np.pi)  # rotate one circle need 4 second
-    if difference >= 0:
-        jetbot_motor.set_speed(-0.1, 0.1)   # rotate clockwise
-        time.sleep(duration)
-    elif difference < 0:
-        jetbot_motor.set_speed(0.1, -0.1)   # rotate counterclockwise
-        time.sleep(duration)
+    difference = (direction - orientation[2]) % (2 * np.pi)
+    duration = 4 * difference / (2 * np.pi)  # rotate one circle need 4 second
+    # turn to the desired direction
+    jetbot_motor.set_speed(0.1, -0.1)   # rotate clockwise
+    time.sleep(duration)
+    stop(jetbot_motor)
+
 
 def distance_point_line(line_start, line_end, point):
     numerator = abs((line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * line_start[1] - line_end[1] * line_start[0])
@@ -62,7 +65,7 @@ def linear_motion(jetbot_motor, end):
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
     v1 = end - start
     direction = np.arctan(v1[0]/v1[1])
-    turn_to_direction(direction)    # turn in the forward direction
+    turn_to_direction(jetbot_motor, direction)    # turn in the forward direction
     k_left = 0
     k_right = 0
     while not rospy.is_shutdown:
@@ -70,6 +73,7 @@ def linear_motion(jetbot_motor, end):
         rospy.sleep(0.1)
         position, orientation = apriltag.get_apriltag()
         v2 = position[0:1] - start
+        # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]   # Calculate the cross product
         if cross_product >= 0:   # too left, must go right
             k_left = 0.1 * distance_point_line(start, end, position[0:1])
@@ -96,6 +100,6 @@ if __name__ == '__main__':
     turn_counterclockwise(jetbot_motor)
 
     # test advanced movement
-    turn_to_direction(np.pi/2)
+    turn_to_direction(jetbot_motor, np.pi/2)
 
     # linear_motion(jetbot_motor, [0.74, 0.74])

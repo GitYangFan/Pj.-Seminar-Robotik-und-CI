@@ -1,10 +1,7 @@
+import numpy as np
 import rospy
 import math
 from apriltag_ros.msg import AprilTagDetectionArray
-
-def tag_callback(data):
-    global apriltag
-    apriltag = data
 
 def euler_from_quaternion(quaternion):
     """
@@ -28,15 +25,21 @@ def euler_from_quaternion(quaternion):
 
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw_z = math.atan2(t3, t4)
+    yaw_z = -math.atan2(t3, t4)
+    if yaw_z < 0:
+        yaw_z = 2*np.pi - yaw_z
 
     euler = [roll_x, pitch_y, yaw_z]
     return euler  # in radians
 
+def tag_callback(data):
+    global apriltag
+    apriltag = data.detections[0].pose.pose
+
 def get_apriltag():
+    apriltag = None
     rospy.init_node('apriltag_listener')
     rospy.Subscriber('/tag_detections', AprilTagDetectionArray, tag_callback)
-    apriltag = None
 
     # Loop waiting to receive data
     while not rospy.is_shutdown() and apriltag is None:
@@ -45,7 +48,16 @@ def get_apriltag():
     # print received data from AprilTag
     if apriltag is not None:
         print(apriltag)
-        position = apriltag[0]['pose']['position']
-        orientation = euler_from_quaternion(apriltag[0]['pose']['orientation'])
+        position = apriltag.position
+        orientation = euler_from_quaternion(apriltag.orientation)
         return position, orientation
 
+
+
+"""
+-------------------- test ----------------------------
+"""
+if __name__ == '__main__':
+    position, orientation = get_apriltag()
+    print('position:', position, 'orientation:',orientation)
+    rospy.spin()
