@@ -28,3 +28,5 @@ def euler_from_quaternion(x, y, z, w):
      
         return roll_x, pitch_y, yaw_z # in radians
 
+test = euler_from_quaternion(-0.724,0.28,-0.228,0.585)
+print(test)
