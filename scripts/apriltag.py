@@ -38,7 +38,7 @@ def tag_callback(data):
     global apriltag
     if data.detections != []:
         apriltag = data.detections[0].pose.pose.pose
-        print(apriltag.position.x)
+        # print(apriltag.position.x)
         # print(data.detections[0].pose.pose.pose)
 
 def get_apriltag():
@@ -48,7 +48,7 @@ def get_apriltag():
     # Loop waiting to receive data
     while not rospy.is_shutdown():
         if apriltag !=[]:
-            print(apriltag)
+            # print(apriltag)
             position = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion([apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z, apriltag.orientation.w])
             return position, orientation

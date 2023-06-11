@@ -1,5 +1,6 @@
 from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
+from image_capture import get_image
 
 net = detectNet(model="model/ssd-mobilenet.onnx", labels="model/labels.txt",
                 input_blob="input_0", output_cvg="scores", output_bbox="boxes",
@@ -10,7 +11,8 @@ display = videoOutput("display://0")  # 'my_video.mp4' for file
 # initialization of object list
 
 while display.IsStreaming():
-    img = camera.Capture()
+    # img = camera.Capture()
+    img = get_image()
 
     if img is None:  # capture timeout
         continue
