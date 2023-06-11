@@ -1,0 +1,7 @@
+ball
+cube_red
+cube_orange
+cube_yellow
+cube_green
+cube_purple
+cube_blue
