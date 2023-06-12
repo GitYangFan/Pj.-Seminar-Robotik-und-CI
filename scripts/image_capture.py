@@ -1,12 +1,18 @@
 import rospy
 from sensor_msgs.msg import Image
+from cv_bridge import CvBridge
+import jetson.utils
 
 img = None
 
 def image_callback(msg):
     global img
-    img = msg
-
+    bridge = CvBridge()
+    try:
+        img_cv = bridge.imgmsg_to_cv2(msg, "bgr8")
+        img = jetson.utils.cudaFromNumpy(img_cv)
+    except Exception as e:
+        rospy.logerr(e)
 
 def get_image():
     rospy.init_node('image_capture')
