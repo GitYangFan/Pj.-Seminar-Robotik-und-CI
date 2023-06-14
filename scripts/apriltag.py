@@ -28,8 +28,8 @@ def euler_from_quaternion(quaternion):
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
     yaw_z = -math.atan2(t3, t4)
-    if yaw_z < 0:
-        yaw_z = 2*np.pi - yaw_z
+    if yaw_z < 0:                   # Adjust the yaw angle range to [0,2*pi]
+        yaw_z = 2*np.pi + yaw_z
 
     euler = [roll_x, pitch_y, yaw_z]
     return euler  # in radians
@@ -51,6 +51,7 @@ def get_apriltag():
             # print(apriltag)
             position = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion([apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z, apriltag.orientation.w])
+            print('position:', position, 'orientation:',orientation)
             return position, orientation
         rospy.sleep(0.1)
 
@@ -61,6 +62,9 @@ def get_apriltag():
 -------------------- test ----------------------------
 """
 
+"""
 
 position, orientation = get_apriltag()
 print('position:', position, 'orientation:',orientation)
+
+"""

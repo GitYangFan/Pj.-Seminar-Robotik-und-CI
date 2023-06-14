@@ -1,22 +1,19 @@
 import rospy
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-import jetson.utils
+import jetson_utils
 
 img = None
 
 def image_callback(msg):
     global img
     bridge = CvBridge()
-    try:
-        img_cv = bridge.imgmsg_to_cv2(msg, "bgr8")
-        img = jetson.utils.cudaFromNumpy(img_cv)
-    except Exception as e:
-        rospy.logerr(e)
+    img_cv = bridge.imgmsg_to_cv2(msg, "bgr8")  # convert 'Image' to 'numpy' array
+    img = jetson_utils.cudaFromNumpy(img_cv)    # convert 'numpy' array to cuda img for using DNN model
 
 def get_image():
     rospy.init_node('image_capture')
-    rospy.Subscriber('image_rect_color', Image, image_callback, queue_size=1)
+    rospy.Subscriber('/camera/image_rect_color', Image, image_callback)
     # Loop waiting to receive data
     while not rospy.is_shutdown():
         if img is not None:
@@ -28,6 +25,3 @@ def get_image():
 """
 -------------------- test ----------------------------
 """
-if __name__ == '__main__':
-    img = get_image()
-    print(img)

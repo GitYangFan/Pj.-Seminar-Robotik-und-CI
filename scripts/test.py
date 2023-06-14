@@ -10,3 +10,6 @@ print(x,y)
 
 z = -6%10
 print(z)
+
+object_size = [[0,0]] * 5
+print(object_size)
