@@ -1,1 +1,157 @@
+import arcade
 
+
+
+"""
+# Start the render process. This must be done before any drawing commands.
+arcade.start_render()
+
+# Draw the face
+x = 300
+y = 300
+radius = 200
+arcade.draw_circle_filled(x, y, radius, arcade.color.YELLOW)
+
+# Draw the right eye
+x = 370
+y = 350
+radius = 20
+arcade.draw_circle_filled(x, y, radius, arcade.color.BLACK)
+
+# Draw the left eye
+x = 230
+y = 350
+radius = 20
+arcade.draw_circle_filled(x, y, radius, arcade.color.BLACK)
+
+# Draw the smile
+x = 300
+y = 280
+width = 120
+height = 100
+start_angle = 190
+end_angle = 350
+arcade.draw_arc_outline(x, y, width, height, arcade.color.BLACK, start_angle, end_angle, 10)"""
+
+#####
+# Set constants for the screen size
+SCREEN_WIDTH = 800
+SCREEN_HEIGHT = 800
+
+# Open the window. Set the window title and dimensions (width and height)
+arcade.open_window(SCREEN_WIDTH, SCREEN_HEIGHT, "Arena with the object's Positions")
+
+#arcade.isometric_grid_to_screen()
+
+# Set the background color to white.
+# For a list of named colors see:
+# http://arcade.academy/arcade.color.html
+# Colors can also be specified in (red, green, blue) format and
+# (red, green, blue, alpha) format.
+arcade.set_background_color(arcade.color.BLUE)
+
+
+
+objects_properties = {
+  "ob1": [0, 0, 1,"BLUE"],
+  "ob2": [450, 450, 0,"WHITE"],
+  "ob3": [200, 200, 0,"YELLOW"],
+  "ob4": [600, 600, 1,"RED"]
+
+}
+
+
+color_list = {  "YELLOW" : arcade.color.YELLOW
+                , "GOLD" : arcade.color.GOLD
+                , "ORANGE" : arcade.color.ORANGE
+                , "RED" : arcade.color.RED
+                , "MAROON" : arcade.color.MAROON
+                , "VIOLET" : arcade.color.VIOLET
+                , "MAGENTA" : arcade.color.MAGENTA
+             , "PURPLE" : arcade.color.PURPLE
+                 ,"BLUE" : arcade.color.BLUE
+                ,"CYAN" : arcade.color.CYAN
+                 , "TURQUOISE" : arcade.color.TURQUOISE
+                , "LIME" : arcade.color.LIME
+             , "GREEN" : arcade.color.GREEN
+                    , "CHOCOLATE" : arcade.color.CHOCOLATE
+                        , "BROWN" : arcade.color.BROWN
+                        , "BLACK" : arcade.color.BLACK
+                        , "GRAY" : arcade.color.GRAY
+                        , "WHITE" : arcade.color.WHITE}
+
+
+
+
+"""# 1 is a ball, 0 is a a cube
+x = 300
+y = 300
+Objekt = 1"""
+
+def aufgabe_1(x, y, Objekt, ob_color):
+    """ show a two-dimensional plot of the arena with the detected objects """
+
+
+    # Draw a ball
+    if Objekt == 1:
+        for j in color_list:
+            if ob_color == j:
+                m = color_list[j][:]
+        radius = 15
+        arcade.draw_circle_filled(x, y, radius, m)
+
+    # Draw a cube
+    if Objekt == 0:
+        for f in color_list:
+            if ob_color == f:
+                n = color_list[f][:]
+
+        arcade.draw_lrtb_rectangle_filled(x + 30, x + 50  ,y - 30,y - 50, n)
+
+
+    """    # Draw the triangle on top of the trunk.
+    # We need three x, y points for the triangle.
+    arcade.draw_triangle_filled(x + 40, y,  # Point 1
+                                x, y - 100,  # Point 2
+                                x + 80, y - 100,  # Point 3
+                                arcade.color.DARK_GREEN)
+
+    # Draw the trunk
+    arcade.draw_lrtb_rectangle_filled(x + 30, x + 50, y - 100, y - 140,
+                                      arcade.color.DARK_BROWN)"""
+
+
+
+
+
+for i in objects_properties:
+    j= objects_properties[i]
+    aufgabe_1(j[0], j[1], j[2], j[3])
+
+
+
+
+#Finish drawing and display the result
+arcade.finish_render()
+
+# Keep the window open until the user hits the 'close' button
+arcade.run()
+
+
+def Aufgabe_2():
+
+    #the current position
+    x=0
+    y=0
+
+    #three known position
+
+    cubes_rot_blue = {
+        "w1": [450, 100, 1, "BLUE"],
+        "w2": [450, 100, 0, "ROT"],
+        "w3": [200, 250, 0, "ROT"],
+        "w4": [550, 600, 1, "BLUE"],
+        "w5": [500, 650, 1, "ROT"],
+        "w6": [750, 300, 1, "BLUE"]
+
+    }
