@@ -1,1 +1,112 @@
+import numpy as np
+#import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt, patches
 
+x1, y1 = [-1, 12], [1, 4]
+x2, y2 = [1, 10], [3, 2]
+
+
+cubes_rot_blue = {
+    "w1": [140 , 80, "BLUE"],
+    "w2": [75, 40, "RED"],
+    "w3": [50, 120, "RED"],
+    "w4": [100, 70, "BLUE"],
+    "w5": [30, 90, "RED"],
+    "w6": [80, 110, "BLUE"]
+
+}
+
+#compare the x coordinate if it is smaller than 75 cm
+
+x_smaller75 = []
+x_bigger75 = []
+
+for x in cubes_rot_blue:
+    j = cubes_rot_blue[x]
+    if j[0] <= 75:
+        x_smaller75.append(x)
+    else:
+        x_bigger75.append(x)
+
+#compare the y coordinate in the x_smaler75 list
+y_smaller = []
+
+for y in x_smaller75:
+    j = cubes_rot_blue[y]
+    y_smaller.append(j[1])
+
+y_smaller.sort()
+
+cubes_rot_blue_sort = []
+
+for yy in y_smaller:
+    for r in cubes_rot_blue:
+        j = cubes_rot_blue[r]
+        if yy == j[1]:
+            cubes_rot_blue_sort.append(r)
+
+#compare the y coordinate in the x_bigger75 list
+
+y_bigger = []
+
+for y in x_bigger75:
+    j = cubes_rot_blue[y]
+    y_bigger.append(j[1])
+
+y_bigger.sort(reverse=True)
+
+for yy in y_bigger:
+    for r in cubes_rot_blue:
+        j = cubes_rot_blue[r]
+        if yy == j[1]:
+            cubes_rot_blue_sort.append(r)
+
+
+
+
+#t = np.arange(0,int(1500/2.5))
+x1 = [0 , 100]
+x2 = [0, 600]
+
+r=10
+b=10
+
+fig = plt.figure()
+ax = fig.add_subplot()
+
+
+
+
+for i in cubes_rot_blue_sort:
+    j = cubes_rot_blue[i]
+
+    x1 = [r  , j[0]]
+    x2 = [b , j[1] -5 ]
+
+    r= j[0]
+    b= j[1] -5
+
+    circle2 = plt.Circle((j[0], j[1]), 5, color='b', fill=False)
+
+
+
+
+    #plt.plot(x1, x2, marker = 'o')
+
+    plt.plot(x1 , x2 )
+    ax.add_patch(circle2)
+
+    if i == cubes_rot_blue_sort[5]:
+        x1 = [j[0], 10]
+        x2 = [j[1]-5, 10]
+        plt.plot(x1, x2)
+        ax.add_patch(circle2)
+
+
+    #Drawing_colored_circle = plt.Circle((j[0], j[1]), 200)
+#circle1 = patches.Circle((100, 600), radius=50)
+
+
+plt.grid()
+
+plt.show()
