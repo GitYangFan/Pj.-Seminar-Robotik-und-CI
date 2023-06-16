@@ -1,0 +1,10 @@
+__ignore__
+_background_
+ball
+cube_red
+cube_green
+cube_blue
+cube_yellow
+cube_orange
+cube_purple
+
