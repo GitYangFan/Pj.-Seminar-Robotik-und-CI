@@ -56,14 +56,16 @@ def find_object():
 
     for i in range(length):
         object_distance[i] = distance_to_camera(0.03, focal_length, object_size[i][0])   # the real size of ball and cube are both 0.03m
-        object_angle[i] = angle_to_camera(focal_length, object_center, camera_frame)
+        object_angle[i] = angle_to_camera(focal_length, object_center[i], camera_frame)
+        print('detected:',object_name[i], 'possibility:',object_score[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
+        print('------------split---------------')
     return object_distance, object_angle
 
 """
 test 2
 """
 object_distance, object_angle = find_object()
-print('distance list:', object_distance, 'angle list:', object_angle)
+# print('distance list:', object_distance, 'angle list:', object_angle)
 
 """
 
