@@ -10,7 +10,7 @@ def detection_callback(data):
         detections = data.detections
 
 def get_detection():
-    rospy.init_node('detection_listener')
+    # rospy.init_node('detection_listener')
     rospy.Subscriber('/detectnet/detections', Detection2DArray, detection_callback)
 
     # Loop waiting to receive data
