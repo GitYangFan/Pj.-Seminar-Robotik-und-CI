@@ -29,11 +29,11 @@ def get_detection():
                 object_score[i] = detection.results[0].score
                 object_center[i] = [detection.bbox.center.x, detection.bbox.center.x]
                 object_size[i] = [detection.bbox.size_x, detection.bbox.size_y]
-                print('detected: ',object_name[i], 'score: ', object_score[i], 'center: ', object_center[i], 'size', object_size[i])
-                print('next one')
-            print('list:', object_name)
-            print('-----------split---------------')
-	    # return object_name
+                # print('detected: ',object_name[i], 'score: ', object_score[i], 'center: ', object_center[i], 'size', object_size[i])
+                # print('next one')
+            # print('list:', object_name)
+            # print('-----------split---------------')
+            return object_name, object_score, object_center, object_size
         rospy.sleep(0.1)
 
 
@@ -43,5 +43,5 @@ def get_detection():
 
 
 
-get_detection()
-print(object_name)
+object_name, object_score, object_center, object_size = get_detection()
+print('detected:', object_name, 'score:', object_score, 'center:', object_center, 'size:', object_size)
