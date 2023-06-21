@@ -1,3 +1,4 @@
+import rospy
 import numpy as np
 from detection_results import get_detection
 from apriltag import get_apriltag
@@ -61,24 +62,29 @@ def find_object():
         else:
             object_distance[i] = distance_to_camera(0.03, focal_length, object_size[i][0])   # the real size of cube is 0.03m
         object_angle[i] = angle_to_camera(focal_length, object_center[i], camera_frame)
-        print('detected:',object_name[i], 'possibility:',object_score[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
-        print('------------split---------------')
+        #print('detected:',object_name[i], 'possibility:',object_score[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
+        #print('------------split---------------')
     return object_name, object_score, object_distance, object_angle
 
 def get_object_position():
     position_jetbot, orientation_jetbot = get_apriltag()
+    print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot)
     object_name, object_score, object_distance, object_angle = find_object()
     length = len(object_name)
     object_position = [None] * length
     for i in range(length):
-        object_position[i] = position_jetbot[0:2] + (object_distance * np.cos(object_angle[1])) * (orientation_jetbot[2] + object_angle[0])
+        object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
+        print('detected:',object_name[i], 'possibility:',object_score[i], 'position:', object_position[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
+        print('------------split---------------')
     return object_name, object_score, object_position
 
 """
 test 2
 """
+rospy.init_node('object_localization')
 # object_name, object_score, object_distance, object_angle = find_object()
 object_name, object_score, object_position = get_object_position()
+# print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position)
 # print('distance list:', object_distance, 'angle list:', object_angle)
 
 """
