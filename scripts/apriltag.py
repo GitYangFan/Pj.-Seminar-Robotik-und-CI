@@ -45,7 +45,7 @@ def transformation(euler,position_relativ):
     rotation_matrix_z = np.array([[np.cos(angle_z), -np.sin(angle_z), 0], [np.sin(angle_z), np.cos(angle_z), 0], [0, 0, 1]])
     rotation_matrix = np.dot(np.dot(rotation_matrix_z,rotation_matrix_y),rotation_matrix_x)
     position_real = -np.dot(position_relativ,rotation_matrix)
-    print(position_real)
+    # print(position_real)
     return position_real
 
 def tag_callback(data):
@@ -56,7 +56,7 @@ def tag_callback(data):
         # print(data.detections[0].pose.pose.pose)
 
 def get_apriltag():
-    rospy.init_node('apriltag_listener')
+    # rospy.init_node('apriltag_listener')
     rospy.Subscriber('/tag_detections', AprilTagDetectionArray, tag_callback)
 
     # Loop waiting to receive data
@@ -67,7 +67,7 @@ def get_apriltag():
             position_relative = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion(quaternion)
             position = transformation(orientation,position_relative)
-            print('position:', position, 'orientation:',orientation)
+            print('position_relative:', position_relative, 'quaternion:',quaternion)
             return position, orientation
         rospy.sleep(0.1)
 
@@ -78,9 +78,8 @@ def get_apriltag():
 -------------------- test ----------------------------
 """
 
-"""
 
-position, orientation = get_apriltag()
-print('position:', position, 'orientation:',orientation)
 
-"""
+# position, orientation = get_apriltag()
+# print('position:', position, 'orientation:',orientation)
+
