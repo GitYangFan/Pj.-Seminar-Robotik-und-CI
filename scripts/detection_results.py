@@ -17,7 +17,7 @@ def get_detection():
     while not rospy.is_shutdown():
         if detections !=[]:
             # print(detections)
-            print('-----------split---------------')
+            # print('-----------split---------------')
             length = len(detections)
             object_name = [None] * length
             object_score = [None] * length
@@ -27,7 +27,7 @@ def get_detection():
                 detection = detections[i]
                 object_name[i] = class_name[detection.results[0].id]
                 object_score[i] = detection.results[0].score
-                object_center[i] = [detection.bbox.center.x, detection.bbox.center.x]
+                object_center[i] = [detection.bbox.center.x, detection.bbox.center.y]
                 object_size[i] = [detection.bbox.size_x, detection.bbox.size_y]
                 # print('detected: ',object_name[i], 'score: ', object_score[i], 'center: ', object_center[i], 'size', object_size[i])
                 # print('next one')
@@ -43,5 +43,5 @@ def get_detection():
 
 
 
-object_name, object_score, object_center, object_size = get_detection()
-print('detected:', object_name, 'score:', object_score, 'center:', object_center, 'size:', object_size)
+# object_name, object_score, object_center, object_size = get_detection()
+# print('detected:', object_name[0], 'score:', object_score[0], 'center:', object_center[0], 'size:', object_size[0])
