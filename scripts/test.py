@@ -70,9 +70,5 @@ import tf
 # print("在Arena坐标系下的Jetbot位置：", arena_position)
 # print("在Arena坐标系下的Jetbot方向：", arena_orientation)
 
-length = 5
-init_list = [0] * length
-print(init_list)
-
-for i in range(length):
-    print(i)
+test = [1, 2, 3]
+print(test[0:2])

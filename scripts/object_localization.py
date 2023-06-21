@@ -1,5 +1,6 @@
 import numpy as np
 from detection_results import get_detection
+from apriltag import get_apriltag
 
 # The function to calculate the focallength
 def get_focal_length():
@@ -55,16 +56,29 @@ def find_object():
     object_angle = [None] * length
 
     for i in range(length):
-        object_distance[i] = distance_to_camera(0.03, focal_length, object_size[i][0])   # the real size of ball and cube are both 0.03m
+        if object_name[i] == 'ball':
+            object_distance[i] = distance_to_camera(0.028, focal_length,object_size[i][0])  # the real size of ball is 0.028m
+        else:
+            object_distance[i] = distance_to_camera(0.03, focal_length, object_size[i][0])   # the real size of cube is 0.03m
         object_angle[i] = angle_to_camera(focal_length, object_center[i], camera_frame)
         print('detected:',object_name[i], 'possibility:',object_score[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
         print('------------split---------------')
-    return object_distance, object_angle
+    return object_name, object_score, object_distance, object_angle
+
+def get_object_position():
+    position_jetbot, orientation_jetbot = get_apriltag()
+    object_name, object_score, object_distance, object_angle = find_object()
+    length = len(object_name)
+    object_position = [None] * length
+    for i in range(length):
+        object_position[i] = position_jetbot[0:2] + (object_distance * np.cos(object_angle[1])) * (orientation_jetbot[2] + object_angle[0])
+    return object_name, object_score, object_position
 
 """
 test 2
 """
-object_distance, object_angle = find_object()
+# object_name, object_score, object_distance, object_angle = find_object()
+object_name, object_score, object_position = get_object_position()
 # print('distance list:', object_distance, 'angle list:', object_angle)
 
 """
