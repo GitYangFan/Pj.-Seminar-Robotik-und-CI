@@ -1,5 +1,3 @@
-
-
 """
 def test():
     global x
@@ -70,5 +68,22 @@ import tf
 # print("在Arena坐标系下的Jetbot位置：", arena_position)
 # print("在Arena坐标系下的Jetbot方向：", arena_orientation)
 
-test = [1, 2, 3]
-print(test[0:2])
+# test = [1, 2, 3]
+# print(test[0:2])
+v1 = [1, 1]
+if v1[0] < 0:
+    if v1[1] > 0:
+        direction = np.arctan(-v1[0] / v1[1])
+    else:
+        direction = np.pi - np.arctan(v1[0] / v1[1])
+else:
+    if v1[1] < 0:
+        direction = np.pi + np.arctan(-v1[0] / v1[1])
+    else:
+        direction = 2 * np.pi - np.arctan(v1[0] / v1[1])
+print(direction / np.pi * 180)
+
+v2 = [1, 0.5]
+cross_product = v1[0] * v2[1] - v1[1] * v2[0]
+print(cross_product)
+

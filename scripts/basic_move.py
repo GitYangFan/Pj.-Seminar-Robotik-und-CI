@@ -46,6 +46,7 @@ def turn_to_direction(jetbot_motor, direction):
     # direction: desired gradient angle
     position, orientation = apriltag.get_apriltag()
     difference = (direction - orientation[2]) % (2 * np.pi)
+    print('orientation of jetbot:', orientation[2])
     duration = 4 * difference / (2 * np.pi)  # rotate one circle need 4 second
     # turn to the desired direction
     jetbot_motor.set_speed(0.1, -0.1)   # rotate clockwise
@@ -61,10 +62,19 @@ def distance_point_line(line_start, line_end, point):
 
 def linear_motion(jetbot_motor, end):
     position, orientation = apriltag.get_apriltag()
-    start = position[0:1]
+    start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
     v1 = end - start
-    direction = np.arctan(v1[0]/v1[1])
+    if v1[0] < 0:
+        if v1[1] > 0:
+            direction = np.arctan(-v1[0] / v1[1])   # first quadrant
+        else:
+            direction = np.pi - np.arctan(v1[0] / v1[1])    # second quadrant
+    else:
+        if v1[1] < 0:
+            direction = np.pi + np.arctan(-v1[0] / v1[1])   # third quadrant
+        else:
+            direction = 2 * np.pi - np.arctan(v1[0] / v1[1])    # fourth quadrant
     turn_to_direction(jetbot_motor, direction)    # turn in the forward direction
     k_left = 0
     k_right = 0
@@ -72,7 +82,7 @@ def linear_motion(jetbot_motor, end):
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
         rospy.sleep(0.1)
         position, orientation = apriltag.get_apriltag()
-        v2 = position[0:1] - start
+        v2 = position[0:2] - start
         # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]   # Calculate the cross product
         if cross_product >= 0:   # too left, must go right
