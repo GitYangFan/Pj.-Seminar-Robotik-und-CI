@@ -1,3 +1,5 @@
+import math
+
 import rospy
 import numpy as np
 from detection_results import get_detection
@@ -73,7 +75,9 @@ def get_object_position():
     length = len(object_name)
     object_position = [None] * length
     for i in range(length):
-        object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
+        # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
+        object_distance_horizon = math.sqrt(object_distance ** 2 - 9.5 ** 2)
+        object_position[i] = position_jetbot[0:2] + [(object_distance_horizon * np.sin(orientation_jetbot[2] + object_angle[i][0])), (object_distance_horizon * np.cos(orientation_jetbot[2] + object_angle[i][0]))]
         print('detected:',object_name[i], 'possibility:',object_score[i], 'position:', object_position[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
         print('------------split---------------')
     return object_name, object_score, object_position
