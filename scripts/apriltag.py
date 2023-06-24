@@ -15,7 +15,7 @@ def euler_from_quaternion(quaternion):
     x = quaternion[0]
     y = quaternion[1]
     z = quaternion[2]
-    w = quaternion[3]
+    w = -quaternion[3]
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)
     roll_x = math.atan2(t0, t1)
@@ -27,7 +27,7 @@ def euler_from_quaternion(quaternion):
 
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw_z = -math.atan2(t3, t4)
+    yaw_z = math.atan2(t3, t4)
     if yaw_z < 0:                   # Adjust the yaw angle range to [0,2*pi]
         yaw_z = 2*np.pi + yaw_z
 
@@ -44,7 +44,7 @@ def transformation(euler,position_relativ):
     rotation_matrix_y = np.array([[np.cos(angle_y), 0, np.sin(angle_y)], [0, 1, 0], [-np.sin(angle_y), 0, np.cos(angle_y)]])
     rotation_matrix_z = np.array([[np.cos(angle_z), -np.sin(angle_z), 0], [np.sin(angle_z), np.cos(angle_z), 0], [0, 0, 1]])
     rotation_matrix = np.dot(np.dot(rotation_matrix_z,rotation_matrix_y),rotation_matrix_x)
-    position_real = -np.dot(position_relativ,rotation_matrix)
+    position_real = -np.dot(rotation_matrix,position_relativ)
     # print(position_real)
     return position_real
 
@@ -53,7 +53,9 @@ def tag_callback(data):
     if data.detections != []:
         apriltag = data.detections[0].pose.pose.pose
         # print(apriltag.position.x)
-        # print(data.detections[0].pose.pose.pose)
+        # print(data.detections[0].pose.pose.pose
+        #print('detection:',data.detections)
+       
 
 def get_apriltag():
     # rospy.init_node('apriltag_listener')
@@ -62,7 +64,7 @@ def get_apriltag():
     # Loop waiting to receive data
     while not rospy.is_shutdown():
         if apriltag !=[]:
-            # print(apriltag)
+            #print(apriltag)
             quaternion = [apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z, apriltag.orientation.w]
             position_relative = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion(quaternion)
