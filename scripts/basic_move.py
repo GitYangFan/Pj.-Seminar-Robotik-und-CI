@@ -8,6 +8,7 @@ import time
 import numpy as np
 import apriltag
 from motors_waveshare import MotorControllerWaveshare
+import time
 
 
 def stop(jetbot_motor):
@@ -45,8 +46,9 @@ def ahead_distance(jetbot_motor, distance):
 def turn_to_direction(jetbot_motor, direction):
     # direction: desired gradient angle
     position, orientation = apriltag.get_apriltag()
-    difference = (direction - orientation[2]) % (2 * np.pi)
-    print('orientation of jetbot:', orientation[2])
+    print('position:', position, 'orientation:',orientation[2]/np.pi*180)
+    difference_cache = (direction - orientation[2])
+    difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
     duration = 4 * difference / (2 * np.pi)  # rotate one circle need 4 second
     # turn to the desired direction
     jetbot_motor.set_speed(0.1, -0.1)   # rotate clockwise
@@ -78,7 +80,8 @@ def linear_motion(jetbot_motor, end):
     turn_to_direction(jetbot_motor, direction)    # turn in the forward direction
     k_left = 0
     k_right = 0
-    while not rospy.is_shutdown:
+    time_init = time.time()
+    while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
         rospy.sleep(0.1)
         position, orientation = apriltag.get_apriltag()
@@ -86,14 +89,21 @@ def linear_motion(jetbot_motor, end):
         # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]   # Calculate the cross product
         if cross_product >= 0:   # too left, must go right
-            k_left = 0.1 * distance_point_line(start, end, position[0:1])
+            k_left = 0.4 * distance_point_line(start, end, position[0:2])
             k_right = 0
         elif cross_product < 0:   # too right, must go left
-            k_right = 0.1 * distance_point_line(start, end, position[0:1])
+            k_right = 0.4 * distance_point_line(start, end, position[0:2])
             k_left = 0
 
-        if math.sqrt((position[0] - end[0])**2 + (position[1] - end[1])**2)<0.05:
+        # print("Position: ", position[0], position[1])
+        if math.sqrt((position[0] - end[0])**2 + (position[1] - end[1])**2)<0.03:
         # stop if distance between jetbot and end point is less than 0.05 m
+            print("Position: ", position[0], position[1])
+            stop(jetbot_motor)
+            break
+
+        if time.time()-time_init > 20:
+            print("Position: ", position[0], position[1])
             stop(jetbot_motor)
             break
 
@@ -105,11 +115,12 @@ if __name__ == '__main__':
     jetbot_motor = MotorControllerWaveshare()
 
     # test simple movement
-    ahead_distance(jetbot_motor, 0.2)
-    turn_clockwise(jetbot_motor)
-    turn_counterclockwise(jetbot_motor)
+    # ahead_distance(jetbot_motor, 0.2)
+    # turn_clockwise(jetbot_motor)
+    # turn_counterclockwise(jetbot_motor)
 
     # test advanced movement
-    turn_to_direction(jetbot_motor, np.pi/2)
+    # turn_to_direction(jetbot_motor, np.pi/2)
+    #stop(jetbot_motor)
 
-    # linear_motion(jetbot_motor, [0.74, 0.74])
+    linear_motion(jetbot_motor, [0.74, 0.74])
