@@ -88,11 +88,15 @@ np.cos(orientation_jetbot[2] + object_angle[i][0]))]
 """
 test 2
 """
+
+"""
+# this node initialization can only be called once !! So it should be writen in main function
 rospy.init_node('object_localization')
-# object_name, object_score, object_distance, object_angle = find_object()
 object_name, object_score, object_position = get_object_position()
 # print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position)
 # print('distance list:', object_distance, 'angle list:', object_angle)
+"""
+
 
 """
 
