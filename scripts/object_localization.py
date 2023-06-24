@@ -1,16 +1,15 @@
-import math
-
 import rospy
 import numpy as np
 from detection_results import get_detection
 from apriltag import get_apriltag
+import math
 
 # The function to calculate the focallength
 def get_focal_length():
     # initialize the known distance from the camera to the known object, unit in mm.
     distance_real = 0.15  # unit: m
     length_real = 0.03   # unit: m
-    length_pixel = 168 # unit: pixel
+    length_pixel = 180 # unit: pixel
     # formula of calculating the focal length
     focal_length = (length_pixel * distance_real) / length_real
     return focal_length
@@ -70,15 +69,19 @@ def find_object():
 
 def get_object_position():
     position_jetbot, orientation_jetbot = get_apriltag()
-    print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot)
+    print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2]/np.pi*180)
     object_name, object_score, object_distance, object_angle = find_object()
     length = len(object_name)
     object_position = [None] * length
+    object_distance_horizon = [None] * length
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
-        object_distance_horizon = math.sqrt(object_distance ** 2 - 9.5 ** 2)
-        object_position[i] = position_jetbot[0:2] + [(object_distance_horizon * np.sin(orientation_jetbot[2] + object_angle[i][0])), (object_distance_horizon * np.cos(orientation_jetbot[2] + object_angle[i][0]))]
-        print('detected:',object_name[i], 'possibility:',object_score[i], 'position:', object_position[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
+        print('object angle from camera to object:',object_angle[i][0])
+        object_distance_horizon[i] = math.sqrt((object_distance[i]+0.03) ** 2 - 0.097 ** 2)
+        object_position[i] = position_jetbot[0:2] + [(-object_distance_horizon[i] * np.sin(orientation_jetbot[2] + object_angle[i][0])), (object_distance_horizon[i] * 
+np.cos(orientation_jetbot[2] + object_angle[i][0]))]
+        # object_position[i] = [object_position[i][1], object_position[i][0]]
+        print('detected:',object_name[i], 'possibility:',object_score[i], 'position:', object_position[i], 'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0]/np.pi*180)
         print('------------split---------------')
     return object_name, object_score, object_position
 
