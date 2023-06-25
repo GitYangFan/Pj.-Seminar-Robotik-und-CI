@@ -93,7 +93,7 @@ def get_object_position():
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
-    return object_name, object_score, object_position
+    return object_name, object_score, object_position, object_distance
 
 
 """
