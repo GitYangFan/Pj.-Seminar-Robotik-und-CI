@@ -53,6 +53,17 @@ def angle_to_camera(focal_length, position_pixel=[0, 0], camera_frame=[1080, 720
 
 
 def find_object():
+    """
+    Parameters
+    ------------
+
+    Returns
+    ------------
+    object_name: the name of object
+    object_score: Likelihood of the test result being correct (0~100)
+    object_distance: The Linear distance from object to jetbot (unit: m)
+    object_angle: The declination of the object and the jetbot orientation: [angle_horizon, angle_vertical] (unit: radian)
+    """
     camera_frame = [1080, 720]
     focal_length = get_focal_length()
     print('focalLength:', focal_length)
@@ -75,6 +86,17 @@ def find_object():
 
 
 def get_object_position():
+    """
+    Parameters
+    ------------
+
+    Returns
+    ------------
+    object_name: the name of object
+    object_score: Likelihood of the test result being correct (0~100)
+    object_position: The position of object in the Arena coordinate: [x, y] (unit: m)
+    object_distance: The Linear distance from object to jetbot (unit: m)
+    """
     position_jetbot, orientation_jetbot = get_apriltag()
     print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
     object_name, object_score, object_distance, object_angle = find_object()

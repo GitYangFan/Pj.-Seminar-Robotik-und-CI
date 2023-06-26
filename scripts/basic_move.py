@@ -13,11 +13,28 @@ import time
 
 # let the jetbot stop
 def stop(jetbot_motor):
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+
+    Returns
+    ------------
+    """
     jetbot_motor.set_speed(0, 0)
 
 
 # let jetbot circle around the object clockwise with the specific angle in front of it
 def turn_clockwise(jetbot_motor, angle):  # add angel (unit: radian)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    angle: The desired angle you want the jetbot turn around the object: (unit: radian)
+
+    Returns
+    ------------
+    """
     jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to left
     time.sleep(1)
     stop(jetbot_motor)
@@ -31,6 +48,15 @@ def turn_clockwise(jetbot_motor, angle):  # add angel (unit: radian)
 
 # let jetbot circle around the object counterclockwise with the specific angle in front of it
 def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    angle: The desired angle you want the jetbot turn around the object: (unit: radian)
+
+    Returns
+    ------------
+    """
     jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to right
     time.sleep(1)
     stop(jetbot_motor)
@@ -44,6 +70,15 @@ def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
 
 # let the jetbot simple go backwards without controller
 def backwards_distance(jetbot_motor, distance):  # distance (unit: m)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    distance: The distance you want the Jetbot go backwards: (unit: m)
+
+    Returns
+    ------------
+    """
     velocity = 0.1  # wheel velocity (unit: m/s)
     duration = distance / velocity
     jetbot_motor.set_speed(-velocity, -velocity)  # go backwards!
@@ -53,6 +88,15 @@ def backwards_distance(jetbot_motor, distance):  # distance (unit: m)
 
 # let the jetbot turn to a desired angle
 def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    direction: The desired direction you want the Jetbot turn to : (unit: radian) (y-axis is 0, clockwise [0~2*pi])
+
+    Returns
+    ------------
+    """
     # direction: desired gradient angle
     position, orientation = apriltag.get_apriltag()
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
@@ -73,6 +117,15 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
 
 # let the jetbot turn to a desired angle
 def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to improve the accuracy
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    direction: The desired direction you want the Jetbot turn to : (unit: radian) (y-axis is 0, clockwise [0~2*pi])
+
+    Returns
+    ------------
+    """
     rate = rospy.Rate(50)
     # direction: desired gradient angle (from y-axis counterclockwise)
     position, orientation = apriltag.get_apriltag()
@@ -118,6 +171,15 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
 
 # let the jetbot to avoid the obstacle in front of it
 def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left: side=0 / right: side=1)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    side: choose the side you want to go (left: side=0 / right: side=1)
+
+    Returns
+    ------------
+    """
     # avoid the obstacle in front of jetbot
     if side == 0:  # go from the left side
         jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to left
@@ -141,6 +203,16 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
 
 # calculate the distance between jetbot and the desired line
 def distance_point_line(line_start, line_end, point):
+    """
+    Parameters
+    ------------
+    line_start: The start point of the line
+    line_end: The end point of the line
+    point: The third point
+
+    Returns
+    ------------
+    """
     numerator = abs(
         (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * line_start[
             1] - line_end[1] * line_start[0])
@@ -151,6 +223,16 @@ def distance_point_line(line_start, line_end, point):
 
 # linear motion mode with a PID controller
 def linear_motion(jetbot_motor, end):
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    end: the desired destination point: [x, y] (unit: m)
+
+    Returns
+    ------------
+    flag: If move to the destination successfully: flag = True; If out of control: flag = False  (Bool)
+    """
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
