@@ -69,7 +69,7 @@ def get_apriltag():
             position_relative = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion(quaternion)
             position = transformation(orientation,position_relative)
-            print('position_relative:', position_relative, 'quaternion:',quaternion)
+            #print('position_relative:', position_relative, 'quaternion:',quaternion)
             return position, orientation
         rospy.sleep(0.1)
 
