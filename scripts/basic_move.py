@@ -73,19 +73,23 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
 
 # let the jetbot turn to a desired angle
 def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to improve the accuracy
+    rate = rospy.Rate(50)
     # direction: desired gradient angle (from y-axis counterclockwise)
     position, orientation = apriltag.get_apriltag()
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
     if difference < np.pi:
-        jetbot_motor.set_speed(0.1, -0.1)  # rotate clockwise
+        jetbot_motor.set_speed(0.08, -0.08)  # rotate clockwise
         time_init = time.time()
         while 1:
             position, orientation = apriltag.get_apriltag()
-            difference_current = abs(orientation[2] - direction)    # current difference compared to desired direction
+            difference_cache = (direction - orientation[2])
+            difference_current = ((2 * np.pi) - difference_cache) % (2 * np.pi)    # current difference compared to desired direction
+            print('difference_current:', difference_current)
             # turn to the desired direction
-            if difference_current <= 0.087:     # Angle error less than 5 degrees (=0.087 radian) is acceptable
+            rate.sleep()
+            if difference_current <= 0.087*2:     # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 stop(jetbot_motor)
                 break
             if time.time() - time_init > 4:
@@ -94,16 +98,19 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
                 break
 
     else:
-        jetbot_motor.set_speed(-0.1, 0.1)  # rotate counterclockwise
+        jetbot_motor.set_speed(-0.08, 0.08)  # rotate counterclockwise
         time_init = time.time()
         while 1:
             position, orientation = apriltag.get_apriltag()
-            difference_current = abs(orientation[2] - direction)  # current difference compared to desired direction
+            difference_cache = (direction - orientation[2])
+            difference_current = ((2 * np.pi) - difference_cache) % (2 * np.pi)    # current difference compared to desired direction
+            print('difference_current:', difference_current)
             # turn to the desired direction
-            if difference_current <= 0.087:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
+            rate.sleep()
+            if difference_current <= 0.087*2:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 stop(jetbot_motor)
                 break
-            if time.time() - time_init > 4:
+            if time.time() - time_init > 10:
                 print("Warning: time out! Try turn_to_direction instead...")
                 turn_to_direction(jetbot_motor, direction)
                 break
@@ -118,7 +125,7 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
         stop(jetbot_motor)
         jetbot_motor.set_speed(0.2, 0.1)  # turn half circle clockwise to avoid the obstacle
         time.sleep(2.75)
-        jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
+        jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to middle
         time.sleep(1)
         stop(jetbot_motor)
     else:  # go from the right side
@@ -127,7 +134,7 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
         stop(jetbot_motor)
         jetbot_motor.set_speed(0.1, 0.2)  # turn half circle counterclockwise to avoid the obstacle
         time.sleep(2.75)
-        jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to middle
+        jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
         time.sleep(1)
         stop(jetbot_motor)
 
@@ -158,11 +165,17 @@ def linear_motion(jetbot_motor, end):
             direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
         else:
             direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+    
+    turn_to_direction(jetbot_motor, direction)
+    print('direction_pre',direction)
+    rospy.sleep(0.5)
     turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
+    print('direction_aft',direction)
+    rospy.sleep(0.5)
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.15
+    safe_width = 0.1
     time_init = time.time()
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
@@ -180,7 +193,7 @@ def linear_motion(jetbot_motor, end):
 
         # print("Position: ", position[0], position[1])
         # stop if distance between jetbot and end point is less than 0.03 m
-        if math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2) < 0.03:
+        if math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2) < 0.05:
             print("Arrive at destination: ", position)
             flag = True  # return True because jetbot get to the destination
             stop(jetbot_motor)
@@ -213,24 +226,29 @@ if __name__ == '__main__':
     # test simple movement
 
     print('Motion mode: backwards_distance')
-    backwards_distance(jetbot_motor, 0.2)
+    #backwards_distance(jetbot_motor, 0.2)
 
     print('Motion mode: turn_clockwise')
-    turn_clockwise(jetbot_motor, 2 * np.pi)
+    #turn_clockwise(jetbot_motor, 2 * np.pi)
 
     print('Motion mode: turn_counterclockwise')
-    turn_counterclockwise(jetbot_motor, 2 * np.pi)
+    #turn_counterclockwise(jetbot_motor, 2 * np.pi)
 
     print('Motion mode: avoid_obstacle')
     avoid_obstacle(jetbot_motor, side=1)
 
+    print('Motion mode: turn_to_direction')
+    #turn_to_direction(jetbot_motor, np.pi/2)
+    #turn_to_direction(jetbot_motor, np.pi/2)
+    #turn_to_direction(jetbot_motor, np.pi/2)
+
     # test advanced movement
 
     print('Motion mode: turn_to_direction_advanced')
-    turn_to_direction_advanced(jetbot_motor, np.pi/2)
+    # turn_to_direction_advanced(jetbot_motor, np.pi/2)
 
     print('Motion mode: linear_motion')
-    flag = linear_motion(jetbot_motor, [0.74, 0.74])
-    print('flag is:', flag)
+    #flag = linear_motion(jetbot_motor, [0.5, 0.5])
+    #print('flag is:', flag)
 
     stop(jetbot_motor)
