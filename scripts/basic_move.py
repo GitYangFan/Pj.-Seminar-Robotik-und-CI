@@ -166,10 +166,10 @@ def linear_motion(jetbot_motor, end):
         else:
             direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
     
-    turn_to_direction(jetbot_motor, direction)
+    turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
     print('direction_pre',direction)
     rospy.sleep(0.5)
-    turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
+    turn_to_direction(jetbot_motor, direction)  # call this function again to compensate the error
     print('direction_aft',direction)
     rospy.sleep(0.5)
     # initialization
