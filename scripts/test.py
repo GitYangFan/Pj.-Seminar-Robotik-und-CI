@@ -20,8 +20,6 @@ object_size = [[0,0]] * 5
 print(object_size)
 """
 
-
-
 # def calculate_arena_pose(jetbot_position, jetbot_orientation, arena_origin_position, arena_origin_orientation):
 #
 #     # 构建Arena原点的四元数
@@ -92,6 +90,7 @@ cross_product = v1[0] * v2[1] - v1[1] * v2[0]
 print(cross_product)
 """
 
+
 # test = []
 # length = len(test)
 # distance = [None]*length
@@ -113,11 +112,13 @@ def distance_point_line(line_start, line_end, point):
     Returns
     ------------
     """
-    numerator = (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * line_start[
-            1] - line_end[1] * line_start[0]
+    numerator = (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * \
+                line_start[
+                    1] - line_end[1] * line_start[0]
     denominator = math.sqrt((line_end[1] - line_start[1]) ** 2 + (line_end[0] - line_start[0]) ** 2)
     distance = numerator / denominator
     return distance
 
-test = distance_point_line([0,0],[3,4],[0,1])
+
+test = distance_point_line([0, 0], [3, 4], [0, 1])
 print(test)
