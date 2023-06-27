@@ -235,7 +235,7 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
         stop(jetbot_motor)
 
 
-# let the jetbot to avoid the obstacle in front of it
+# let the jetbot to avoid the obstacle in front of it with cube
 def avoid_obstacle_with_cube(jetbot_motor, side):  # choose the side you want to go (left: side=0 / right: side=1)
     """
     Parameters
