@@ -1,21 +1,27 @@
 import rospy
 from vision_msgs.msg import Detection2DArray
+import time
 
 detections = []
 class_name = ['BACKGROUND', 'ball', 'cube_red', 'cube_orange', 'cube_yellow', 'cube_green', 'cube_purple', 'cube_blue']
+
 
 def detection_callback(data):
     global detections
     if data.detections != []:
         detections = data.detections
 
+
 def get_detection():
     # rospy.init_node('detection_listener')
     rospy.Subscriber('/detectnet/detections', Detection2DArray, detection_callback)
 
+    # initialization
+    time_init = time.time()
+
     # Loop waiting to receive data
     while not rospy.is_shutdown():
-        if detections !=[]:
+        if detections != []:
             # print(detections)
             # print('-----------split---------------')
             length = len(detections)
@@ -34,14 +40,22 @@ def get_detection():
             # print('list:', object_name)
             # print('-----------split---------------')
             return object_name, object_score, object_center, object_size
+
+        # if there is no object in the sight, wait for a second to make sure and return []
+        if time.time() - time_init > 1:
+            print('No object has been detected! ')
+            object_name = []
+            object_score = []
+            object_center = []
+            object_size = []
+            return object_name, object_score, object_center, object_size
+
         rospy.sleep(0.1)
 
 
 """
 -------------------- test ----------------------------
 """
-
-
 
 # object_name, object_score, object_center, object_size = get_detection()
 # print('detected:', object_name[0], 'score:', object_score[0], 'center:', object_center[0], 'size:', object_size[0])

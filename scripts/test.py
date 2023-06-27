@@ -70,6 +70,7 @@ import tf
 
 # test = [1, 2, 3]
 # print(test[0:2])
+"""
 v1 = [1, 1]
 if v1[0] < 0:
     if v1[1] > 0:
@@ -86,4 +87,13 @@ print(direction / np.pi * 180)
 v2 = [1, 0.5]
 cross_product = v1[0] * v2[1] - v1[1] * v2[0]
 print(cross_product)
+"""
 
+test = []
+length = len(test)
+distance = [None]*length
+print(length)
+print(distance)
+# print(range(len(test)))
+for i in range(length):
+    print(i)

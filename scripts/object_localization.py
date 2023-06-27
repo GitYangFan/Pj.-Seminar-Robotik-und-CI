@@ -5,6 +5,24 @@ from apriltag import get_apriltag
 import math
 
 
+class ObjecT:
+    """
+    Class of object
+
+    Attributes:
+        name (string): the name of the objet
+        score (float): the score of the object from DNN Model
+        position ([float, float]): the position of the object
+        distance (float): the horizontal distance between the object and jetbot
+    """
+
+    def __init__(self, name, score, position, distance):
+        self.name = name
+        self.score = score
+        self.position = position
+        self.distance = distance
+
+
 # The function to calculate the focallength
 def get_focal_length():
     # initialize the known distance from the camera to the known object, unit in mm.
@@ -118,17 +136,43 @@ def get_object_position():
     return object_name, object_score, object_position, object_distance
 
 
+def get_objects():
+    position_jetbot, orientation_jetbot = get_apriltag()
+    print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
+    object_name, object_score, object_distance, object_angle = find_object()
+    length = len(object_name)
+    object_position = [None] * length
+    object_distance_horizon = [None] * length
+    objects = []
+    for i in range(length):
+        # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
+        print('object angle from camera to object:', object_angle[i][0])
+        object_distance_horizon[i] = math.sqrt((object_distance[i] + 0.03) ** 2 - 0.097 ** 2)
+        object_position[i] = position_jetbot[0:2] + [
+            (-object_distance_horizon[i] * np.sin(orientation_jetbot[2] + object_angle[i][0])),
+            (object_distance_horizon[i] *
+             np.cos(orientation_jetbot[2] + object_angle[i][0]))]
+        # object_position[i] = [object_position[i][1], object_position[i][0]]
+        print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
+              'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
+        print('------------split---------------')
+        obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i])
+        objects.append(obj)
+    return objects
+
+
 """
 test 2
 """
 
-"""
 # this node initialization can only be called once !! So it should be writen in main function
 rospy.init_node('object_localization')
-object_name, object_score, object_position = get_object_position()
+# object_name, object_score, object_position = get_object_position()
+objects = get_objects()
+print('object class:',objects)
 # print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position)
 # print('distance list:', object_distance, 'angle list:', object_angle)
-"""
+
 
 """
 
