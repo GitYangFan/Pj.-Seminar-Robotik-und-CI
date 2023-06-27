@@ -1,3 +1,7 @@
+import numpy as np
+import tf
+import math
+
 """
 def test():
     global x
@@ -16,8 +20,7 @@ object_size = [[0,0]] * 5
 print(object_size)
 """
 
-import numpy as np
-import tf
+
 
 # def calculate_arena_pose(jetbot_position, jetbot_orientation, arena_origin_position, arena_origin_orientation):
 #
@@ -89,11 +92,32 @@ cross_product = v1[0] * v2[1] - v1[1] * v2[0]
 print(cross_product)
 """
 
-test = []
-length = len(test)
-distance = [None]*length
-print(length)
-print(distance)
-# print(range(len(test)))
-for i in range(length):
-    print(i)
+# test = []
+# length = len(test)
+# distance = [None]*length
+# print(length)
+# print(distance)
+# # print(range(len(test)))
+# for i in range(length):
+#     print(i)
+
+
+def distance_point_line(line_start, line_end, point):
+    """
+    Parameters
+    ------------
+    line_start: The start point of the line
+    line_end: The end point of the line
+    point: The third point
+
+    Returns
+    ------------
+    """
+    numerator = (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * line_start[
+            1] - line_end[1] * line_start[0]
+    denominator = math.sqrt((line_end[1] - line_start[1]) ** 2 + (line_end[0] - line_start[0]) ** 2)
+    distance = numerator / denominator
+    return distance
+
+test = distance_point_line([0,0],[3,4],[0,1])
+print(test)
