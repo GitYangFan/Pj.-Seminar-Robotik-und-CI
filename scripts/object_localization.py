@@ -133,7 +133,7 @@ def get_object_position():
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
-    return object_name, object_score, object_position, object_distance
+    return object_name, object_score, object_position, object_distance_horizon
 
 
 def get_objects():
@@ -164,15 +164,16 @@ def get_objects():
 """
 test 2
 """
-
+"""
 # this node initialization can only be called once !! So it should be writen in main function
 rospy.init_node('object_localization')
-# object_name, object_score, object_position = get_object_position()
-objects = get_objects()
-print('object class:',objects)
-# print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position)
-# print('distance list:', object_distance, 'angle list:', object_angle)
+object_name, object_score, object_position, object_distance_horizon = get_object_position()
+print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position,'object horizon distance:',object_distance_horizon)
+#objects = get_objects()
+#print('object class detected:',objects[0].name, 'possibility:',objects[0].score, 'object position:',objects[0].position, 'object horizon distance:',objects[0].distance)
 
+# print('distance list:', object_distance, 'angle list:', object_angle)
+"""
 
 """
 
