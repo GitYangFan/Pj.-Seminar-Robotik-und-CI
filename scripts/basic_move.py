@@ -114,6 +114,36 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
         time.sleep(duration)
         stop(jetbot_motor)
 
+# let the jetbot turn to a desired angle with cube
+def turn_to_direction_with_cube(jetbot_motor, direction):  # add apriltag (not for now)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    direction: The desired direction you want the Jetbot turn to : (unit: radian) (y-axis is 0, clockwise [0~2*pi])
+
+    Returns
+    ------------
+    """
+    # direction: desired gradient angle
+    position, orientation = apriltag.get_apriltag()
+    print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
+    difference_cache = (direction - orientation[2])
+    difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
+    time_init = time.time()
+    if difference < np.pi:
+        duration = 4 * difference / (2 * np.pi)  # rotate one circle need 4 second
+        # turn to the desired direction
+        jetbot_motor.set_speed(0.165, 0)  # rotate clockwise
+        time.sleep(duration)
+        stop(jetbot_motor)
+    else:
+        duration = 4 * (2 * np.pi - difference) / (2 * np.pi)  # rotate one circle need 4 second
+        jetbot_motor.set_speed(0, 0.165)  # rotate counterclockwise
+        time.sleep(duration)
+        stop(jetbot_motor)
+    duration = time.time()-time_init
+    print('duration:',duration)
 
 # let the jetbot turn to a desired angle
 def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to improve the accuracy
@@ -133,7 +163,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
     if difference < np.pi:
-        jetbot_motor.set_speed(0.08, -0.08)  # rotate clockwise
+        jetbot_motor.set_speed(0.08, 0)  # rotate clockwise
         time_init = time.time()
         while 1:
             position, orientation = apriltag.get_apriltag()
@@ -142,7 +172,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
                         2 * np.pi)  # current difference compared to desired direction
             print('difference_current:', difference_current)
             # turn to the desired direction
-            rate.sleep()
+            #rate.sleep()
             if difference_current <= 0.087 * 2:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 stop(jetbot_motor)
                 break
@@ -152,7 +182,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
                 break
 
     else:
-        jetbot_motor.set_speed(-0.08, 0.08)  # rotate counterclockwise
+        jetbot_motor.set_speed(0, 0.08)  # rotate counterclockwise
         time_init = time.time()
         while 1:
             position, orientation = apriltag.get_apriltag()
@@ -161,11 +191,11 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
                         2 * np.pi)  # current difference compared to desired direction
             print('difference_current:', difference_current)
             # turn to the desired direction
-            rate.sleep()
+            #rate.sleep()
             if difference_current <= 0.087 * 2:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 stop(jetbot_motor)
                 break
-            if time.time() - time_init > 10:
+            if time.time() - time_init > 4:
                 print("Warning: time out! Try turn_to_direction instead...")
                 turn_to_direction(jetbot_motor, direction)
                 break
@@ -235,6 +265,7 @@ def linear_motion(jetbot_motor, end):
     ------------
     flag: If move to the destination successfully: flag = True; If out of control: flag = False  (Bool)
     """
+    print('Going to:',end)
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
@@ -251,15 +282,15 @@ def linear_motion(jetbot_motor, end):
             direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
 
     turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
-    print('direction_pre', direction)
+    print('turn to direction:', direction)
     rospy.sleep(0.5)
-    turn_to_direction(jetbot_motor, direction)  # call this function again to compensate the error
-    print('direction_aft', direction)
-    rospy.sleep(0.5)
+    #turn_to_direction(jetbot_motor, direction)  # call this function again to compensate the error
+    #print('direction_aft', direction)
+    #rospy.sleep(0.5)
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.1
+    safe_width = 0.3
     time_init = time.time()
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
@@ -303,6 +334,7 @@ def linear_motion(jetbot_motor, end):
 
 # linear motion mode with a PID controller and a desired time
 def linear_motion_with_desired_time(jetbot_motor, end, t):
+    print('Going to:',end,'with desired time:',t)
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
@@ -318,16 +350,16 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
         else:
             direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
 
-    turn_to_direction(jetbot_motor, direction)
-    print('direction_pre', direction)
+    turn_to_direction_advanced(jetbot_motor, direction)
+    print('turn to direction:', direction)
     rospy.sleep(0.5)
-    turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
-    print('direction_aft', direction)
-    rospy.sleep(0.5)
+    #turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
+    #print('direction_aft', direction)
+    #rospy.sleep(0.5)
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.15
+    safe_width = 0.3
     MAX_TIME = 10
     if t > MAX_TIME:
         t = MAX_TIME
@@ -381,6 +413,7 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
 """
 -------------------- test ----------------------------
 """
+
 if __name__ == '__main__':
     jetbot_motor = MotorControllerWaveshare()
 
@@ -390,18 +423,18 @@ if __name__ == '__main__':
     # backwards_distance(jetbot_motor, 0.2)
 
     print('Motion mode: turn_clockwise')
-    # turn_clockwise(jetbot_motor, 2 * np.pi)
+    #turn_clockwise(jetbot_motor, np.pi)
 
     print('Motion mode: turn_counterclockwise')
     # turn_counterclockwise(jetbot_motor, 2 * np.pi)
 
     print('Motion mode: avoid_obstacle')
-    avoid_obstacle(jetbot_motor, side=1)
+    #avoid_obstacle(jetbot_motor, side=1)
 
     print('Motion mode: turn_to_direction')
-    # turn_to_direction(jetbot_motor, np.pi/2)
-    # turn_to_direction(jetbot_motor, np.pi/2)
-    # turn_to_direction(jetbot_motor, np.pi/2)
+    #turn_to_direction(jetbot_motor, np.pi)
+    #turn_to_direction_advanced(jetbot_motor, np.pi)
+    turn_to_direction_with_cube(jetbot_motor, np.pi/2)
 
     # test advanced movement
 
@@ -409,10 +442,11 @@ if __name__ == '__main__':
     # turn_to_direction_advanced(jetbot_motor, np.pi/2)
 
     print('Motion mode: linear_motion')
-    # flag = linear_motion(jetbot_motor, [0.75, 0.5])
-    # print('flag is:', flag)
+    #flag = linear_motion(jetbot_motor, [0.6, 0.3])
+    #print('flag is:', flag)
 
     print('Motion mode: linear_motion_with_desired_time')
-    linear_motion_with_desired_time(jetbot_motor, [0.75, 0.5], 1)
+    #flag = linear_motion_with_desired_time(jetbot_motor, [0.6, 0.3], 3)
+    #print('flag is:',flag)
 
     stop(jetbot_motor)
