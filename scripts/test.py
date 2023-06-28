@@ -101,24 +101,34 @@ print(cross_product)
 #     print(i)
 
 
-def distance_point_line(line_start, line_end, point):
-    """
-    Parameters
-    ------------
-    line_start: The start point of the line
-    line_end: The end point of the line
-    point: The third point
+# def distance_point_line(line_start, line_end, point):
+#     """
+#     Parameters
+#     ------------
+#     line_start: The start point of the line
+#     line_end: The end point of the line
+#     point: The third point
+#
+#     Returns
+#     ------------
+#     """
+#     numerator = (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * \
+#                 line_start[
+#                     1] - line_end[1] * line_start[0]
+#     denominator = math.sqrt((line_end[1] - line_start[1]) ** 2 + (line_end[0] - line_start[0]) ** 2)
+#     distance = numerator / denominator
+#     return distance
+#
+#
+# test = distance_point_line([0, 0], [3, 4], [0, 1])
+# print(test)
 
-    Returns
-    ------------
-    """
-    numerator = (line_end[1] - line_start[1]) * point[0] - (line_end[0] - line_start[0]) * point[1] + line_end[0] * \
-                line_start[
-                    1] - line_end[1] * line_start[0]
-    denominator = math.sqrt((line_end[1] - line_start[1]) ** 2 + (line_end[0] - line_start[0]) ** 2)
-    distance = numerator / denominator
-    return distance
 
+test = [1, 2, 3, 4, 5]
+idx_cubeinbase = [2,4]
 
-test = distance_point_line([0, 0], [3, 4], [0, 1])
+if idx_cubeinbase:
+    for i in range(len(idx_cubeinbase) - 1, -1, -1):
+        del test[idx_cubeinbase[i]]
+
 print(test)

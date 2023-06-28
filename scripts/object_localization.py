@@ -121,6 +121,8 @@ def get_object_position():
     length = len(object_name)
     object_position = [None] * length
     object_distance_horizon = [None] * length
+    bases = [[0.1, 0.1], [0.7425, 0.1], [1.385, 0.1], [1.385, 0.7425], [0.7425, 1.385], [0.1, 1.385], [0.1, 0.7425]]
+    idx_cubeinbase = []
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
         print('object angle from camera to object:', object_angle[i][0])
@@ -130,9 +132,20 @@ def get_object_position():
             (object_distance_horizon[i] *
              np.cos(orientation_jetbot[2] + object_angle[i][0]))]
         # object_position[i] = [object_position[i][1], object_position[i][0]]
+        # find the cube within the base area
+        for base in bases:
+            if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.15:
+                idx_cubeinbase.append(i)
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
+    # remove the cube within the base area
+    if idx_cubeinbase:
+        for i in range(len(idx_cubeinbase) - 1, -1, -1):
+            del object_name[idx_cubeinbase[i]]
+            del object_score[idx_cubeinbase[i]]
+            del object_position[idx_cubeinbase[i]]
+            del object_distance_horizon[idx_cubeinbase[i]]
     return object_name, object_score, object_position, object_distance_horizon
 
 
