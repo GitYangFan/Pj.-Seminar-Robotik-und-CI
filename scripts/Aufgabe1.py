@@ -68,7 +68,7 @@ def plot(position, color, marker):
 
 
 position,_ =get_apriltag()
-
+plot_position=[]
 #global a
 a = position[0]
 d = position[1]
@@ -79,54 +79,56 @@ for c in range(0,6):
     i = math.pow(-1, b+1)
     for e in range(0,6):
         a=a+0.2*i
+        print("move",a)
         end= [a,position[1]]
         object= get_objects()
         if objects == []:
             linear_motion(jetbot_motor, end)
             continue
-        nearest_object= find_nearest_cube(objects)
-        object_distance =  nearest_object.distance
-        object_position =nearest_object.position
-        if object_distance< 0.2:
-            i=i+1
-        if object_distance < 0.2 and a< 1.2 :
-           # rospy.init_node('object_localization')
-            #_, _, object_position,_ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
-            #end2 = [object_position[0] - 0.1, object_position[1] - 0.1]
-            #inear_motion(jetbot_motor, end2)
-            approach_obstacle(object_position)
-            object = get_objects()
-            nearest_object = find_nearest_cube(object)
-            #object_name, _, object_position,_ = get_object_position()
-
-            plot_position[i]=nearest_object.position
-            if cube in nearest_object.name:
-                marker[i] = 's'
-                color[i]=nearest_object.name[5:]
-            elif ball in nearest_object.name:
-                 marker[i]='o'
-                 color[i]='gray'
-
-            turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
-            turn_clockwise(jetbot_motor, np.pi / 2)
-            position, _ = get_apriltag()
-            end=[position[0]+0.2,d]
-            linear_motion(jetbot_motor, end)
-            turn_to_direction(jetbot_motor, 3 / 2 * np.pi)
-            a=position[0]
-
-
-        elif object_distance < 0.1 and a > 1.2 :
-            object_name, _, object_position, _ = get_object_position()
-            plot_position[i] = object_position
-            if cube in object_name:
-                marker[i] = 's'
-                color[i] = object_name[5:]
-            elif ball in object_name:
-                marker[i] = '0'
-                color[i] = 'gray'
         else:
-            linear_motion(jetbot_motor, end)
+            nearest_object= find_nearest_cube(objects)
+            object_distance =  nearest_object.distance
+            object_position =nearest_object.position
+            if object_distance< 0.2:
+                i=i+1
+            if object_distance < 0.2 and a< 1.2 :
+               # rospy.init_node('object_localization')
+                #_, _, object_position,_ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
+                #end2 = [object_position[0] - 0.1, object_position[1] - 0.1]
+                #inear_motion(jetbot_motor, end2)
+                approach_obstacle(object_position)
+                object = get_objects()
+                nearest_object = find_nearest_cube(object)
+                #object_name, _, object_position,_ = get_object_position()
+
+                plot_position.append(nearest_object.position)
+                if cube in nearest_object.name:
+                    marker[i] = 's'
+                    color[i]=nearest_object.name[5:]
+                elif ball in nearest_object.name:
+                     marker[i]='o'
+                     color[i]='gray'
+
+                turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
+                turn_clockwise(jetbot_motor, np.pi / 2)
+                position, _ = get_apriltag()
+                end=[position[0]+0.2,d]
+                linear_motion(jetbot_motor, end)
+                turn_to_direction(jetbot_motor, 3 / 2 * np.pi)
+                a=position[0]
+
+
+            elif object_distance < 0.1 and a > 1.2 :
+                object_name, _, object_position, _ = get_object_position()
+                plot_position[i] = object_position
+                if cube in object_name:
+                    marker[i] = 's'
+                    color[i] = object_name[5:]
+                elif ball in object_name:
+                    marker[i] = '0'
+                    color[i] = 'gray'
+            else:
+                linear_motion(jetbot_motor, end)
 
 
     d=d+0.2
@@ -140,24 +142,25 @@ for c in range(0,6):
             linear_motion(jetbot_motor, end1)
             turn_clockwise(jetbot_motor, 0)
             continue
-        nearest_object = find_nearest_cube(objects)
-        object_distance = nearest_object.distance
-        object_position = nearest_object.position
-        if object_distance <0.2:
-           # _, _, object_position, _ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
-            #end1 = [object_position[0] - 0.1, object_position[1] - 0.1]
-            #linear_motion(jetbot_motor, end1)
-            approach_obstacle(object_position)
-            turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
-            turn_clockwise(jetbot_motor, np.pi / 2)
-            position, _ = get_apriltag()
-            end1=[position[0],position[1]+0.2]
-            linear_motion(jetbot_motor, end1)
-            turn_clockwise(jetbot_motor, 0)
         else:
-            end1=[a,d]
-            linear_motion(jetbot_motor, end1)
-            turn_clockwise(jetbot_motor,0)
+            nearest_object = find_nearest_cube(objects)
+            object_distance = nearest_object.distance
+            object_position = nearest_object.position
+            if object_distance <0.2:
+               # _, _, object_position, _ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
+                #end1 = [object_position[0] - 0.1, object_position[1] - 0.1]
+                #linear_motion(jetbot_motor, end1)
+                approach_obstacle(object_position)
+                turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
+                turn_clockwise(jetbot_motor, np.pi / 2)
+                position, _ = get_apriltag()
+                end1=[position[0],position[1]+0.2]
+                linear_motion(jetbot_motor, end1)
+                turn_clockwise(jetbot_motor, 0)
+            else:
+                end1=[a,d]
+                linear_motion(jetbot_motor, end1)
+                turn_clockwise(jetbot_motor,0)
     elif position[0] < 0.2:
         turn_counterclockwise(jetbot_motor, 0)  # Rotate pi/2 in place to left
         #_, _, object_distance = find_object()
@@ -167,24 +170,25 @@ for c in range(0,6):
             linear_motion(jetbot_motor, end1)
             turn_counterclockwise(jetbot_motor, 0)
             continue
-        nearest_object = find_nearest_cube(objects)
-        object_distance = nearest_object.distance
-        object_position = nearest_object.position
-        if object_distance < 0.2:
-           # _, _, object_position, _ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
-            #end1 = [object_position[0] - 0.1, object_position[1] - 0.1]
-            #linear_motion(jetbot_motor, end1)
-            approach_obstacle(object_position)
-            turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
-            turn_counterclockwise(jetbot_motor, np.pi / 2)
-            position, _ = get_apriltag()
-            end1 = [position[0], position[1] + 0.2]
-            linear_motion(jetbot_motor, end1)
-            turn_counterclockwise(jetbot_motor, 0)
         else:
-            end1 = [a, d]
-            linear_motion(jetbot_motor, end1)
-            turn_counterclockwise(jetbot_motor, 0)
+            nearest_object = find_nearest_cube(objects)
+            object_distance = nearest_object.distance
+            object_position = nearest_object.position
+            if object_distance < 0.2:
+               # _, _, object_position, _ = get_object_position()  # get_object_position()# object_position = objects[2].object_position
+                #end1 = [object_position[0] - 0.1, object_position[1] - 0.1]
+                #linear_motion(jetbot_motor, end1)
+                approach_obstacle(object_position)
+                turn_to_direction(jetbot_motor, -math.atan(object_position[0] / object_position[1]))
+                turn_counterclockwise(jetbot_motor, np.pi / 2)
+                position, _ = get_apriltag()
+                end1 = [position[0], position[1] + 0.2]
+                linear_motion(jetbot_motor, end1)
+                turn_counterclockwise(jetbot_motor, 0)
+            else:
+                end1 = [a, d]
+                linear_motion(jetbot_motor, end1)
+                turn_counterclockwise(jetbot_motor, 0)
 
 end3=[a,d]
 #_, _, object_distance = find_object()
