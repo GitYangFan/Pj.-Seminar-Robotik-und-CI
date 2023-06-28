@@ -489,6 +489,98 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
     return flag  # return the flag (Bool), move successfully: flag = True; out of control: flag = False
 
 
+# linear motion mode with a PID controller and a desired time
+def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
+    print('linear_motion_with_desired_time...')
+    print('Going to:', end, 'with desired time:', t)
+    position, orientation = apriltag.get_apriltag()
+    start = position[0:2]
+    # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+    v1 = end - start
+    if v1[0] < 0:
+        if v1[1] > 0:
+            direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+        else:
+            direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+    else:
+        if v1[1] < 0:
+            direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+        else:
+            direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+
+    turn_to_direction_with_cube(jetbot_motor, direction)
+    print('turn to direction:', direction)
+    rospy.sleep(0.5)
+    # turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
+    # print('direction_aft', direction)
+    # rospy.sleep(0.5)
+
+    # in the case of too short distance
+    distance = math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2)
+    if distance < 0.1:
+        print('distance too short! simple forwards mode...')
+        duration = distance / 0.1
+        jetbot_motor.set_speed(0.1, 0.1)
+        time.sleep(duration)
+        stop(jetbot_motor)
+        flag = True
+        return flag
+
+    # initialization
+    k_left = 0
+    k_right = 0
+    safe_width = 0.1
+    MAX_TIME = 10
+    if t > MAX_TIME:
+        t = MAX_TIME
+    time_init = time.time()
+    while 1:
+        jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
+        rospy.sleep(0.1)
+        position, orientation = apriltag.get_apriltag()
+        v2 = position[0:2] - start
+        # PID controller (currently only P was considered)
+        cross_product = v1[0] * v2[1] - v1[1] * v2[0]  # Calculate the cross product
+        if cross_product >= 0:  # too left, must go right
+            k_left = 0.4 * distance_point_line(start, end, position[0:2])
+            k_right = 0
+        elif cross_product < 0:  # too right, must go left
+            k_right = 0.4 * distance_point_line(start, end, position[0:2])
+            k_left = 0
+
+        # print("Position: ", position[0], position[1])
+        # stop if distance between jetbot and end point is less than 0.03 m
+        if math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2) < 0.05:
+            print("Arrive at destination: ", position)
+            flag = True  # return True because jetbot get to the destination
+            stop(jetbot_motor)
+            break
+
+        # stop if move for desired time, but not too long
+        if time.time() - time_init > t:
+            if t == MAX_TIME:
+                print("Warning: time out! Stop at:", position)
+                flag = False  # return False because time out
+                stop(jetbot_motor)
+                break
+            else:
+                print("Move for a desired time! Stop at:", position)
+                flag = True
+                stop(jetbot_motor)
+                break
+
+        # stop if jetbot is out of the safe boundary
+        if position[0] < (0 + safe_width) or position[0] > (1.485 - safe_width) or position[1] < (0 + safe_width) or \
+                position[1] > (1.485 - safe_width):
+            print("Warning: out of bounds! Stop at: : ", position)
+            flag = False  # return False because out of bounds
+            stop(jetbot_motor)
+            break
+
+    rospy.sleep(0.5)
+    return flag  # return the flag (Bool), move successfully: flag = True; out of control: flag = False
+
+
 """
 -------------------- test ----------------------------
 """
