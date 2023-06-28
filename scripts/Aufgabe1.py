@@ -47,8 +47,8 @@ def approach_obstacle(obstacle_position):
     vec = [obstacle_position[0] - position[0], obstacle_position[1] - position[1]]
     magnitude = math.sqrt(vec[0]**2 + vec[1]**2)
     uVec = [vec[0] / magnitude, vec[1] / magnitude]
-    p_x = (-DISTANCE_TO_OBSTACLE * uVec[0]) + object_position[0]
-    p_y = (-DISTANCE_TO_OBSTACLE * uVec[1]) + object_position[1]
+    p_x = (-DISTANCE_TO_OBSTACLE * uVec[0]) + obstacle_position[0]
+    p_y = (-DISTANCE_TO_OBSTACLE * uVec[1]) + obstacle_position[1]
     p = [p_x, p_y]
     linear_motion(jetbot_motor, p)
 
@@ -81,7 +81,10 @@ for c in range(0,6):
         a=a+0.2*i
         end= [a,position[1]]
         object= get_objects()
-        nearest_object= find_nearest_cube(object)
+        if objects == []:
+            linear_motion(jetbot_motor, end)
+            continue
+        nearest_object= find_nearest_cube(objects)
         object_distance =  nearest_object.distance
         object_position =nearest_object.position
         if object_distance< 0.2:
@@ -131,8 +134,13 @@ for c in range(0,6):
     if position[0] > 1.2:
         turn_clockwise(jetbot_motor, 0)# Rotate pi/2 in place to left
         #_, _, object_distance = find_object()
-        object = get_objects()
-        nearest_object = find_nearest_cube(object)
+        objects = get_objects()
+        if objects== []:
+            end1 = [a, d]
+            linear_motion(jetbot_motor, end1)
+            turn_clockwise(jetbot_motor, 0)
+            continue
+        nearest_object = find_nearest_cube(objects)
         object_distance = nearest_object.distance
         object_position = nearest_object.position
         if object_distance <0.2:
@@ -153,8 +161,13 @@ for c in range(0,6):
     elif position[0] < 0.2:
         turn_counterclockwise(jetbot_motor, 0)  # Rotate pi/2 in place to left
         #_, _, object_distance = find_object()
-        object = get_objects()
-        nearest_object = find_nearest_cube(object)
+        objects = get_objects()
+        if objects ==[]:
+            end1 = [a, d]
+            linear_motion(jetbot_motor, end1)
+            turn_counterclockwise(jetbot_motor, 0)
+            continue
+        nearest_object = find_nearest_cube(objects)
         object_distance = nearest_object.distance
         object_position = nearest_object.position
         if object_distance < 0.2:
@@ -173,12 +186,12 @@ for c in range(0,6):
             linear_motion(jetbot_motor, end1)
             turn_counterclockwise(jetbot_motor, 0)
 
-#end3=[a,d]
+end3=[a,d]
 #_, _, object_distance = find_object()
 #if object_distance<0.2:
 
 #    avoid_obstacle(jetbot_motor, left)
-#linear_motion(jetbot_motor, end3)
+linear_motion(jetbot_motor, end3)
 
 
 
