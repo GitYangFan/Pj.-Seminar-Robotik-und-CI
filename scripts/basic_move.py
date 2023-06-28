@@ -22,6 +22,7 @@ def stop(jetbot_motor):
     ------------
     """
     jetbot_motor.set_speed(0, 0)
+    rospy.sleep(0.5)
 
 
 # let jetbot circle around the object clockwise with the specific angle in front of it
@@ -35,6 +36,7 @@ def turn_clockwise(jetbot_motor, angle):  # add angel (unit: radian)
     Returns
     ------------
     """
+    print('turn_clockwise...')
     jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to left
     time.sleep(1)
     stop(jetbot_motor)
@@ -44,6 +46,7 @@ def turn_clockwise(jetbot_motor, angle):  # add angel (unit: radian)
     # jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
     # time.sleep(1)
     stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # let jetbot circle around the object counterclockwise with the specific angle in front of it
@@ -57,6 +60,7 @@ def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
     Returns
     ------------
     """
+    print('turn_counterclockwise...')
     jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to right
     time.sleep(1)
     stop(jetbot_motor)
@@ -66,6 +70,7 @@ def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
     # jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to middle
     # time.sleep(1)
     stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # let the jetbot simple go backwards without controller
@@ -79,11 +84,13 @@ def backwards_distance(jetbot_motor, distance):  # distance (unit: m)
     Returns
     ------------
     """
+    print('backwards_distance...')
     velocity = 0.1  # wheel velocity (unit: m/s)
     duration = distance / velocity
     jetbot_motor.set_speed(-velocity, -velocity)  # go backwards!
     time.sleep(duration)
     stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # let the jetbot turn to a desired angle
@@ -98,6 +105,7 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
     ------------
     """
     # direction: desired gradient angle
+    print('turn_to_direction...')
     position, orientation = apriltag.get_apriltag()
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
@@ -113,6 +121,7 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
         jetbot_motor.set_speed(-0.1, 0.1)  # rotate counterclockwise
         time.sleep(duration)
         stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # let the jetbot turn to a desired angle with cube
@@ -127,6 +136,7 @@ def turn_to_direction_with_cube(jetbot_motor, direction):
     ------------
     """
     # direction: desired gradient angle
+    print('turn_to_direction_with_cube...')
     position, orientation = apriltag.get_apriltag()
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
@@ -143,8 +153,9 @@ def turn_to_direction_with_cube(jetbot_motor, direction):
         jetbot_motor.set_speed(0, 0.165)  # rotate counterclockwise
         time.sleep(duration)
         stop(jetbot_motor)
-    duration = time.time() - time_init
-    print('duration:', duration)
+    # duration = time.time() - time_init
+    # print('duration:', duration)
+    rospy.sleep(0.5)
 
 
 # let the jetbot turn to a desired angle
@@ -158,6 +169,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
     Returns
     ------------
     """
+    print('turn_to_direction_advanced...')
     rate = rospy.Rate(50)
     # direction: desired gradient angle (from y-axis counterclockwise)
     position, orientation = apriltag.get_apriltag()
@@ -201,6 +213,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
                 print("Warning: time out! Try turn_to_direction instead...")
                 turn_to_direction(jetbot_motor, direction)
                 break
+    rospy.sleep(0.5)
 
 
 # let the jetbot to avoid the obstacle in front of it
@@ -214,6 +227,7 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
     Returns
     ------------
     """
+    print('avoid_obstacle...')
     # avoid the obstacle in front of jetbot
     if side == 0:  # go from the left side
         jetbot_motor.set_speed(-0.1, 0.1)  # Rotate pi/2 in place to left
@@ -233,6 +247,7 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
         jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
         time.sleep(1)
         stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # let the jetbot to avoid the obstacle in front of it with cube
@@ -246,6 +261,7 @@ def avoid_obstacle_with_cube(jetbot_motor, side):  # choose the side you want to
     Returns
     ------------
     """
+    print('avoid_obstacle_with_cube...')
     # avoid the obstacle in front of jetbot
     if side == 0:  # go from the left side
         jetbot_motor.set_speed(0, 0.165)  # Rotate pi/2 in place to left
@@ -265,6 +281,7 @@ def avoid_obstacle_with_cube(jetbot_motor, side):  # choose the side you want to
         jetbot_motor.set_speed(0.165, 0)  # Rotate pi/2 in place to middle
         time.sleep(1)
         stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 
 # calculate the distance between jetbot and the desired line
@@ -299,6 +316,7 @@ def linear_motion(jetbot_motor, end):
     ------------
     flag: If move to the destination successfully: flag = True; If out of control: flag = False  (Bool)
     """
+    print('linear_motion...')
     print('Going to:', end)
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
@@ -318,9 +336,21 @@ def linear_motion(jetbot_motor, end):
     turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
     print('turn to direction:', direction)
     rospy.sleep(0.5)
-    # turn_to_direction(jetbot_motor, direction)  # call this function again to compensate the error
+    turn_to_direction(jetbot_motor, direction)  # call this function again to compensate the error
     # print('direction_aft', direction)
-    # rospy.sleep(0.5)
+    rospy.sleep(0.5)
+
+    # in the case of too short distance
+    distance = math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2)
+    if distance < 0.1:
+        print('distance too short! simple forwards mode...')
+        duration = distance / 0.1
+        jetbot_motor.set_speed(0.1, 0.1)
+        time.sleep(duration)
+        stop(jetbot_motor)
+        flag = True
+        return flag
+
     # initialization
     k_left = 0
     k_right = 0
@@ -363,11 +393,13 @@ def linear_motion(jetbot_motor, end):
             stop(jetbot_motor)
             break
 
+    rospy.sleep(0.5)
     return flag  # return the flag (Bool), move successfully: flag = True; out of control: flag = False
 
 
 # linear motion mode with a PID controller and a desired time
 def linear_motion_with_desired_time(jetbot_motor, end, t):
+    print('linear_motion_with_desired_time...')
     print('Going to:', end, 'with desired time:', t)
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
@@ -384,16 +416,28 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
         else:
             direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
 
-    turn_to_direction_advanced(jetbot_motor, direction)
+    turn_to_direction(jetbot_motor, direction)
     print('turn to direction:', direction)
     rospy.sleep(0.5)
-    # turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
+    turn_to_direction(jetbot_motor, direction)  # turn to the forward direction
     # print('direction_aft', direction)
-    # rospy.sleep(0.5)
+    rospy.sleep(0.5)
+
+    # in the case of too short distance
+    distance = math.sqrt((position[0] - end[0]) ** 2 + (position[1] - end[1]) ** 2)
+    if distance < 0.1:
+        print('distance too short! simple forwards mode...')
+        duration = distance / 0.1
+        jetbot_motor.set_speed(0.1, 0.1)
+        time.sleep(duration)
+        stop(jetbot_motor)
+        flag = True
+        return flag
+
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.3
+    safe_width = 0.1
     MAX_TIME = 10
     if t > MAX_TIME:
         t = MAX_TIME
@@ -441,13 +485,14 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
             stop(jetbot_motor)
             break
 
+    rospy.sleep(0.5)
     return flag  # return the flag (Bool), move successfully: flag = True; out of control: flag = False
 
 
 """
 -------------------- test ----------------------------
 """
-
+"""
 if __name__ == '__main__':
     jetbot_motor = MotorControllerWaveshare()
 
@@ -484,3 +529,5 @@ if __name__ == '__main__':
     # print('flag is:',flag)
 
     stop(jetbot_motor)
+    
+"""
