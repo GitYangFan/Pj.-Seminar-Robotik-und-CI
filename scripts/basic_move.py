@@ -218,7 +218,7 @@ def linear_motion(jetbot_motor, end):
 
 
 # linear motion mode with a PID controller and a desired time
-def linear_motion_with_desired_time(jetbot_motor, end, t):
+def linear_motion_with_desired_time(jetbot_motor, end, t=20):
     position, orientation = apriltag.get_apriltag()
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]

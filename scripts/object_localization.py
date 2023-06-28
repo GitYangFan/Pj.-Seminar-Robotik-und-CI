@@ -133,7 +133,7 @@ def get_objects():
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
-        obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i])
+        obj = ObjecT(object_name[i], object_score[i], object_position[i][0:2], object_distance_horizon[i])
         objects.append(obj)
     return objects
 
