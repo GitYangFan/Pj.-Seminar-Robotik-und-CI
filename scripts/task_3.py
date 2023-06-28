@@ -5,7 +5,7 @@ import basic_move
 from apriltag import get_apriltag
 # from object_localization import ObjecT
 from object_localization import get_objects
-# from motors_waveshare import MotorControllerWaveshare
+from motors_waveshare import MotorControllerWaveshare
 
 def find_nearest_cube(cubes):
     """
@@ -26,7 +26,7 @@ def find_nearest_cube(cubes):
 
     return cubes[min_index]
 
-def turning_detection(excepted_cubes):
+def turning_detection(jetbot_motor, excepted_cubes):
     """
     Turning in the current position and try to find the next cube at the same time, which not lies on the base
 
@@ -52,7 +52,7 @@ def turning_detection(excepted_cubes):
 
     return None
 
-def go_to_next_cube(next_cube, excepted_cubes):
+def go_to_next_cube(jetbot_motor, next_cube, excepted_cubes):
     """
     Go to the next cube and get its position again to improve accuracy, call the function when next_cube.distance > 0.2
 
@@ -77,7 +77,37 @@ def go_to_next_cube(next_cube, excepted_cubes):
         cube_will_be_pushed = find_nearest_cube(objects)
         return cube_will_be_pushed
 
-def go_to_start_push_position(base_position, object_position):
+def go_to_destination_with_obstacle_avoid(jetbot_motor, destination, cube_pushed=None):
+    """
+    Go to the destination and avoid obstacle automatically
+
+    Args:
+        destination ([float, float]): the destination
+        cube_pushed (ObjecT): the cube, which is being pushed
+    """
+    position, _ = get_apriltag()
+    completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+    while not completed:
+        continue_flag = False
+        position, _ = get_apriltag()
+        objects = get_objects()
+        if cube_pushed is not None and cube_pushed in objects:
+            objects.remove(cube_pushed)
+        while objects != []:
+            obstacle = find_nearest_cube(objects)
+            distance_to_line = basic_move.distance_point_line(position, destination, obstacle.position)
+            if distance_to_line < 0.08:
+                approach_obstacle(jetbot_motor, obstacle.position)
+                my_obstacle_avoid(jetbot_motor)
+                completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+                continue_flag = True
+                break
+        if continue_flag:
+            continue
+        basic_move.linear_motion_with_desired_time(jetbot_motor, destination, 5) # linear_motion_with_desired_time_with_cube
+        completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+
+def go_to_start_push_position(jetbot_motor, base_position, object_position):
     """
     Go to the position, on there the next push should be started
 
@@ -93,26 +123,10 @@ def go_to_start_push_position(base_position, object_position):
     p_y = (DISTANCE_TO_OBJECT * uVec[1]) + object_position[1]
     start_push_position = [p_x, p_y]
 
-    position, _ = get_apriltag()
-    completed = (abs(position[0] - start_push_position[0])) < 0.03 and (abs(position[1] - start_push_position[1]) < 0.03)
-    while not completed:
-        continue_flag = False
-        position, _ = get_apriltag()
-        objects = get_objects()
-        while objects != []:
-            obstacle = find_nearest_cube(objects)
-            distance_to_line = basic_move.distance_point_line(position, start_push_position, obstacle.position)
-            if distance_to_line < 0.08:
-                approach_obstacle(obstacle.position)
-                my_obstacle_avoid(jetbot_motor) #TODO
-                continue_flag = True
-                break
-        if continue_flag:
-            continue
-        basic_move.linear_motion_with_desired_time(jetbot_motor, start_push_position, 3)
-        completed = (abs(position[0] - start_push_position[0])) < 0.03 and (abs(position[1] - start_push_position[1]) < 0.03)
+    go_to_destination_with_obstacle_avoid(jetbot_motor, start_push_position)
 
-def approach_obstacle(obstacle_position):
+
+def approach_obstacle(jetbot_motor, obstacle_position):
     """
     Approach the obstacle for avoiding
 
@@ -124,8 +138,8 @@ def approach_obstacle(obstacle_position):
     vec = [obstacle_position[0] - position[0], obstacle_position[1] - position[1]]
     magnitude = math.sqrt(vec[0]**2 + vec[1]**2)
     uVec = [vec[0] / magnitude, vec[1] / magnitude]
-    p_x = (-DISTANCE_TO_OBSTACLE * uVec[0]) + object_position[0]
-    p_y = (-DISTANCE_TO_OBSTACLE * uVec[1]) + object_position[1]
+    p_x = (-DISTANCE_TO_OBSTACLE * uVec[0]) + obstacle_position[0]
+    p_y = (-DISTANCE_TO_OBSTACLE * uVec[1]) + obstacle_position[1]
     p = [p_x, p_y]
     basic_move.linear_motion_with_desired_time(jetbot_motor, p)
 
@@ -139,7 +153,7 @@ def my_obstacle_avoid(jetbot_motor):
     if position[0] < 0.15:
         # left side up
         if (current_direction > 0 and current_direction < (np.pi / 6)) or (current_direction > (np.pi / 6 * 11)):
-            if position[1] > 1.47:
+            if position[1] > 1.335:
                 # basic_move.backwards_distance(jetbot_motor, 0.15)
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2 * 3)
                 return
@@ -155,10 +169,10 @@ def my_obstacle_avoid(jetbot_motor):
             else:
                 basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
-    elif position[0] > 1.47:
+    elif position[0] > 1.335:
         # right side up
         if (current_direction > 0 and current_direction < (np.pi / 6)) or (current_direction > (np.pi / 6 * 11)):
-            if position[1] > 1.47:
+            if position[1] > 1.335:
                 # basic_move.backwards_distance(jetbot_motor, 0.15)
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2)
                 return
@@ -187,14 +201,14 @@ def my_obstacle_avoid(jetbot_motor):
                 return
         # under side right
         elif (current_direction > (np.pi / 3 * 4)) and (current_direction < (np.pi / 3 * 5)):
-            if position[0] > 1.47:
+            if position[0] > 1.335:
                 # basic_move.stop(jetbot_motor)
                 # basic_move.turn_to_direction(jetbot_motor, 0)
                 return
             else:
                 basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
-    elif position[1] > 1.47:
+    elif position[1] > 1.335:
         # up side left
         if (current_direction > (np.pi / 3)) and (current_direction < (np.pi / 3 * 2)):
             if position[0] < 0.15:
@@ -206,7 +220,7 @@ def my_obstacle_avoid(jetbot_motor):
                 return
         # up side right
         elif (current_direction > (np.pi / 3 * 4)) and (current_direction < (np.pi / 3 * 5)):
-            if position[0] > 1.47:
+            if position[0] > 1.335:
                 # basic_move.stop(jetbot_motor)
                 # basic_move.turn_to_direction(jetbot_motor, np.pi)
                 return
@@ -216,7 +230,7 @@ def my_obstacle_avoid(jetbot_motor):
 
     basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
 
-def push_cube(base_position, cube):
+def push_cube(jetbot_motor, base_position, cube):
     """
     Push a cube to the corresponding base position, start from start_push_position
 
@@ -228,32 +242,14 @@ def push_cube(base_position, cube):
     duration_to_cube = cube_distance / 0.1
     basic_move.linear_motion_with_desired_time(jetbot_motor, base_position, duration_to_cube)
 
-    position, _ = get_apriltag()
-    completed = (abs(position[0] - base_position[0])) < 0.05 and (abs(position[1] - base_position[1]) < 0.05)
-    while not completed:
-        continue_flag = False
-        position, _ = get_apriltag()
-        objects = get_objects()
-        if cube in objects:
-            objects.remove(cube)
-        while objects != []:
-            obstacle = find_nearest_cube(objects)
-            distance_to_line = basic_move.distance_point_line(position, base_position, obstacle.position)
-            if distance_to_line < 0.08:
-                approach_obstacle(obstacle.position)
-                my_obstacle_avoid(jetbot_motor) #TODO
-                continue_flag = True
-                break
-        if continue_flag:
-            continue
-        basic_move.linear_motion_with_desired_time(jetbot_motor, base_position, 5) # linear_motion_with_desired_time_with_cube
-        completed = (abs(position[0] - base_position[0])) < 0.05 and (abs(position[1] - base_position[1]) < 0.05)
+    go_to_destination_with_obstacle_avoid(jetbot_motor, base_position, cube)
+
 
 # push is just like linear_motion
 # after push, go backward 10cm
 # before linear_motion always turning_detection, when find a cube, push it instead of going back to path or any other motion.
 
-def go_back_to_path(path):
+def go_back_to_path(jetbot_motor, path):
     """
     After pushing a cube, go back to center or end of the predefined path and search for next_cube at the same time
 
@@ -274,48 +270,16 @@ def go_back_to_path(path):
     distance_to_end = math.sqrt((position[0] - path.end[0]) ** 2 + (position[1] - path.end[1]) ** 2)
     if distance_to_end > 0.2:
         # go back to path_center
-        completed = (abs(position[0] - path_center[0])) < 0.05 and (abs(position[1] - path_center[1]) < 0.05)
-        while not completed:
-            continue_flag = False
-            position, _ = get_apriltag()
-            objects = get_objects()
-            while objects != []:
-                obstacle = find_nearest_cube(objects)
-                distance_to_line = basic_move.distance_point_line(position, path_center, obstacle.position)
-                if distance_to_line < 0.08:
-                    approach_obstacle(obstacle.position)
-                    my_obstacle_avoid(jetbot_motor) #TODO
-                    continue_flag = True
-                    break
-            if continue_flag:
-                continue
-            basic_move.linear_motion_with_desired_time(jetbot_motor, path_center, 5)
-            completed = (abs(position[0] - path_center[0])) < 0.05 and (abs(position[1] - path_center[1]) < 0.05)
+        go_to_destination_with_obstacle_avoid(jetbot_motor, path_center)
         arrive_end = False
         return arrive_end
     else:
         # go back to path_end
-        completed = (abs(position[0] - path.end[0])) < 0.05 and (abs(position[1] - path.end[1]) < 0.05)
-        while not completed:
-            continue_flag = False
-            position, _ = get_apriltag()
-            objects = get_objects()
-            while objects != []:
-                obstacle = find_nearest_cube(objects)
-                distance_to_line = basic_move.distance_point_line(position, path.end, obstacle.position)
-                if distance_to_line < 0.08:
-                    approach_obstacle(obstacle.position)
-                    my_obstacle_avoid(jetbot_motor) #TODO
-                    continue_flag = True
-                    break
-            if continue_flag:
-                continue
-            basic_move.linear_motion_with_desired_time(jetbot_motor, path.end, 3)
-            completed = (abs(position[0] - path.end[0])) < 0.05 and (abs(position[1] - path.end[1]) < 0.05)
+        go_to_destination_with_obstacle_avoid(jetbot_motor, path.end)
         arrive_end = True
         return arrive_end
 
-def follow_path(path_end):
+def follow_path(jetbot_motor, path_end):
     """
     Call the function after go_back_to_path and let Jetbot follow the path.
     
@@ -329,21 +293,6 @@ def follow_path(path_end):
     basic_move.linear_motion_with_desired_time(jetbot_motor, path_end, 3)
     arrive_end = (abs(position[0] - path_end[0])) < 0.05 and (abs(position[1] - path_end[1]) < 0.05)
     return arrive_end
-
-
-# maybe don't need
-# def is_finished(excepted_cubes):
-#     """
-#     Determine if all the cubes has been pushed to corresponding base
-#
-#     Args:
-#         excepted_cubes (list of ObjecT): the cubes, which have been pushed to corresponding base
-#
-#     Returns:
-#         bool
-#     """
-#     if len(excepted_cubes) == 6:
-#         return True
 
 class Path:
     """
@@ -365,21 +314,21 @@ def define_paths():
         paths (list of Path): the paths
     """
     paths = []
-    path0 = Path([0.2, 0.2], [1.465, 1.465])
+    path0 = Path([0.3, 0.3], [1.185, 1.185])
     paths.append(path0)
-    path1 = Path([1.465, 1.465], [1.465, 0.2])
+    path1 = Path([1.185, 1.185], [1.185, 0.3])
     paths.append(path1)
-    path2 = Path([1.465, 0.2], [0.2, 1.465])
+    path2 = Path([1.185, 0.3], [0.3, 1.185])
     paths.append(path2)
-    path3 = Path([0.2, 1.465], [1.465, 1.465])
+    path3 = Path([0.3, 1.185], [1.185, 1.185])
     paths.append(path3)
-    path4 = Path([1.465, 1.465], [0.2, 0.2])
+    path4 = Path([1.185, 1.185], [0.3, 0.3])
     paths.append(path4)
-    path5 = Path([0.2, 0.2], [0.2, 1.465])
+    path5 = Path([0.3, 0.3], [0.3, 1.185])
     paths.append(path5)
-    path6 = Path([0.2, 1.465], [1.465, 0.2])
+    path6 = Path([0.3, 1.185], [1.185, 0.3])
     paths.append(path6)
-    path7 = Path([1.465, 0.2], [0.2, 0.2])
+    path7 = Path([1.185, 0.3], [0.3, 0.3])
     paths.append(path7)
     return paths
 
@@ -416,7 +365,7 @@ def get_base_position(cube_name):
 
 def main():
     # initialization
-    # visited_positions = [] #linear_motion with desired time = 3s, every 3 seconds save a position to visited_positions
+    jetbot_motor = MotorControllerWaveshare()
     excepted_cubes = [] # cubes which have been pushed to the corresponding base
     paths = define_paths()
 
@@ -426,21 +375,21 @@ def main():
     for i in range(len(paths)):
         arrive_end = False
         while not arrive_end:
-            next_cube = turning_detection(excepted_cubes)
+            next_cube = turning_detection(jetbot_motor, excepted_cubes)
             if next_cube is not None:
                 base_position = get_base_position(next_cube.name)
-                cube_will_be_pushed = go_to_next_cube(next_cube, excepted_cubes)
-                go_to_start_push_position(base_position, cube_will_be_pushed.position)
-                push_cube(base_position, cube_will_be_pushed)
+                cube_will_be_pushed = go_to_next_cube(jetbot_motor, next_cube, excepted_cubes)
+                go_to_start_push_position(jetbot_motor, base_position, cube_will_be_pushed.position)
+                push_cube(jetbot_motor, base_position, cube_will_be_pushed)
                 excepted_cubes.append(cube_will_be_pushed)
                 if len(excepted_cubes) == 6:
                     basic_move.linear_motion(jetbot_motor, START_POSITION)
                     return
                 basic_move.backwards_distance(jetbot_motor, 0.1)
             else:
-                arrive_end = go_back_to_path(paths[i])
+                arrive_end = go_back_to_path(jetbot_motor, paths[i])
                 if not arrive_end:
-                    arrive_end = follow_path(paths[i].end)
+                    arrive_end = follow_path(jetbot_motor, paths[i].end)
 
     basic_move.linear_motion_with_desired_time(jetbot_motor, START_POSITION, 3)
 
