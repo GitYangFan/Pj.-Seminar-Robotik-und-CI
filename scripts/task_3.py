@@ -144,7 +144,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2 * 3)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 1)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 1)
                 return
         # left side down
         elif current_direction > (np.pi / 6 * 5) and current_direction < (np.pi / 6 * 7):
@@ -153,7 +153,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2 * 3)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 0)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
     elif position[0] > 1.47:
         # right side up
@@ -163,7 +163,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 0)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
         # right side down
         elif current_direction > (np.pi / 6 * 5) and current_direction < (np.pi / 6 * 7):
@@ -172,7 +172,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi / 2)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 1)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 1)
                 return
 
     if position[1] < 0.15:
@@ -183,7 +183,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, 0)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 1)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 1)
                 return
         # under side right
         elif (current_direction > (np.pi / 3 * 4)) and (current_direction < (np.pi / 3 * 5)):
@@ -192,7 +192,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, 0)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 0)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
     elif position[1] > 1.47:
         # up side left
@@ -202,7 +202,7 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 0)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
                 return
         # up side right
         elif (current_direction > (np.pi / 3 * 4)) and (current_direction < (np.pi / 3 * 5)):
@@ -211,10 +211,10 @@ def my_obstacle_avoid(jetbot_motor):
                 # basic_move.turn_to_direction(jetbot_motor, np.pi)
                 return
             else:
-                basic_move.avoid_obstacle(jetbot_motor, 1)
+                basic_move.avoid_obstacle_with_cube(jetbot_motor, 1)
                 return
 
-    basic_move.avoid_obstacle(jetbot_motor, 0)
+    basic_move.avoid_obstacle_with_cube(jetbot_motor, 0)
 
 def push_cube(base_position, cube):
     """

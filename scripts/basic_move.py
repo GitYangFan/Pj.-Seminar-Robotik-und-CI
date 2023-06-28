@@ -70,6 +70,36 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
         time.sleep(duration)
         stop(jetbot_motor)
 
+# let the jetbot turn to a desired angle with cube
+def turn_to_direction_with_cube(jetbot_motor, direction):
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    direction: The desired direction you want the Jetbot turn to : (unit: radian) (y-axis is 0, clockwise [0~2*pi])
+
+    Returns
+    ------------
+    """
+    # direction: desired gradient angle
+    position, orientation = apriltag.get_apriltag()
+    print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
+    difference_cache = (direction - orientation[2])
+    difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
+    time_init = time.time()
+    if difference < np.pi:
+        duration = 4 * difference / (2 * np.pi)  # rotate one circle need 4 second
+        # turn to the desired direction
+        jetbot_motor.set_speed(0.165, 0)  # rotate clockwise
+        time.sleep(duration)
+        stop(jetbot_motor)
+    else:
+        duration = 4 * (2 * np.pi - difference) / (2 * np.pi)  # rotate one circle need 4 second
+        jetbot_motor.set_speed(0, 0.165)  # rotate counterclockwise
+        time.sleep(duration)
+        stop(jetbot_motor)
+    duration = time.time() - time_init
+    print('duration:', duration)
 
 # let the jetbot turn to a desired angle
 def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to improve the accuracy
@@ -135,6 +165,37 @@ def avoid_obstacle(jetbot_motor, side):  # choose the side you want to go (left:
         jetbot_motor.set_speed(0.1, 0.2)  # turn half circle counterclockwise to avoid the obstacle
         time.sleep(2.75)
         jetbot_motor.set_speed(0.1, -0.1)  # Rotate pi/2 in place to middle
+        time.sleep(1)
+        stop(jetbot_motor)
+
+# let the jetbot to avoid the obstacle in front of it with cube
+def avoid_obstacle_with_cube(jetbot_motor, side):  # choose the side you want to go (left: side=0 / right: side=1)
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    side: choose the side you want to go (left: side=0 / right: side=1)
+
+    Returns
+    ------------
+    """
+    # avoid the obstacle in front of jetbot
+    if side == 0:  # go from the left side
+        jetbot_motor.set_speed(0, 0.165)  # Rotate pi/2 in place to left
+        time.sleep(1)
+        stop(jetbot_motor)
+        jetbot_motor.set_speed(0.2, 0.1)  # turn half circle clockwise to avoid the obstacle
+        time.sleep(2.75)
+        jetbot_motor.set_speed(0, 0.165)  # Rotate pi/2 in place to middle
+        time.sleep(1)
+        stop(jetbot_motor)
+    else:  # go from the right side
+        jetbot_motor.set_speed(0.165, 0)  # Rotate pi/2 in place to right
+        time.sleep(1)
+        stop(jetbot_motor)
+        jetbot_motor.set_speed(0.1, 0.2)  # turn half circle counterclockwise to avoid the obstacle
+        time.sleep(2.75)
+        jetbot_motor.set_speed(0.165, 0)  # Rotate pi/2 in place to middle
         time.sleep(1)
         stop(jetbot_motor)
 
