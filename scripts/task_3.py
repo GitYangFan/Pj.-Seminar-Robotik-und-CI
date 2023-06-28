@@ -99,7 +99,7 @@ def go_to_start_push_position(base_position, object_position):
         continue_flag = False
         position, _ = get_apriltag()
         objects = get_objects()
-        while objects != []
+        while objects != []:
             obstacle = find_nearest_cube(objects)
             distance_to_line = basic_move.distance_point_line(position, start_push_position, obstacle.position)
             if distance_to_line < 0.08:
@@ -236,7 +236,7 @@ def push_cube(base_position, cube):
         objects = get_objects()
         if cube in objects:
             objects.remove(cube)
-        while objects != []
+        while objects != []:
             obstacle = find_nearest_cube(objects)
             distance_to_line = basic_move.distance_point_line(position, base_position, obstacle.position)
             if distance_to_line < 0.08:
@@ -279,7 +279,7 @@ def go_back_to_path(path):
             continue_flag = False
             position, _ = get_apriltag()
             objects = get_objects()
-            while objects != []
+            while objects != []:
                 obstacle = find_nearest_cube(objects)
                 distance_to_line = basic_move.distance_point_line(position, path_center, obstacle.position)
                 if distance_to_line < 0.08:
@@ -300,7 +300,7 @@ def go_back_to_path(path):
             continue_flag = False
             position, _ = get_apriltag()
             objects = get_objects()
-            while objects != []
+            while objects != []:
                 obstacle = find_nearest_cube(objects)
                 distance_to_line = basic_move.distance_point_line(position, path.end, obstacle.position)
                 if distance_to_line < 0.08:
@@ -384,13 +384,13 @@ def define_paths():
     return paths
 
 # base positions
-START_POSITION = []
-RED_BASE_POSITION = []
-GREEN_BASE_POSITION = []
-BLUE_BASE_POSITION = []
-YELLOW_BASE_POSITION = []
-PURPLE_BASE_POSITION = []
-ORANGE_BASE_POSITION = []
+START_POSITION = [0.10, 0.10]
+RED_BASE_POSITION = [0.74, 0.10]
+GREEN_BASE_POSITION = [0.10, 0.74]
+BLUE_BASE_POSITION = [0.10, 1.475]
+YELLOW_BASE_POSITION = [1.475, 0.74]
+PURPLE_BASE_POSITION = [1.475, 0.10]
+ORANGE_BASE_POSITION = [0.74, 1.475]
 def get_base_position(cube_name):
     """
     Get the corresponding base_position according to cube's name
@@ -441,6 +441,8 @@ def main():
                 arrive_end = go_back_to_path(paths[i])
                 if not arrive_end:
                     arrive_end = follow_path(paths[i].end)
+
+    basic_move.linear_motion_with_desired_time(jetbot_motor, START_POSITION, 3)
 
 
 if __name__ == "__main__":
