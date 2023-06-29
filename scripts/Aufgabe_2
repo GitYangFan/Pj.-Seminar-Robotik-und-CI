@@ -2,64 +2,11 @@ import math
 import numpy as np
 #import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt, patches
-#from basic_move import linear_motion
-#from basic_move import stop
-#from motors_waveshare import MotorControllerWaveshare
-#from detection_results import get_detection
-#from apriltag import get_apriltag
-"""cubes_rot_blue = {
-    "w1": [40, 70, "BLUE"],
-    "w2": [30, 70, "RED"],
-    "w3": [55, 70, "RED"],
-    "w4": [70, 70, "BLUE"],
-    "w5": [100, 90, "RED"],
-    "w6": [80, 90, "BLUE"]
-}
-
-current_location = (10, 10)  # Starting location
-visited_cubes = []  # List to store the visited cubes
-
-# Function to calculate the distance between two points
-def calculate_distance(p1, p2):
-    x1, y1 = p1
-    x2, y2 = p2
-    distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
-    return distance
-
-# Function to move in a clockwise direction
-def move_clockwise(current_location, next_location):
-    print("Moving clockwise from", current_location, "to", next_location)
-
-# Function to move in a counterclockwise direction
-def move_counterclockwise(current_location, next_location):
-    print("Moving counterclockwise from", current_location, "to", next_location)
-
-# Visit each cube based on the specified conditions
-for cube_key, cube_values in cubes_rot_blue.items():
-    cube_location = (cube_values[0], cube_values[1])
-    cube_color = cube_values[2]
-
-    # Calculate distance between current location and the cube
-    distance = calculate_distance(current_location, cube_location)
-    print("Moving from", current_location, "to", cube_location)
-    current_location = cube_location
-
-    # Check the color of the cube and move accordingly
-    if cube_color == "RED":
-        move_clockwise(current_location, cube_location)
-    elif cube_color == "BLUE":
-        move_counterclockwise(current_location, cube_location)
-
-    visited_cubes.append(cube_key)
-
-# Return to the starting point
-distance = calculate_distance(current_location, (10, 10))
-print("Moving from", current_location, "to", (10, 10))
-current_location = (10, 10)
-
-print("Visited cubes:", visited_cubes)
-
-"""
+from basic_move import linear_motion
+from basic_move import stop
+from motors_waveshare import MotorControllerWaveshare
+from detection_results import get_detection
+from apriltag import get_apriltag
 
 def merge_dicts(dict1, dict2):
     merged_dict = dict1.copy()  # Create a copy of dict1
@@ -133,17 +80,6 @@ def intersection_point(point, line):
 x1, y1 = [-1, 12], [1, 4]
 x2, y2 = [1, 10], [3, 2]
 
-"""
-cubes_rot_blue = {
-    "w1": [40 , 70, "BLUE"],
-    "w2": [30, 70, "RED"],
-    "w3": [55, 70, "RED"],
-    "w4": [70, 70, "BLUE"],
-    "w5": [100, 90, "RED"],
-    "w6": [80, 90, "BLUE"]
-
-}
-"""
 cubes_rot_blue = {
     "w1": [120 , 45 ],
     "w2": [22, 20],
