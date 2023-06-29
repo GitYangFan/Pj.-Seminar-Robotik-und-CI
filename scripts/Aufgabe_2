@@ -367,7 +367,7 @@ for j in merged_sorted:
                 else:
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
             ####
-
+            print(rounded_pos_stop)
             for i in range(int(rounded_pos_stop )+ 1):
 
                 #Sich umdrehen nach der Richtung des Zielpunkts
