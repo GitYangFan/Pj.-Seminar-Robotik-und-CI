@@ -5,6 +5,7 @@ from apriltag_ros.msg import AprilTagDetectionArray
 
 apriltag = []
 
+
 def euler_from_quaternion(quaternion):
     """
     Convert a quaternion into euler angles (roll, pitch, yaw)
@@ -28,25 +29,30 @@ def euler_from_quaternion(quaternion):
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
     yaw_z = math.atan2(t3, t4)
-    if yaw_z < 0:                   # Adjust the yaw angle range to [0,2*pi]
-        yaw_z = 2*np.pi + yaw_z
+    if yaw_z < 0:  # Adjust the yaw angle range to [0,2*pi]
+        yaw_z = 2 * np.pi + yaw_z
 
     euler = [roll_x, pitch_y, yaw_z]
     return euler  # in radians
 
-def transformation(euler,position_relativ):
+
+def transformation(euler, position_relativ):
     # euler = euler_from_quaternion(quaternion)
-    euler = [euler[0]/3.14*180,euler[1]/3.14*180,euler[2]/3.14*180]
+    euler = [euler[0] / 3.14 * 180, euler[1] / 3.14 * 180, euler[2] / 3.14 * 180]
     angle_x = np.deg2rad(euler[0])
     angle_y = np.deg2rad(euler[1])
     angle_z = np.deg2rad(euler[2])
-    rotation_matrix_x = np.array([[1, 0, 0], [0, np.cos(angle_x), -np.sin(angle_x)], [0, np.sin(angle_x), np.cos(angle_x)]])
-    rotation_matrix_y = np.array([[np.cos(angle_y), 0, np.sin(angle_y)], [0, 1, 0], [-np.sin(angle_y), 0, np.cos(angle_y)]])
-    rotation_matrix_z = np.array([[np.cos(angle_z), -np.sin(angle_z), 0], [np.sin(angle_z), np.cos(angle_z), 0], [0, 0, 1]])
-    rotation_matrix = np.dot(np.dot(rotation_matrix_z,rotation_matrix_y),rotation_matrix_x)
-    position_real = -np.dot(rotation_matrix,position_relativ)
+    rotation_matrix_x = np.array(
+        [[1, 0, 0], [0, np.cos(angle_x), -np.sin(angle_x)], [0, np.sin(angle_x), np.cos(angle_x)]])
+    rotation_matrix_y = np.array(
+        [[np.cos(angle_y), 0, np.sin(angle_y)], [0, 1, 0], [-np.sin(angle_y), 0, np.cos(angle_y)]])
+    rotation_matrix_z = np.array(
+        [[np.cos(angle_z), -np.sin(angle_z), 0], [np.sin(angle_z), np.cos(angle_z), 0], [0, 0, 1]])
+    rotation_matrix = np.dot(np.dot(rotation_matrix_z, rotation_matrix_y), rotation_matrix_x)
+    position_real = -np.dot(rotation_matrix, position_relativ)
     # print(position_real)
     return position_real
+
 
 def tag_callback(data):
     global apriltag
@@ -54,8 +60,8 @@ def tag_callback(data):
         apriltag = data.detections[0].pose.pose.pose
         # print(apriltag.position.x)
         # print(data.detections[0].pose.pose.pose
-        #print('detection:',data.detections)
-       
+        # print('detection:',data.detections)
+
 
 def get_apriltag():
     # rospy.init_node('apriltag_listener')
@@ -63,25 +69,22 @@ def get_apriltag():
 
     # Loop waiting to receive data
     while not rospy.is_shutdown():
-        if apriltag !=[]:
-            #print(apriltag)
-            quaternion = [apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z, apriltag.orientation.w]
+        if apriltag != []:
+            # print(apriltag)
+            quaternion = [apriltag.orientation.x, apriltag.orientation.y, apriltag.orientation.z,
+                          apriltag.orientation.w]
             position_relative = [apriltag.position.x, apriltag.position.y, apriltag.position.z]
             orientation = euler_from_quaternion(quaternion)
-            position = transformation(orientation,position_relative)
-            #print('position_relative:', position_relative, 'quaternion:',quaternion)
-            return position, orientation
+            position = transformation(orientation, position_relative)
+            # print('position_relative:', position_relative, 'quaternion:',quaternion)
+            if (0 < position[0] < 1.485) and (0 < position[1] < 1.485):
+                return position, orientation
         rospy.sleep(0.1)
-
-
 
 
 """
 -------------------- test ----------------------------
 """
 
-
-
 # position, orientation = get_apriltag()
 # print('position:', position, 'orientation:',orientation)
-

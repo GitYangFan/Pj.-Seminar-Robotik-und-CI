@@ -354,7 +354,7 @@ def linear_motion(jetbot_motor, end):
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.3
+    safe_width = 0.1
     time_init = time.time()
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!

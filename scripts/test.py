@@ -124,11 +124,17 @@ print(cross_product)
 # print(test)
 
 
-test = [1, 2, 3, 4, 5]
-idx_cubeinbase = [2,4]
+# test = [1, 2, 3, 4, 5]
+# idx_cubeinbase = [2,4]
+#
+# if idx_cubeinbase:
+#     for i in range(len(idx_cubeinbase) - 1, -1, -1):
+#         del test[idx_cubeinbase[i]]
+#
+# print(test)
 
-if idx_cubeinbase:
-    for i in range(len(idx_cubeinbase) - 1, -1, -1):
-        del test[idx_cubeinbase[i]]
+dict1 = {"a": 1, "b": 2}
+dict2 = {"c": 3, "d": 4}
 
-print(test)
+merged_dict = {**dict1, **dict2}
+print(merged_dict)
