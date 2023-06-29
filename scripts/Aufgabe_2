@@ -83,8 +83,8 @@ x1, y1 = [-0.1, 0.12], [0.1, 0.4]
 x2, y2 = [0.1, 0.10], [0.3, 0.2]
 
 cubes_rot_blue = {
-    "w1": [1.2 , 0.45 ],
-    "w2": [0.22, 0.20],
+    "w1": [1.20 , 0.450 ],
+    "w2": [0.42, 0.40],
     "w3": [1.20, 1.20],
     "w4": [1.20, 0.70],
     "w5": [0.65, 0.90],
@@ -117,12 +117,12 @@ for ob, value in cubes_rot_blue.items():
 
 # sort based on the first digits then on the second digits
 #smaller than or equal 75
-sorted_x_smaller75_d = dict(sorted(x_smaller75_d.items(), key=lambda x: int(str(x[1][0]))))
-sorted_y_smaller75_d = dict(sorted(sorted_x_smaller75_d.items(), key=lambda x: int(str(x[1][1]))))
+sorted_x_smaller75_d = dict(sorted(x_smaller75_d.items(), key=lambda x: (str(x[1][0]))))
+sorted_y_smaller75_d = dict(sorted(sorted_x_smaller75_d.items(), key=lambda x: (str(x[1][1]))))
 
 #bigger than 75
-sorted_x_bigger75_d = dict(sorted(x_bigger75_d.items(), key=lambda x: int(str(x[1][0])), reverse=True))
-sorted_y_bigger75_d = dict(sorted(sorted_x_bigger75_d.items(), key=lambda x: int(str(x[1][1])),reverse=True))
+sorted_x_bigger75_d = dict(sorted(x_bigger75_d.items(), key=lambda x: (str(x[1][0])), reverse=True))
+sorted_y_bigger75_d = dict(sorted(sorted_x_bigger75_d.items(), key=lambda x: (str(x[1][1])),reverse=True))
 
 #merge the two dict together
 #merged_sorted = {**sorted_y_smaller75_d, **sorted_y_bigger75_d}
@@ -178,7 +178,7 @@ for i in merged_sorted:
 
     if i in x_smaller75_d:
         #from the start point
-        if r in range(0.1, 0.20) and b in range(0.10, 0.20):
+        if r *100 in range(10, 20) and b*100 in range(10, 20):
             x1 = [r  , j[0]]
             x2 = [b , j[1] -0.075]
 
