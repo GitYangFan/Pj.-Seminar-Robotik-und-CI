@@ -79,16 +79,16 @@ def intersection_point(point, line):
     return intersection_x, intersection_y
 
 
-x1, y1 = [-1, 12], [1, 4]
-x2, y2 = [1, 10], [3, 2]
+x1, y1 = [-0.1, 0.12], [0.1, 0.4]
+x2, y2 = [0.1, 0.10], [0.3, 0.2]
 
 cubes_rot_blue = {
-    "w1": [120 , 45 ],
-    "w2": [22, 20],
-    "w3": [120, 120],
-    "w4": [120, 70],
-    "w5": [65, 90],
-    "w6": [80, 60]
+    "w1": [1.2 , 0.45 ],
+    "w2": [0.22, 0.20],
+    "w3": [1.20, 1.20],
+    "w4": [1.20, 0.70],
+    "w5": [0.65, 0.90],
+    "w6": [0.80, 0.60]
 
 }
 
@@ -99,7 +99,7 @@ x_bigger75 = []
 
 for x in cubes_rot_blue:
     j = cubes_rot_blue[x]
-    if j[0] <= 75:
+    if j[0] <= 0.75:
         x_smaller75.append(x)
     else:
         x_bigger75.append(x)
@@ -127,12 +127,13 @@ sorted_y_bigger75_d = dict(sorted(sorted_x_bigger75_d.items(), key=lambda x: int
 #merge the two dict together
 #merged_sorted = {**sorted_y_smaller75_d, **sorted_y_bigger75_d}
 merged_sorted = merge_dicts(sorted_y_smaller75_d, sorted_y_bigger75_d)
-x1 = [0 , 100]
-x2 = [0, 600]
+
+x1 = [0 , 1]
+x2 = [0, 1]
 
 #current_postion
-r=10
-b=10
+r=0.1
+b=0.1
 
 #next_postion
 
@@ -177,82 +178,82 @@ for i in merged_sorted:
 
     if i in x_smaller75_d:
         #from the start point
-        if r in range(10, 20) and b in range(10, 20):
+        if r in range(0.1, 0.20) and b in range(0.10, 0.20):
             x1 = [r  , j[0]]
-            x2 = [b , j[1] -7.5]
+            x2 = [b , j[1] -0.075]
 
             if  j[0] >= jj[0]  :
                 # current postion
-                r = j[0] - 7.5
+                r = j[0] - 0.075
                 b = j[1]
 
             if  j[0] < jj[0]  :
                 # current postion
-                r = j[0] + 7.5
+                r = j[0] + 0.075
                 b = j[1]
 
         elif i != last_ob_x_smaller75_d :
 
             x1 = [r  , j[0] ]
-            x2 = [b , j[1] -7.5 ]
+            x2 = [b , j[1] -0.075 ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 7.5
+                r = j[0] - 0.075
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 7.5
+                r = j[0] + 0.075
                 b = j[1]
 
         else:
             x1 = [r  , j[0] ]
-            x2 = [b , j[1] -7.5 ]
+            x2 = [b , j[1] -0.075 ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 7.5
+                r = j[0] -0.075
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 7.5
+                r = j[0] + 0.075
                 b = j[1]
 
     if i in x_bigger75_d:
         if i == fisrt_ob_x_bigger75_d:
 
-            x1 = [r  , j[0] -7.5 ]
+            x1 = [r  , j[0] -0.075 ]
             x2 = [b , j[1] ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 7.5
+                r = j[0] - 0.075
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 7.5
+                r = j[0] + 0.075
                 b = j[1]
 
         else:
             x1 = [r, j[0] ]
-            x2 = [b, j[1] + 7.5 ]
+            x2 = [b, j[1] + 0.075 ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 7.5
+                r = j[0] - 0.075
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 7.5
+                r = j[0] + 0.075
                 b = j[1]
 
 
 
-    circle2 = plt.Circle((j[0], j[1]), 7.5 , fill=False  , edgecolor='black', facecolor='none')
+    circle2 = plt.Circle((j[0], j[1]),0.075 , fill=False  , edgecolor='black', facecolor='none')
 
 
 
@@ -264,7 +265,7 @@ for i in merged_sorted:
     planned_trajectory['point'+ i] = []
     planned_trajectory["point" + i] += [x1[0], x2[0]]
     planned_trajectory["point" + i] += [x1[1], x2[1]]
-    planned_trajectory['kreis' + i] = [j[0], j[1], 7.5 ]
+    planned_trajectory['kreis' + i] = [j[0], j[1], 0.075]
 
     if x1[1] != r and x2[1] != b:
         planned_trajectory['kurve' + i] = [r, b]
@@ -292,7 +293,7 @@ for i in merged_sorted:
 
     if i == last_ob:
         x1 = [j[0],j[0]]
-        x2 = [j[1]- 7.5, 10]
+        x2 = [j[1]- 0.075, 0.1]
         planned_trajectory['start_point90' ] = []
         planned_trajectory["start_point90" ] += [x1[0], x2[0]]
         planned_trajectory["start_point90"] += [x1[1], x2[1]]
@@ -305,8 +306,8 @@ for i in merged_sorted:
          #         width=0.1, length_includes_head=True, head_width=0.3, color='red')
         # ax.add_patch(circle2)
 
-        x1 = [j[0],10]
-        x2 = [10, 10]
+        x1 = [j[0],0.1]
+        x2 = [0.1, 0.1]
         planned_trajectory['start_point' ] = []
         planned_trajectory["start_point" ] += [x1[0], x2[0]]
         planned_trajectory["start_point"] += [x1[1], x2[1]]
@@ -395,12 +396,12 @@ for j in merged_sorted:
                         #turn_clockwise(jetbot_motor, np-pi)
                     else:
                         #noch 20 cm fahren
-                        adjacent, opposite = calculate_sides(20, direction)
+                        adjacent, opposite = calculate_sides(0.2, direction)
                         end = [position[0] + opposite, position[1] + adjacent]
                         linear_motion(jetbot_motor, end)
 
                 else:
-                    adjacent, opposite = calculate_sides(20, direction)
+                    adjacent, opposite = calculate_sides(0.2, direction)
                     end = [position[0] + opposite, position[1] + adjacent]
                     linear_motion(jetbot_motor, end)
 
