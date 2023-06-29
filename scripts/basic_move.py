@@ -473,7 +473,7 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
                 break
             else:
                 print("Move for a desired time! Stop at:", position)
-                flag = True
+                flag = False
                 stop(jetbot_motor)
                 break
 

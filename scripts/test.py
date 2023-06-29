@@ -133,8 +133,11 @@ print(cross_product)
 #
 # print(test)
 
-dict1 = {"a": 1, "b": 2}
-dict2 = {"c": 3, "d": 4}
+# dict1 = {"a": 1, "b": 2}
+# dict2 = {"c": 3, "d": 4}
+#
+# merged_dict = {**dict1, **dict2}
+# print(merged_dict)
 
-merged_dict = {**dict1, **dict2}
-print(merged_dict)
+for i in range(3):
+    print(i)
