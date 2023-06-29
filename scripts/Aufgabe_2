@@ -3,10 +3,12 @@ import numpy as np
 #import matplotlib.pyplot as plt
 from matplotlib import pyplot as plt, patches
 from basic_move import linear_motion
+from basic_move import *
 from basic_move import stop
 from motors_waveshare import MotorControllerWaveshare
 from detection_results import get_detection
-from apriltag import get_apriltag
+from object_localization  import *
+import apriltag 
 
 def merge_dicts(dict1, dict2):
     merged_dict = dict1.copy()  # Create a copy of dict1
@@ -138,8 +140,8 @@ b=10
 planned_trajectory = {}
 
 
-fig = plt.figure()
-ax = fig.add_subplot()
+# fig = plt.figure()
+# ax = fig.add_subplot()
 
 # Function to calculate the distance between two points
 def calculate_distance(o1, o2):
@@ -267,10 +269,10 @@ for i in merged_sorted:
     if x1[1] != r and x2[1] != b:
         planned_trajectory['kurve' + i] = [r, b]
 
-    line = plt.plot(x1 , x2 )
-    plt.arrow(x1[0], x2[0], x1[1] - x1[0], x2[1]- x2[0],
-              width=1, length_includes_head=True, head_width=2, color='red')
-    ax.add_patch(circle2)
+    # line = plt.plot(x1 , x2 )
+    # plt.arrow(x1[0], x2[0], x1[1] - x1[0], x2[1]- x2[0],
+    #           width=1, length_includes_head=True, head_width=2, color='red')
+    #ax.add_patch(circle2)
 
     #add_arrow(line, ax, label='Path')
     """    ax.annotate("", xytext=( r,  j[0]), xy=( b , j [1] ),
@@ -283,7 +285,7 @@ for i in merged_sorted:
 
     arrow0 = x1[adx0 + 1], x2[adx0 + 1], x1[adx0 + 1] - x1[adx0], x2[adx0 + 1] - x2[adx0]
 
-    plt.arrow(*arrow0 , shape='full', lw=0, length_includes_head=True, head_width=0.12)
+    # plt.arrow(*arrow0 , shape='full', lw=0, length_includes_head=True, head_width=0.12)
 
 
 
@@ -296,9 +298,9 @@ for i in merged_sorted:
         planned_trajectory["start_point90"] += [x1[1], x2[1]]
 
 
-        plt.plot(x1, x2, label='Trajectory')
-        plt.arrow( j[0] ,(j[1]- 7.5) , j[0] - j[0],10- (j[1]- 7.5),
-                  width=1, length_includes_head=True, head_width=2, color='red')
+        # plt.plot(x1, x2, label='Trajectory')
+        # plt.arrow( j[0] ,(j[1]- 7.5) , j[0] - j[0],10- (j[1]- 7.5),
+        #           width=1, length_includes_head=True, head_width=2, color='red')
         #plt.arrow(prev_value[0], prev_value[1], value[0] - prev_value[0], value[1] - prev_value[1],
          #         width=0.1, length_includes_head=True, head_width=0.3, color='red')
         # ax.add_patch(circle2)
@@ -309,9 +311,9 @@ for i in merged_sorted:
         planned_trajectory["start_point" ] += [x1[0], x2[0]]
         planned_trajectory["start_point"] += [x1[1], x2[1]]
 
-        plt.plot(x1, x2, label='Trajectory')
-        plt.arrow(j[0], 10, 10 - j[0],10- 10,
-                  width=1, length_includes_head=True, head_width=2, color='red')
+        # plt.plot(x1, x2, label='Trajectory')
+        # plt.arrow(j[0], 10, 10 - j[0],10- 10,
+        #           width=1, length_includes_head=True, head_width=2, color='red')
 
 
     #Drawing_colored_circle = plt.Circle((j[0], j[1]), 200)
@@ -365,13 +367,13 @@ for j in merged_sorted:
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
             ####
 
-            for i in range(rounded_pos_stop + 1):
+            for i in range(int(rounded_pos_stop )+ 1):
 
                 #Sich umdrehen nach der Richtung des Zielpunkts
                 turn_to_direction(jetbot_motor, direction)
                 #detektion ob eine Kugel da ist
                 #get_detection()
-                object_name,object_position = get_object_position()
+                object_name,_, object_position,_ = get_object_position()
                 if object_name == "ball":
                     #Abstand zwischen der Kugel und unserer Trajektorie zu dem Objekt
 
@@ -508,16 +510,16 @@ for j in merged_sorted:
 """
 print(planned_trajectory)
 # Set plot
-plt.xlim(0, 149.5)
-plt.ylim(0, 149.5)
-plt.xlabel('X')
-plt.ylabel('Y')
-plt.title('Arena')
+# plt.xlim(0, 149.5)
+# plt.ylim(0, 149.5)
+# plt.xlabel('X')
+# plt.ylabel('Y')
+# plt.title('Arena')
 #plt.legend()
 
-plt.grid()
+# plt.grid()
 
-plt.show()
+# plt.show()
 
 #Turn to the direction
 #has been tested
