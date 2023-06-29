@@ -83,7 +83,7 @@ x1, y1 = [-0.1, 0.12], [0.1, 0.4]
 x2, y2 = [0.1, 0.10], [0.3, 0.2]
 
 cubes_rot_blue = {
-    "w1": [1.20 , 0.450 ],
+    "w1": [1.20, 0.45],
     "w2": [0.42, 0.40],
     "w3": [1.20, 1.20],
     "w4": [1.20, 0.70],
@@ -366,67 +366,19 @@ for j in merged_sorted:
                     direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
                 else:
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
-            ####
-            print(rounded_pos_stop)
-            for i in range(int(rounded_pos_stop )+ 1):
-
-                #Sich umdrehen nach der Richtung des Zielpunkts
-                turn_to_direction(jetbot_motor, direction)
-                #detektion ob eine Kugel da ist
-                #get_detection()
-                object_name,_, object_position,_ = get_object_position()
-                if object_name == "ball":
-                    #Abstand zwischen der Kugel und unserer Trajektorie zu dem Objekt
-
-                    intersection = intersection_point(object_position, line)
-                    distance_ob = calculate_distance(position[0:2], intersection)
-                    #ich glaube wir koennen nicht einfach 0.1 anziehen von distance_ob
-                    adjacent, opposite = calculate_sides(distance_ob , direction)
-                    print("opposite: ",opposite)
-                    print("adjacent: ", adjacent)
-                    line = [ position[0:2] , o2]
-                    width = distance_to_line(object_position, line)
-                    if distance_ob < 0.3 and width < 0.15 :
+        
+            turn_to_direction(jetbot_motor, direction)
+            #detektion ob eine Kugel da ist
+            #get_detection()
+            object_name,_, object_position,_ = get_object_position()
+            adjacent, opposite = calculate_sides(0.30, direction)
+            print("opposite: ", opposite)
+            print("adjacent: ", adjacent)
+            end = [position[0] + opposite, position[1] + adjacent]
+            linear_motion(jetbot_motor, end)
 
 
 
-                        end = [position[0]+ (opposite), position[1]+ (adjacent)]
-                        linear_motion(jetbot_motor, end)
-                        #muessen wir wissen ob wir recht oder Licks umdrehen muessen
-                        #wenn die ball auf der richten Seite von dem Jetbot dann muss er sich links umdrehen
-                        turn_counterclockwise(jetbot_motor, np.pi)
-                        #turn_clockwise(jetbot_motor, np-pi)
-                    else:
-                        #noch 20 cm fahren
-                        adjacent, opposite = calculate_sides(0.30, direction)
-                        print("opposite: ", opposite)
-                        print("adjacent: ", adjacent)
-                        end = [position[0] + opposite, position[1] + adjacent]
-                        linear_motion(jetbot_motor, end)
-
-                else:
-                    adjacent, opposite = calculate_sides(0.30, direction)
-                    print("opposite: ",opposite)
-                    print("adjacent: ", adjacent)
-                    end = [position[0] + opposite, position[1] + adjacent]
-                    linear_motion(jetbot_motor, end)
-
-                #nicht vergesssen muss der Jetbot erstmal sich bewegen
-                #Wenn wir eine Methode finden dass der Jetbot jede 20 cm anhaelt und dann detektieren ob es eine Kugel gibt
-                """
-                #halten wir jede 20 cm an
-
-                    #muss der JETBOT 20 cm fahren
-                    #bzw. wie koennen wir den end punkt rechnen wenn wir jede 20 cm anhalten?
-                    #Pythagoras rechnen um 20 cm  zu fahren
-
-                    #stop(jetbot_motor)
-                    #detection if any odject thier
-
-                        #fahr eine halbkreis
-                        #dann  fahr gerade aus bis wir denn naechten Punkt erreichen
-
-                """
 
         if i == "kreis" + j:
 
