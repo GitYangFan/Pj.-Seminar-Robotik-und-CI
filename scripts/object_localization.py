@@ -122,7 +122,7 @@ def get_object_position():
     object_position = [None] * length
     object_distance_horizon = [None] * length
     bases = [[0.1, 0.1], [0.7425, 0.1], [1.385, 0.1], [1.385, 0.7425], [0.7425, 1.385], [0.1, 1.385], [0.1, 0.7425]]
-    idx_cubeinbase = []
+    idx_cube_remove = []
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
         print('object angle from camera to object:', object_angle[i][0])
@@ -134,19 +134,22 @@ def get_object_position():
         # object_position[i] = [object_position[i][1], object_position[i][0]]
         # find the cube within the base area
         for base in bases:
-            if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.15:
-                idx_cubeinbase.append(i)
+            if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.1:
+                idx_cube_remove.append(i)
+        if object_score < 70:
+            idx_cube_remove.append(i)
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
     # remove the cube within the base area
-    if idx_cubeinbase:
-        for i in range(len(idx_cubeinbase) - 1, -1, -1):
-            print('remove the object within the base area:', object_name[idx_cubeinbase[i]], object_position[idx_cubeinbase[i]])
-            del object_name[idx_cubeinbase[i]]
-            del object_score[idx_cubeinbase[i]]
-            del object_position[idx_cubeinbase[i]]
-            del object_distance_horizon[idx_cubeinbase[i]]
+    if idx_cube_remove:
+        for i in range(len(idx_cube_remove) - 1, -1, -1):
+            print('remove the object within the base area:', object_name[idx_cubeinbase[i]],
+                  object_position[idx_cube_remove[i]])
+            del object_name[idx_cube_remove[i]]
+            del object_score[idx_cube_remove[i]]
+            del object_position[idx_cube_remove[i]]
+            del object_distance_horizon[idx_cube_remove[i]]
     return object_name, object_score, object_position, object_distance_horizon
 
 
@@ -159,7 +162,7 @@ def get_objects():
     object_distance_horizon = [None] * length
     objects = []
     bases = [[0.1, 0.1], [0.7425, 0.1], [1.385, 0.1], [1.385, 0.7425], [0.7425, 1.385], [0.1, 1.385], [0.1, 0.7425]]
-    idx_cubeinbase = []
+    idx_cube_remove = []
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
         print('object angle from camera to object:', object_angle[i][0])
@@ -171,20 +174,22 @@ def get_objects():
         # object_position[i] = [object_position[i][1], object_position[i][0]]
         # find the cube within the base area
         for base in bases:
-            if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.15:
-                idx_cubeinbase.append(i)
+            if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.1:
+                idx_cube_remove.append(i)
+        if object_score < 70:
+            idx_cube_remove.append(i)
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
         # remove the cube within the base area
-        if idx_cubeinbase:
-            for i in range(len(idx_cubeinbase) - 1, -1, -1):
+        if idx_cube_remove:
+            for i in range(len(idx_cube_remove) - 1, -1, -1):
                 print('remove the object within the base area:', object_name[idx_cubeinbase[i]],
-                      object_position[idx_cubeinbase[i]])
-                del object_name[idx_cubeinbase[i]]
-                del object_score[idx_cubeinbase[i]]
-                del object_position[idx_cubeinbase[i]]
-                del object_distance_horizon[idx_cubeinbase[i]]
+                      object_position[idx_cube_remove[i]])
+                del object_name[idx_cube_remove[i]]
+                del object_score[idx_cube_remove[i]]
+                del object_position[idx_cube_remove[i]]
+                del object_distance_horizon[idx_cube_remove[i]]
         obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i])
         objects.append(obj)
     return objects
@@ -197,9 +202,10 @@ test 2
 # this node initialization can only be called once !! So it should be writen in main function
 rospy.init_node('object_localization')
 object_name, object_score, object_position, object_distance_horizon = get_object_position()
-print('detected:',object_name, 'possibility:',object_score, 'object position:', object_position,'object horizon distance:',object_distance_horizon)
-#objects = get_objects()
-#print('object class detected:',objects[0].name, 'possibility:',objects[0].score, 'object position:',objects[0].position, 'object horizon distance:',objects[0].distance)
+print('detected:', object_name, 'possibility:', object_score, 'object position:', object_position,
+      'object horizon distance:', object_distance_horizon)
+# objects = get_objects()
+# print('object class detected:',objects[0].name, 'possibility:',objects[0].score, 'object position:',objects[0].position, 'object horizon distance:',objects[0].distance)
 
 # print('distance list:', object_distance, 'angle list:', object_angle)
 
