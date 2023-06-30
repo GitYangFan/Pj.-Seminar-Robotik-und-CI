@@ -304,6 +304,23 @@ def distance_point_line(line_start, line_end, point):
     return distance
 
 
+# calculate the direction angle with end point and start point
+def get_direction(start, end):
+    # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+    v1 = end - start
+    if v1[0] < 0:
+        if v1[1] > 0:
+            direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+        else:
+            direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+    else:
+        if v1[1] < 0:
+            direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+        else:
+            direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+    return direction
+
+
 # linear motion mode with a PID controller
 def linear_motion(jetbot_motor, end):
     """

@@ -139,5 +139,60 @@ print(cross_product)
 # merged_dict = {**dict1, **dict2}
 # print(merged_dict)
 
-for i in range(3):
-    print(i)
+# for i in range(3):
+#     print(i)
+
+from filterpy.kalman import KalmanFilter
+import numpy as np
+
+# 定义Kalman滤波器
+kf = KalmanFilter(dim_x=4, dim_z=2)  # 状态向量为4维，观测向量为2维
+
+# 定义状态转移矩阵，表示系统从t-1时刻到t时刻的状态转移
+kf.F = np.array([[1, 0, 1, 0],
+                 [0, 1, 0, 1],
+                 [0, 0, 1, 0],
+                 [0, 0, 0, 1]])
+
+# 定义观测矩阵，表示观测向量与状态向量之间的映射关系
+kf.H = np.array([[1, 0, 0, 0],
+                 [0, 1, 0, 0]])
+
+# 定义过程噪声协方差矩阵，表示状态转移的噪声
+kf.Q = np.array([[1, 0, 0, 0],
+                 [0, 1, 0, 0],
+                 [0, 0, 1, 0],
+                 [0, 0, 0, 1]])
+
+# 定义观测噪声协方差矩阵，表示观测的噪声
+kf.R = np.array([[1, 0],
+                 [0, 1]])
+
+# 初始化滤波器的状态向量
+kf.x = np.array([0, 0, 0, 0])
+
+# 初始化滤波器的状态协方差矩阵
+kf.P = np.eye(4)
+
+# 对每个接收到的位置信息进行滤波
+def filter_position(tag_position):
+    # 预测状态
+    kf.predict()
+
+    # 更新观测
+    kf.update(tag_position)
+
+    # 获取估计的位置信息
+    filtered_position = kf.x[:2]
+
+    return filtered_position
+
+# 示例使用
+# 假设tag_position为apriltag返回的位置信息，形如[x, y]
+tag_position = np.array([[0.1,0.5],[0.12,0.55],[0.14,0.6],[100,-50],[0.16,0.65],[0.18,0.7]])
+
+for i in range(len(tag_position)):
+    # 使用Kalman滤波器进行位置估计
+    filtered_position = filter_position(tag_position[i])
+
+    print("Filtered Position:", filtered_position)

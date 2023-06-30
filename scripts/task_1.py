@@ -25,4 +25,6 @@ for i in range(12):
     while not flag:
         flag = linear_motion_with_desired_time(jetbot_motor, a[i], 2)
         object_name, object_score, object_position, object_distance_horizon = get_object_position()
+        if object_name != []:
+            avoid_point = [object_position[0][0], object_position[0][1] + 0.1]
 print('Finished! Returned to the start point. ')
