@@ -10,6 +10,15 @@ from detection_results import get_detection
 from object_localization  import *
 import apriltag 
 
+
+# Function to calculate the distance between two points
+def calculate_distance(o1, o2):
+    x1, y1 = o1
+    x2, y2 = o2
+    distance = ((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5
+    return distance
+
+
 def merge_dicts(dict1, dict2):
     merged_dict = dict1.copy()  # Create a copy of dict1
 
@@ -79,7 +88,7 @@ def intersection_point(point, line):
     return intersection_x, intersection_y
 
 
-x1, y1 = [-0.1, 0.12], [0.1, 0.4]
+"""x1, y1 = [-0.1, 0.12], [0.1, 0.4]
 x2, y2 = [0.1, 0.10], [0.3, 0.2]
 
 cubes_rot_blue = {
@@ -320,11 +329,17 @@ for i in merged_sorted:
     #Drawing_colored_circle = plt.Circle((j[0], j[1]), 200)
 #circle1 = patches.Circle((100, 600), radius=50)
 
+"""
+
+planned_trajectory={'pointw2': [0.1, 0.1, 0.22, 0.125], 'kreisw2': [0.22, 0.2, 0.075], 'kurvew2': [0.295, 0.2], 'pointw5': [0.295, 0.2, 0.65, 0.825], 'kreisw5': [0.65, 0.9, 0.075], 'kurvew5': [0.725, 0.9], 'pointw3': [0.725, 0.9, 1.125, 1.2], 'kreisw3': [1.2, 1.2, 0.075], 'pointw4': [1.125, 1.2, 1.2, 0.775], 'kreisw4': [1.2, 0.7, 0.075], 'kurvew4': [1.125, 0.7], 'pointw6': [1.125, 0.7, 0.8, 0.675], 'kreisw6': [0.8, 0.6, 0.075], 'kurvew6': [0.875, 0.6], 'pointw1': [0.875, 0.6, 1.2, 0.525], 'kreisw1': [1.2, 0.45, 0.075], 'kurvew1': [1.125, 0.45], 'start_point90': [1.2, 0.375, 1.2, 0.1], 'start_point': [1.2, 0.1, 0.1, 0.1]}
+
+merged_sorted = {'w2': [0.4, 0.5], 'w5': [0.65, 0.9], 'w3': [1.2, 1.2], 'w4': [1.2, 0.7], 'w6': [0.8, 0.6], 'w1': [1.2, 0.45]}
 
 next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
 for j in merged_sorted:
     next_next_ob = next_next_ob +1
+    last_ob = list(merged_sorted.keys())[-1]
     # next next position
     if j != last_ob:
         ggg = list(merged_sorted.keys())[next_next_ob]
@@ -465,7 +480,9 @@ for j in merged_sorted:
 
 
 """
+planned_trajectory=
 {'pointw2': [10, 10, 22, 12.5], 'kreisw2': [22, 20, 7.5], 'kurvew2': [29.5, 20], 'pointw5': [29.5, 20, 65, 82.5], 'kreisw5': [65, 90, 7.5], 'kurvew5': [72.5, 90], 'pointw3': [72.5, 90, 112.5, 120], 'kreisw3': [120, 120, 7.5], 'pointw4': [112.5, 120, 120, 77.5], 'kreisw4': [120, 70, 7.5], 'kurvew4': [112.5, 70], 'pointw6': [112.5, 70, 80, 67.5], 'kreisw6': [80, 60, 7.5], 'kurvew6': [87.5, 60], 'pointw1': [87.5, 60, 120, 52.5], 'kreisw1': [120, 45, 7.5], 'kurvew1': [112.5, 45], 'start_point90': [120, 37.5, 120, 10], 'start_point': [120, 10, 10, 10]}
+
 """
 print(planned_trajectory)
 # Set plot
