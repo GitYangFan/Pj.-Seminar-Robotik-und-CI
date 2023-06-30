@@ -1,30 +1,43 @@
-#!/usr/bin/env python
+from object_localization import get_object_position
+from object_localization import find_object
+from object_localization import get_objects
 from basic_move import *
-from object_localization import *
+import rospy
+import numpy as np
+from basic_move import turn_to_direction
+import math
+from apriltag import get_apriltag
 from motors_waveshare import MotorControllerWaveshare
+import matplotlib.pyplot as plt
+import time
+
 
 jetbot_motor = MotorControllerWaveshare()
 
-a = [0] * 12
-a[0] = [1.2, 0.2]
-a[1] = [1.2, 0.4]
-a[2] = [0.2, 0.4]
-a[3] = [0.2, 0.6]
-a[4] = [1.2, 0.6]
-a[5] = [1.2, 0.8]
-a[6] = [0.2, 0.8]
-a[7] = [0.2, 1.0]
-a[8] = [1.2, 1.0]
-a[9] = [1.2, 1.2]
-a[10] = [0.2, 1.2]
-a[11] = [0.2, 0.2]
+position,_ =get_apriltag()
+a=[0]*10
+a[0]=[1.3,0.2]
+a[1]=[1.3,0.5]
+a[2]=[0.2,0.5]
+a[3]=[0.2,0.8]
+a[4]=[1.3,0.8]
+a[5]=[1.3,1.1]
+a[6]=[0.2,1.1]
+a[7]=[0.2,1.3]
+a[8]=[1.3,1.3]
+a[9]=[0.1,0.1]
+
+
+
+position, _ = get_apriltag()
+jetbot_motor = MotorControllerWaveshare()
 
 for i in range(12):
-    print('Searching for the point:', i, 'position:', a[i], '-----------------------------------------')
-    flag = False
-    while not flag:
-        flag = linear_motion_with_desired_time(jetbot_motor, a[i], 2)
-        object_name, object_score, object_position, object_distance_horizon = get_object_position()
-        if object_name != []:
-            avoid_point = [object_position[0][0], object_position[0][1] + 0.1]
-print('Finished! Returned to the start point. ')
+    distance_to_destination = math.sqrt((position[0] - a[i][0]) ** 2 + (position[1] - a[i][1]) ** 2)
+    while distance_to_destination > 0.05 :
+        position, _ = get_apriltag()
+        if position[0] > 1.35 and position[0] < 0.1:
+            position, _ = get_apriltag()
+        else:
+            linear_motion_with_desired_time(jetbot_motor, a[i],1.5)
+            distance_to_destination = math.sqrt((position[0] - a[i][0]) ** 2 + (position[1] - a[i][1]) ** 2)
