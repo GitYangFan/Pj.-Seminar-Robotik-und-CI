@@ -180,80 +180,80 @@ for i in merged_sorted:
         #from the start point
         if r *100 in range(10, 20) and b*100 in range(10, 20):
             x1 = [r  , j[0]]
-            x2 = [b , j[1] -0.075]
+            x2 = [b , j[1] -0.1]
 
             if  j[0] >= jj[0]  :
                 # current postion
-                r = j[0] - 0.075
+                r = j[0] - 0.1
                 b = j[1]
 
             if  j[0] < jj[0]  :
                 # current postion
-                r = j[0] + 0.075
+                r = j[0] + 0.1
                 b = j[1]
 
         elif i != last_ob_x_smaller75_d :
 
             x1 = [r  , j[0] ]
-            x2 = [b , j[1] -0.075 ]
+            x2 = [b , j[1] -0.1]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 0.075
+                r = j[0] - 0.1
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 0.075
+                r = j[0] + 0.1
                 b = j[1]
 
         else:
             x1 = [r  , j[0] ]
-            x2 = [b , j[1] -0.075 ]
+            x2 = [b , j[1] -0.1 ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] -0.075
+                r = j[0] -0.1
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 0.075
+                r = j[0] + 0.1
                 b = j[1]
 
     if i in x_bigger75_d:
         if i == fisrt_ob_x_bigger75_d:
 
-            x1 = [r  , j[0] -0.075 ]
+            x1 = [r  , j[0] -0.1 ]
             x2 = [b , j[1] ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 0.075
+                r = j[0] - 0.1
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 0.075
+                r = j[0] + 0.1
                 b = j[1]
 
         else:
             x1 = [r, j[0] ]
-            x2 = [b, j[1] + 0.075 ]
+            x2 = [b, j[1] + 0.1 ]
 
             if j[0] >= jj[0]:
                 # current postion
-                r = j[0] - 0.075
+                r = j[0] - 0.1
                 b = j[1]
 
             if j[0] < jj[0]:
                 # current postion
-                r = j[0] + 0.075
+                r = j[0] + 0.1
                 b = j[1]
 
 
 
-    circle2 = plt.Circle((j[0], j[1]),0.075 , fill=False  , edgecolor='black', facecolor='none')
+    circle2 = plt.Circle((j[0], j[1]),0.1 , fill=False  , edgecolor='black', facecolor='none')
 
 
 
