@@ -84,7 +84,7 @@ def find_object():
     """
     camera_frame = [1080, 720]
     focal_length = get_focal_length()
-    print('focalLength:', focal_length)
+    # print('focalLength:', focal_length)
     object_name, object_score, object_center, object_size = get_detection()  # get the detection results from DNN model
     length = len(object_name)
     object_distance = [None] * length
@@ -125,8 +125,8 @@ def get_object_position():
     idx_cube_remove = []
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
-        print('object angle from camera to object:', object_angle[i][0])
-        object_distance_horizon[i] = math.sqrt((object_distance[i] + 0.03) ** 2 - 0.097 ** 2)
+        # print('object angle from camera to object:', object_angle[i][0])
+        object_distance_horizon[i] = math.sqrt(abs((object_distance[i] + 0.03) ** 2 - 0.097 ** 2))
         object_position[i] = position_jetbot[0:2] + [
             (-object_distance_horizon[i] * np.sin(orientation_jetbot[2] + object_angle[i][0])),
             (object_distance_horizon[i] *
@@ -136,16 +136,18 @@ def get_object_position():
         for base in bases:
             if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.1:
                 idx_cube_remove.append(i)
-        if object_score < 70 and (object_size[0] > 1.5*object_size[1]):
+        if object_score[i] < 0.7:
+            print('score is too low!',object_score[i])
             idx_cube_remove.append(i)
-        print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
-              'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
+        if (object_size[i][0] > 1.5 * object_size[i][1]):
+            print('It is not a cube',object_size[i])
+            idx_cube_remove.append(i)
+        print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
     # remove the cube within the base area
-    if idx_cube_remove:
+    if len(idx_cube_remove)!=0:
         for i in range(len(idx_cube_remove) - 1, -1, -1):
-            print('remove the object within the base area:', object_name[idx_cube_remove[i]],
-                  object_position[idx_cube_remove[i]])
+            print('remove the object within the base area:',object_name[idx_cube_remove[i]],object_position[idx_cube_remove[i]])
             del object_name[idx_cube_remove[i]]
             del object_score[idx_cube_remove[i]]
             del object_position[idx_cube_remove[i]]
@@ -156,7 +158,7 @@ def get_object_position():
 def get_objects():
     position_jetbot, orientation_jetbot = get_apriltag()
     print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
-    object_name, object_score, object_distance, object_angle = find_object()
+    object_name, object_score, object_distance, object_angle, object_size = find_object()
     length = len(object_name)
     object_position = [None] * length
     object_distance_horizon = [None] * length
@@ -166,7 +168,7 @@ def get_objects():
     for i in range(length):
         # object_position[i] = position_jetbot[0:2] + (object_distance[i] * np.cos(object_angle[i][1])) * (orientation_jetbot[2] + object_angle[i][0])
         print('object angle from camera to object:', object_angle[i][0])
-        object_distance_horizon[i] = math.sqrt((object_distance[i] + 0.03) ** 2 - 0.097 ** 2)
+        object_distance_horizon[i] = math.sqrt(abs((object_distance[i] + 0.03) ** 2 - 0.097 ** 2))
         object_position[i] = position_jetbot[0:2] + [
             (-object_distance_horizon[i] * np.sin(orientation_jetbot[2] + object_angle[i][0])),
             (object_distance_horizon[i] *
@@ -176,13 +178,17 @@ def get_objects():
         for base in bases:
             if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.1:
                 idx_cube_remove.append(i)
-        if object_score < 70:
+        if object_score[i] < 0.7:
+            print('score is too low!',object_score[i])
+            idx_cube_remove.append(i)
+        if (object_size[i][0] > 1.5 * object_size[i][1]):
+            print('It is not a cube',object_size[i])
             idx_cube_remove.append(i)
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
         print('------------split---------------')
         # remove the cube within the base area
-        if idx_cube_remove:
+        if len(idx_cube_remove)!=0:
             for i in range(len(idx_cube_remove) - 1, -1, -1):
                 print('remove the object within the base area:', object_name[idx_cube_remove[i]],
                       object_position[idx_cube_remove[i]])
@@ -190,6 +196,7 @@ def get_objects():
                 del object_score[idx_cube_remove[i]]
                 del object_position[idx_cube_remove[i]]
                 del object_distance_horizon[idx_cube_remove[i]]
+    for i in range(len(object_name)):
         obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i])
         objects.append(obj)
     return objects
@@ -204,8 +211,8 @@ rospy.init_node('object_localization')
 object_name, object_score, object_position, object_distance_horizon = get_object_position()
 print('detected:', object_name, 'possibility:', object_score, 'object position:', object_position,
       'object horizon distance:', object_distance_horizon)
-# objects = get_objects()
-# print('object class detected:',objects[0].name, 'possibility:',objects[0].score, 'object position:',objects[0].position, 'object horizon distance:',objects[0].distance)
+#objects = get_objects()
+#print('object class detected:',objects)
 
 # print('distance list:', object_distance, 'angle list:', object_angle)
 
