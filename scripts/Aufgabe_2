@@ -83,8 +83,8 @@ x1, y1 = [-0.1, 0.12], [0.1, 0.4]
 x2, y2 = [0.1, 0.10], [0.3, 0.2]
 
 cubes_rot_blue = {
-    "w1": [1.20, 0.45],
-    "w2": [0.42, 0.40],
+    "w1": [1.20, 0.60],
+    "w2": [0.42, 0.50],
     "w3": [1.20, 1.20],
     "w4": [1.20, 0.70],
     "w5": [0.65, 0.90],
@@ -342,8 +342,8 @@ for j in merged_sorted:
 
             #Abstand zwischen dem Jetbot und dem Objekt
             distance_ob_total = calculate_distance(position[0:2], o2)
-            pos_stop= distance_ob_total/0.2
-            rounded_pos_stop = math.ceil(pos_stop)
+            #pos_stop= distance_ob_total/0.2
+            #rounded_pos_stop = math.ceil(pos_stop)
             """
             # Sides of the triangle
             a = planned_trajectory[i][3] - position[1]
@@ -366,15 +366,15 @@ for j in merged_sorted:
                     direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
                 else:
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
-        
+
             turn_to_direction(jetbot_motor, direction)
             #detektion ob eine Kugel da ist
             #get_detection()
             object_name,_, object_position,_ = get_object_position()
-            adjacent, opposite = calculate_sides(0.30, direction)
-            print("opposite: ", opposite)
-            print("adjacent: ", adjacent)
-            end = [position[0] + opposite, position[1] + adjacent]
+            #adjacent, opposite = calculate_sides(0.30, direction)
+            #print("opposite: ", opposite)
+            #print("adjacent: ", adjacent)
+            end = [object_position[0], object_position[1]]
             linear_motion(jetbot_motor, end)
 
 
