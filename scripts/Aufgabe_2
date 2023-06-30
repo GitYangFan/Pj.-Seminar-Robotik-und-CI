@@ -285,8 +285,10 @@ for i in merged_sorted:
     #ax.add_patch(circle2)
 
     #add_arrow(line, ax, label='Path')
-    """    ax.annotate("", xytext=( r,  j[0]), xy=( b , j [1] ),
-    arrowprops = dict(arrowstyle="->", linewidth=3, color='k'), size = 40)"""
+    """
+    # ax.annotate("", xytext=( r,  j[0]), xy=( b , j [1] ),
+    #arrowprops = dict(arrowstyle="->", linewidth=3, color='k'), size = 40)
+"""
 
     # sample at 0, 1/3rd, and 2/3rd of curve
     t = np.linspace(0, 2*np.pi, 100)
@@ -331,9 +333,8 @@ for i in merged_sorted:
 
 """
 
-planned_trajectory={'pointw2': [0.1, 0.1, 0.22, 0.125], 'kreisw2': [0.22, 0.2, 0.075], 'kurvew2': [0.295, 0.2], 'pointw5': [0.295, 0.2, 0.65, 0.825], 'kreisw5': [0.65, 0.9, 0.075], 'kurvew5': [0.725, 0.9], 'pointw3': [0.725, 0.9, 1.125, 1.2], 'kreisw3': [1.2, 1.2, 0.075], 'pointw4': [1.125, 1.2, 1.2, 0.775], 'kreisw4': [1.2, 0.7, 0.075], 'kurvew4': [1.125, 0.7], 'pointw6': [1.125, 0.7, 0.8, 0.675], 'kreisw6': [0.8, 0.6, 0.075], 'kurvew6': [0.875, 0.6], 'pointw1': [0.875, 0.6, 1.2, 0.525], 'kreisw1': [1.2, 0.45, 0.075], 'kurvew1': [1.125, 0.45], 'start_point90': [1.2, 0.375, 1.2, 0.1], 'start_point': [1.2, 0.1, 0.1, 0.1]}
-
-merged_sorted = {'w2': [0.4, 0.5], 'w5': [0.65, 0.9], 'w3': [1.2, 1.2], 'w4': [1.2, 0.7], 'w6': [0.8, 0.6], 'w1': [1.2, 0.45]}
+planned_trajectory={'pointw2': [0.1, 0.1, 0.4, 0.425], 'kreisw2': [0.4, 0.5, 0.075], 'kurvew2': [0.475, 0.5], 'pointw5': [0.475, 0.5, 0.65, 0.825], 'kreisw5': [0.65, 0.9, 0.075], 'kurvew5': [0.725, 0.9], 'pointw3': [0.725, 0.9, 1.125, 1.2], 'kreisw3': [1.2, 1.2, 0.075], 'pointw4': [1.125, 1.2, 1.2, 0.775], 'kreisw4': [1.2, 0.7, 0.075], 'kurvew4': [1.125, 0.7], 'pointw6': [1.125, 0.7, 0.8, 0.675], 'kreisw6': [0.8, 0.6, 0.075], 'kurvew6': [0.875, 0.6], 'pointw1': [0.875, 0.6, 1.2, 0.525], 'kreisw1': [1.2, 0.45, 0.075], 'kurvew1': [1.125, 0.45], 'start_point90': [1.2, 0.375, 1.2, 0.1], 'start_point': [1.2, 0.1, 0.1, 0.1]}
+merged_sorted ={'w2': [0.4, 0.5], 'w5': [0.65, 0.9], 'w3': [1.2, 1.2], 'w4': [1.2, 0.7], 'w6': [0.8, 0.6], 'w1': [1.2, 0.45]}
 
 next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
@@ -356,7 +357,7 @@ for j in merged_sorted:
             o2=[planned_trajectory[i][2], planned_trajectory[i][3] ]
 
             #Abstand zwischen dem Jetbot und dem Objekt
-            distance_ob_total = calculate_distance(position[0:2], o2)
+            #distance_ob_total = calculate_distance(position[0:2], o2)
             #pos_stop= distance_ob_total/0.2
             #rounded_pos_stop = math.ceil(pos_stop)
             """
@@ -389,8 +390,9 @@ for j in merged_sorted:
             #adjacent, opposite = calculate_sides(0.30, direction)
             #print("opposite: ", opposite)
             #print("adjacent: ", adjacent)
-            end = [object_position[0], object_position[1]]
-            linear_motion(jetbot_motor, end)
+            #end = [object_position[0], object_position[1]]
+            linear_motion(jetbot_motor, o2)
+            print("Ziel_punkt:", o2)
 
 
 
@@ -399,7 +401,7 @@ for j in merged_sorted:
 
             #orientation[2]
             position, orientation = apriltag.get_apriltag()
-            o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
+            #o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
             """            
             # Sides of the triangle
             a = planned_trajectory[i][1] - position[1]
@@ -438,7 +440,7 @@ for j in merged_sorted:
 
         if i == "kurv" + j:
             position, orientation = apriltag.get_apriltag()
-            o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
+            #o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
             """            
             # Sides of the triangle
             a = planned_trajectory[i][1] - position[1]
