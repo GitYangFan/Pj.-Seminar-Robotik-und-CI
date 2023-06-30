@@ -100,7 +100,7 @@ def find_object():
         object_angle[i] = angle_to_camera(focal_length, object_center[i], camera_frame)
         # print('detected:',object_name[i], 'possibility:',object_score[i], 'distance:', object_distance[i], 'angle:', object_angle[i])
         # print('------------split---------------')
-    return object_name, object_score, object_distance, object_angle
+    return object_name, object_score, object_distance, object_angle, object_size
 
 
 def get_object_position():
@@ -117,7 +117,7 @@ def get_object_position():
     """
     position_jetbot, orientation_jetbot = get_apriltag()
     print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
-    object_name, object_score, object_distance, object_angle = find_object()
+    object_name, object_score, object_distance, object_angle, object_size = find_object()
     length = len(object_name)
     object_position = [None] * length
     object_distance_horizon = [None] * length
@@ -136,7 +136,7 @@ def get_object_position():
         for base in bases:
             if math.sqrt((object_position[i][0] - base[0]) ** 2 + (object_position[i][1] - base[1]) ** 2) < 0.1:
                 idx_cube_remove.append(i)
-        if object_score < 70:
+        if object_score < 70 and (object_size[0] > 1.5*object_size[1]):
             idx_cube_remove.append(i)
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
               'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
@@ -144,7 +144,7 @@ def get_object_position():
     # remove the cube within the base area
     if idx_cube_remove:
         for i in range(len(idx_cube_remove) - 1, -1, -1):
-            print('remove the object within the base area:', object_name[idx_cubeinbase[i]],
+            print('remove the object within the base area:', object_name[idx_cube_remove[i]],
                   object_position[idx_cube_remove[i]])
             del object_name[idx_cube_remove[i]]
             del object_score[idx_cube_remove[i]]
@@ -184,7 +184,7 @@ def get_objects():
         # remove the cube within the base area
         if idx_cube_remove:
             for i in range(len(idx_cube_remove) - 1, -1, -1):
-                print('remove the object within the base area:', object_name[idx_cubeinbase[i]],
+                print('remove the object within the base area:', object_name[idx_cube_remove[i]],
                       object_position[idx_cube_remove[i]])
                 del object_name[idx_cube_remove[i]]
                 del object_score[idx_cube_remove[i]]
