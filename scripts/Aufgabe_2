@@ -265,7 +265,7 @@ for i in merged_sorted:
     planned_trajectory['point'+ i] = []
     planned_trajectory["point" + i] += [x1[0], x2[0]]
     planned_trajectory["point" + i] += [x1[1], x2[1]]
-    planned_trajectory['kreis' + i] = [j[0], j[1], 0.075]
+    planned_trajectory['kreis' + i] = [j[0], j[1], 0.1]
 
     if x1[1] != r and x2[1] != b:
         planned_trajectory['kurve' + i] = [r, b]
@@ -293,7 +293,7 @@ for i in merged_sorted:
 
     if i == last_ob:
         x1 = [j[0],j[0]]
-        x2 = [j[1]- 0.075, 0.1]
+        x2 = [j[1]- 0.1, 0.1]
         planned_trajectory['start_point90' ] = []
         planned_trajectory["start_point90" ] += [x1[0], x2[0]]
         planned_trajectory["start_point90"] += [x1[1], x2[1]]
