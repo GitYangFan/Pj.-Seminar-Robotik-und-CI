@@ -8,7 +8,7 @@ from basic_move import stop
 from motors_waveshare import MotorControllerWaveshare
 from detection_results import get_detection
 from object_localization  import *
-import apriltag 
+import apriltag
 
 
 # Function to calculate the distance between two points
@@ -332,9 +332,9 @@ for i in merged_sorted:
 #circle1 = patches.Circle((100, 600), radius=50)
 
 """
+planned_trajectory = [('pointw2', [10, 10, 40, 42.5]), ('kreisw2', [40, 50, 7.5]), ('kurvew2', [47.5, 50]), ('pointw5', [47.5, 50, 65, 82.5]), ('kreisw5', [65, 90, 7.5]), ('kurvew5', [72.5, 90]), ('pointw3', [72.5, 90, 112.5, 120]), ('kreisw3', [120, 120, 7.5]), ('pointw4', [112.5, 120, 120, 77.5]), ('kreisw4', [120, 70, 7.5]), ('kurvew4', [112.5, 70]), ('pointw6', [112.5, 70, 80, 67.5]), ('kreisw6', [80, 60, 7.5]), ('kurvew6', [87.5, 60]), ('pointw1', [87.5, 60, 120, 52.5]), ('kreisw1', [120, 45, 7.5]), ('kurvew1', [112.5, 45]), ('start_point90', [120, 37.5, 120, 10]), ('start_point', [120, 10, 10, 10])]
 
-planned_trajectory={'pointw2': [0.1, 0.1, 0.4, 0.425], 'kreisw2': [0.4, 0.5, 0.075], 'kurvew2': [0.475, 0.5], 'pointw5': [0.475, 0.5, 0.65, 0.825], 'kreisw5': [0.65, 0.9, 0.075], 'kurvew5': [0.725, 0.9], 'pointw3': [0.725, 0.9, 1.125, 1.2], 'kreisw3': [1.2, 1.2, 0.075], 'pointw4': [1.125, 1.2, 1.2, 0.775], 'kreisw4': [1.2, 0.7, 0.075], 'kurvew4': [1.125, 0.7], 'pointw6': [1.125, 0.7, 0.8, 0.675], 'kreisw6': [0.8, 0.6, 0.075], 'kurvew6': [0.875, 0.6], 'pointw1': [0.875, 0.6, 1.2, 0.525], 'kreisw1': [1.2, 0.45, 0.075], 'kurvew1': [1.125, 0.45], 'start_point90': [1.2, 0.375, 1.2, 0.1], 'start_point': [1.2, 0.1, 0.1, 0.1]}
-merged_sorted ={'w2': [0.4, 0.5], 'w5': [0.65, 0.9], 'w3': [1.2, 1.2], 'w4': [1.2, 0.7], 'w6': [0.8, 0.6], 'w1': [1.2, 0.45]}
+merged_sorted =[('w2', [40, 50]), ('w5', [65, 90]), ('w3', [120, 120]), ('w4', [120, 70]), ('w6', [80, 60]), ('w1', [120, 45])]
 
 next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
@@ -348,13 +348,13 @@ for j in merged_sorted:
     jjj = merged_sorted[ggg]
 
     for i in planned_trajectory:
-        if i == "point" + j:
+        if i[0] == "point" + j[0]:
             #umdrehen und erkennen ob eine Kugel da ist oder nicht wenn nicht kann der Jetbot der erste 20 cm fahren wenn ja halb kreis undrehen
             #print(planned_trajectory[i][2])
             #print(planned_trajectory[i][3])
 
             position, orientation = apriltag.get_apriltag()
-            o2=[planned_trajectory[i][2], planned_trajectory[i][3] ]
+            o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
 
             #Abstand zwischen dem Jetbot und dem Objekt
             #distance_ob_total = calculate_distance(position[0:2], o2)
@@ -397,11 +397,11 @@ for j in merged_sorted:
 
 
 
-        if i == "kreis" + j:
+        if i[0] == "kreis" + j[0]:
 
             #orientation[2]
             position, orientation = apriltag.get_apriltag()
-            #o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
+            o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
             """            
             # Sides of the triangle
             a = planned_trajectory[i][1] - position[1]
@@ -438,9 +438,9 @@ for j in merged_sorted:
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
 
-        if i == "kurv" + j:
+        if i[0] == "kurv" + j[0]:
             position, orientation = apriltag.get_apriltag()
-            #o2=[planned_trajectory[i][0], planned_trajectory[i][1] ]
+            o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
             """            
             # Sides of the triangle
             a = planned_trajectory[i][1] - position[1]
@@ -469,7 +469,7 @@ for j in merged_sorted:
             turn_to_direction(jetbot_motor, direction)
 
             # mit Uhrzeigesin oder gegen!
-            if  planned_trajectory[i][2]  > planned_trajectory[jjj][2]:
+            if  planned_trajectory[i][1][2]  > planned_trajectory[jjj][1][2]:
                 turn_clockwise(jetbot_motor, np.pi/2 )
             else:
                 turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
