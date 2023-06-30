@@ -441,8 +441,8 @@ for j in range(len(merged_sorted)):
 
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
-
-        if planned_trajectory[i][0] == "kurv" + merged_sorted[j][0]:
+    
+        if planned_trajectory[i][0] == "kurve" + merged_sorted[j][0]:
             position, orientation = apriltag.get_apriltag()
             o2=[planned_trajectory[i][1][0], planned_trajectory[i][1][1]]
             """            
@@ -478,6 +478,34 @@ for j in range(len(merged_sorted)):
             else:
                 turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
 
+
+merged_sorted =[('w2', [0.40, 0.50]), ('w5', [0.65, 0.90]), ('w3', [1.20, 1.20]), ('w4', [1.20, 0.70]), ('w6', [0.80, 0.60]), ('w1', [1.20, 0.45])]
+
+position, orientation = apriltag.get_apriltag()
+o2=[merged_sorted[-1][1][0], merged_sorted[-1][1][1]]
+start = position[0:2]
+##
+# start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+v1 = o2 - start
+if v1[0] < 0:
+    if v1[1] > 0:
+        direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+    else:
+        direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+else:
+    if v1[1] < 0:
+        direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+    else:
+        direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+####
+
+turn_to_direction(jetbot_motor, direction)
+turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
+
+o2=[planned_trajectory[-2][1][2], planned_trajectory[-2][1][3]]
+linear_motion(jetbot_motor, o2)
+o2=[planned_trajectory[-1][1][2], planned_trajectory[-1][1][3]]
+linear_motion(jetbot_motor, o2)
 
 
 
