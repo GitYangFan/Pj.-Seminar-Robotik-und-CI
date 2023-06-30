@@ -441,7 +441,7 @@ for j in range(len(merged_sorted)):
 
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
-    
+
         if planned_trajectory[i][0] == "kurve" + merged_sorted[j][0]:
             position, orientation = apriltag.get_apriltag()
             o2=[planned_trajectory[i][1][0], planned_trajectory[i][1][1]]
@@ -473,13 +473,14 @@ for j in range(len(merged_sorted)):
             turn_to_direction(jetbot_motor, direction)
 
             # mit Uhrzeigesin oder gegen!
-            if  planned_trajectory[i][1][2]  > planned_trajectory[jjj][1][2]:
-                turn_clockwise(jetbot_motor, np.pi/2 )
-            else:
-                turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
+            if i != range(len(planned_trajectory))[-1]:
+                if planned_trajectory[i-2][1][2] > planned_trajectory[i+1][1][2]:
+                    turn_clockwise(jetbot_motor, np.pi/2 )
+                else:
+                    turn_counterclockwise(jetbot_motor, (np.pi)/2)
 
 
-merged_sorted =[('w2', [0.40, 0.50]), ('w5', [0.65, 0.90]), ('w3', [1.20, 1.20]), ('w4', [1.20, 0.70]), ('w6', [0.80, 0.60]), ('w1', [1.20, 0.45])]
+
 
 position, orientation = apriltag.get_apriltag()
 o2=[merged_sorted[-1][1][0], merged_sorted[-1][1][1]]
