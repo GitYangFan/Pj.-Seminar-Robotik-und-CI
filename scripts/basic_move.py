@@ -177,9 +177,10 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
     if difference < np.pi:
-        jetbot_motor.set_speed(0.08, 0)  # rotate clockwise
-        time_init = time.time()
         while 1:
+            jetbot_motor.set_speed(0.1, -0.1)  # rotate clockwise
+            time.sleep(1 / 3)
+            stop(jetbot_motor)
             position, orientation = apriltag.get_apriltag()
             difference_cache = (direction - orientation[2])
             difference_current = ((2 * np.pi) - difference_cache) % (
@@ -187,18 +188,15 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
             print('difference_current:', difference_current)
             # turn to the desired direction
             # rate.sleep()
-            if difference_current <= 0.087 * 2:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
-                stop(jetbot_motor)
-                break
-            if time.time() - time_init > 4:
-                print("Warning: time out! Try turn_to_direction instead...")
+            if difference_current <= np.pi / 6:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 turn_to_direction(jetbot_motor, direction)
                 break
 
     else:
-        jetbot_motor.set_speed(0, 0.08)  # rotate counterclockwise
-        time_init = time.time()
         while 1:
+            jetbot_motor.set_speed(-0.1, 0.1)  # rotate clockwise
+            time.sleep(1 / 3)
+            stop(jetbot_motor)
             position, orientation = apriltag.get_apriltag()
             difference_cache = (direction - orientation[2])
             difference_current = ((2 * np.pi) - difference_cache) % (
@@ -206,11 +204,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
             print('difference_current:', difference_current)
             # turn to the desired direction
             # rate.sleep()
-            if difference_current <= 0.087 * 2:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
-                stop(jetbot_motor)
-                break
-            if time.time() - time_init > 4:
-                print("Warning: time out! Try turn_to_direction instead...")
+            if (2 * np.pi - difference_current) <= np.pi / 6:  # Angle error less than 5 degrees (=0.087 radian) is acceptable
                 turn_to_direction(jetbot_motor, direction)
                 break
     rospy.sleep(0.5)
@@ -601,7 +595,7 @@ def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
 """
 -------------------- test ----------------------------
 """
-"""
+
 if __name__ == '__main__':
     jetbot_motor = MotorControllerWaveshare()
 
@@ -622,12 +616,12 @@ if __name__ == '__main__':
     print('Motion mode: turn_to_direction')
     # turn_to_direction(jetbot_motor, np.pi)
     # turn_to_direction_advanced(jetbot_motor, np.pi)
-    turn_to_direction_with_cube(jetbot_motor, np.pi / 2)
+    # turn_to_direction_with_cube(jetbot_motor, np.pi / 2)
 
     # test advanced movement
 
     print('Motion mode: turn_to_direction_advanced')
-    # turn_to_direction_advanced(jetbot_motor, np.pi/2)
+    turn_to_direction_advanced(jetbot_motor, np.pi/2)
 
     print('Motion mode: linear_motion')
     # flag = linear_motion(jetbot_motor, [0.6, 0.3])
@@ -639,4 +633,4 @@ if __name__ == '__main__':
 
     stop(jetbot_motor)
     
-"""
+

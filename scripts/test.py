@@ -142,6 +142,7 @@ print(cross_product)
 # for i in range(3):
 #     print(i)
 
+"""
 from filterpy.kalman import KalmanFilter
 import numpy as np
 
@@ -196,3 +197,10 @@ for i in range(len(tag_position)):
     filtered_position = filter_position(tag_position[i])
 
     print("Filtered Position:", filtered_position)
+"""
+
+test = [0,1]
+idx = [0]
+for i in range(len(idx) - 1, -1, -1):
+    del test[idx[i]]
+print(test)
