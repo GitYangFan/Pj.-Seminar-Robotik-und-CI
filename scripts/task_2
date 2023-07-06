@@ -100,14 +100,14 @@ merged_sorted =[('w2', [40, 50, 'RED']), ('w5', [65, 90, 'BLUE']), ('w4', [30, 1
 pos_real = []
 next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
-for j in merged_sorted:
-    next_next_ob = next_next_ob +1
-    last_ob = list(merged_sorted.keys())[-1]
-    # next next position
-    if j != last_ob:
-        ggg = list(merged_sorted.keys())[next_next_ob]
 
-    jjj = merged_sorted[ggg]
+for j in range(len(merged_sorted)):
+    next_next_ob = next_next_ob + 1
+    last_ob = merged_sorted[-1][0]
+    # next next position
+    if merged_sorted[j][0] != last_ob:
+        # ggg = merged_sorted[next_next_ob][0]
+        jjj = merged_sorted[j + 1]
 
     for i in planned_trajectory:
         if i[0] == "point" + j[0]:
