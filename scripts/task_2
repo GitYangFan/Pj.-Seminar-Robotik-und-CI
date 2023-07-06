@@ -147,6 +147,7 @@ for j in merged_sorted:
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
 
             turn_to_direction(jetbot_motor, direction)
+            turn_to_direction(jetbot_motor, direction)
             #detektion ob eine Kugel da ist
             #get_detection()
             object_name,_, object_position,_ = get_object_position()
@@ -198,6 +199,7 @@ for j in merged_sorted:
             #oder machen wir die Richtung einfach 90 grad ?
 
             turn_to_direction(jetbot_motor,direction)
+            turn_to_direction(jetbot_motor, direction)
             object_name, object_score, object_center, object_size =get_detection()
             if object_name == "cube_blue" :
                 #wir muessen entweder das Zentrum der Kreis eingeben !!!
@@ -238,6 +240,7 @@ for j in merged_sorted:
             ####
 
             turn_to_direction(jetbot_motor, direction)
+            turn_to_direction(jetbot_motor, direction)
 
             # mit Uhrzeigesin oder gegen!
             if  planned_trajectory[i][1][2]  > planned_trajectory[jjj][1][2]:
@@ -271,6 +274,7 @@ else:
         direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
 ####
 
+turn_to_direction(jetbot_motor, direction)
 turn_to_direction(jetbot_motor, direction)
 turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
 
