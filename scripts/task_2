@@ -11,6 +11,37 @@ from object_localization  import *
 import apriltag
 
 
+def go_to_destination_with_obstacle_avoid(jetbot_motor, destination, cube_pushed=None):
+    """
+    Go to the destination and avoid obstacle automatically
+
+    Args:
+        destination ([float, float]): the destination
+        cube_pushed (ObjecT): the cube, which is being pushed
+    """
+    position, _ = get_apriltag()
+    completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+    while not completed:
+        continue_flag = False
+        position, _ = get_apriltag()
+        objects = get_objects()
+        if cube_pushed is not None and cube_pushed in objects:
+            objects.remove(cube_pushed)
+        while objects != []:
+            obstacle = find_nearest_cube(objects)
+            distance_to_line = basic_move.distance_point_line(position, destination, obstacle.position)
+            if distance_to_line < 0.08:
+                approach_obstacle(jetbot_motor, obstacle.position)
+                my_obstacle_avoid(jetbot_motor)
+                completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+                continue_flag = True
+                break
+        if continue_flag:
+            continue
+        basic_move.linear_motion_with_desired_time(jetbot_motor, destination, 5) # linear_motion_with_desired_time_with_cube
+        completed = (math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)) < 0.05
+
+
 # Function to calculate the distance between two points
 def calculate_distance(o1, o2):
     x1, y1 = o1
@@ -156,7 +187,7 @@ for j in range(len(merged_sorted)):
             #print("adjacent: ", adjacent)
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
-                flag = linear_motion_with_desired_time(jetbot_motor, o2, 5)
+                flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
                 if flag:
                     print("i bin hier ")
                     break
