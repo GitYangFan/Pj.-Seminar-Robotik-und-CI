@@ -277,10 +277,11 @@ for j in range(len(merged_sorted)):
             turn_to_direction(jetbot_motor, direction)
 
             # mit Uhrzeigesin oder gegen!
-            if  planned_trajectory[i][1][2]  > planned_trajectory[jjj][1][2]:
-                turn_clockwise(jetbot_motor, np.pi/2 )
-            else:
-                turn_counterclockwise(jetbot_motor, np.pi/2)
+            if i != range(len(planned_trajectory))[-1]:
+                if planned_trajectory[i - 2][1][2] > planned_trajectory[i + 1][1][2]:
+                    turn_clockwise(jetbot_motor, np.pi / 2)
+                else:
+                    turn_counterclockwise(jetbot_motor, np.pi/ 2)
 
 
 
