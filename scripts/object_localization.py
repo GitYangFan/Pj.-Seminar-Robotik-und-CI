@@ -16,11 +16,12 @@ class ObjecT:
         distance (float): the horizontal distance between the object and jetbot
     """
 
-    def __init__(self, name, score, position, distance):
+    def __init__(self, name, score, position, distance, horizon_angle):
         self.name = name
         self.score = score
         self.position = position
         self.distance = distance
+        self.horizon_angle = horizon_angle
 
 
 # The function to calculate the focallength
@@ -211,7 +212,7 @@ def get_objects():
             del object_position[idx_cube_remove[i]]
             del object_distance_horizon[idx_cube_remove[i]]
     for i in range(len(object_name)):
-        obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i])
+        obj = ObjecT(object_name[i], object_score[i], object_position[i], object_distance_horizon[i], object_angle[i][0])
         objects.append(obj)
     return objects
 
