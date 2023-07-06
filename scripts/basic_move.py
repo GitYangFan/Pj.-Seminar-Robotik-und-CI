@@ -365,7 +365,7 @@ def linear_motion(jetbot_motor, end):
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.1
+    safe_width = 0.15
     time_init = time.time()
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
@@ -448,7 +448,7 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.1
+    safe_width = 0.15
     MAX_TIME = 10
     if t > MAX_TIME:
         t = MAX_TIME
@@ -540,7 +540,7 @@ def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
     # initialization
     k_left = 0
     k_right = 0
-    safe_width = 0.1
+    safe_width = 0.15
     MAX_TIME = 10
     if t > MAX_TIME:
         t = MAX_TIME
@@ -595,7 +595,7 @@ def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
 """
 -------------------- test ----------------------------
 """
-
+"""
 if __name__ == '__main__':
     jetbot_motor = MotorControllerWaveshare()
 
@@ -633,4 +633,4 @@ if __name__ == '__main__':
 
     stop(jetbot_motor)
     
-
+"""
