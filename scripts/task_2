@@ -156,7 +156,7 @@ for j in merged_sorted:
             #print("adjacent: ", adjacent)
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
-                flage = linear_motion_with_desired_time(jetbot_motor, o2, 5)
+                flage = linear_motion_with_desired_time(jetbot_motor, o2, 3)
                 if flage == True:
                     break
             #linear_motion(jetbot_motor, o2)
