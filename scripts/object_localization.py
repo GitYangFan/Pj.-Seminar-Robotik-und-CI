@@ -147,7 +147,11 @@ def get_object_position():
             idx_cube_remove.append(i)
             continue
         if (object_size[i][0] > 1.5 * object_size[i][1]):
-            print('It is not a cube',object_size[i])
+            print('It is not a cube!',object_size[i])
+            idx_cube_remove.append(i)
+            continue
+        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][0] > 1.485):
+            print('Object is outside the Arena!', object_position[i])
             idx_cube_remove.append(i)
             continue
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],'distance_horizon:', object_distance_horizon[i], 'angle:', object_angle[i][0] / np.pi * 180)
@@ -197,6 +201,10 @@ def get_objects():
             continue
         if (object_size[i][0] > 1.5 * object_size[i][1]):
             print('It is not a cube',object_size[i])
+            idx_cube_remove.append(i)
+            continue
+        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][0] > 1.485):
+            print('Object is outside the Arena!', object_position[i])
             idx_cube_remove.append(i)
             continue
         print('detected:', object_name[i], 'possibility:', object_score[i], 'position:', object_position[i],
