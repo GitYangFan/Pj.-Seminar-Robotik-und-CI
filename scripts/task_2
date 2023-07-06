@@ -109,8 +109,8 @@ for j in range(len(merged_sorted)):
         # ggg = merged_sorted[next_next_ob][0]
         jjj = merged_sorted[j + 1]
 
-    for i in planned_trajectory:
-        if i[0] == "point" + j[0]:
+    for i in range(len(planned_trajectory)):
+        if planned_trajectory[i][0] == "point" + merged_sorted[j][0]:
             #umdrehen und erkennen ob eine Kugel da ist oder nicht wenn nicht kann der Jetbot der erste 20 cm fahren wenn ja halb kreis undrehen
             #print(planned_trajectory[i][2])
             #print(planned_trajectory[i][3])
@@ -165,7 +165,7 @@ for j in range(len(merged_sorted)):
 
 
 
-        if i[0] == "kreis" + j[0]:
+        if planned_trajectory[i][0] == "kreis" + merged_sorted[j][0]:
 
             #orientation[2]
             position, orientation = apriltag.get_apriltag()
@@ -208,7 +208,7 @@ for j in range(len(merged_sorted)):
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
 
-        if i[0] == "kurv" + j[0]:
+        if planned_trajectory[i][0] == "kurve" + merged_sorted[j][0]:
             position, orientation = apriltag.get_apriltag()
             pos_real.append(position[0:2])
             #o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
