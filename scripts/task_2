@@ -95,10 +95,10 @@ def intersection_point(point, line):
 
 
 planned_trajectory =[('pointw2', [10, 10, 40, 42.5]), ('kreisw2', [40, 50, 7.5]), ('kurvew2', [47.5, 50]), ('pointw5', [47.5, 50, 65, 82.5]), ('kreisw5', [65, 90, 7.5]), ('kurvew5', [57.5, 90]), ('pointw4', [57.5, 90, 30, 122.5]), ('kreisw4', [30, 130, 7.5]), ('kurvew4', [37.5, 130]), ('pointw1', [37.5, 130, 112.5, 120]), ('kreisw1', [120, 120, 7.5]), ('pointw3', [112.5, 120, 120, 77.5]), ('kreisw3', [120, 70, 7.5]), ('kurvew3', [112.5, 70]), ('pointw6', [112.5, 70, 80, 37.5]), ('kreisw6', [80, 30, 7.5]), ('kurvew6', [72.5, 30]), ('start_point90', [80, 22.5, 80, 10]), ('start_point', [80, 10, 10, 10])]
-merged_sorted =[('w2', [40, 50]), ('w5', [65, 90]), ('w4', [30, 130]), ('w1', [120, 120]), ('w3', [120, 70]), ('w6', [80, 30])]
+merged_sorted =[('w2', [40, 50, 'RED']), ('w5', [65, 90, 'BLUE']), ('w4', [30, 130, 'RED']), ('w1', [120, 120, 'BLUE']), ('w3', [120, 70, 'RED']), ('w6', [80, 30, 'RED'])]
 
 pos_real = []
-next_next_ob= 00,
+next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
 for j in merged_sorted:
     next_next_ob = next_next_ob +1
@@ -156,7 +156,7 @@ for j in merged_sorted:
             #print("adjacent: ", adjacent)
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
-                flage = linear_motion_with_desired_time(jetbot_motor, o2, 3)
+                flage = linear_motion_with_desired_time(jetbot_motor, o2, 5)
                 if flage == True:
                     break
             #linear_motion(jetbot_motor, o2)
