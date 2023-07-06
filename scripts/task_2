@@ -93,12 +93,12 @@ def intersection_point(point, line):
 
 #merged_sorted =[('w2', [0.40, 0.50]), ('w5', [0.65, 0.90]), ('w3', [1.20, 1.20]), ('w4', [1.20, 0.70]), ('w6', [0.80, 0.60]), ('w1', [1.20, 0.45])]
 
-planned_trajectory =[('pointw4', [10, 10, 30, 22.5]), ('kreisw4', [30, 30, 7.5]), ('kurvew4', [37.5, 30]), ('pointw2', [37.5, 30, 40, 42.5]), ('kreisw2', [40, 50, 7.5]), ('kurvew2', [47.5, 50]), ('pointw5', [47.5, 50, 65, 82.5]), ('kreisw5', [65, 90, 7.5]), ('kurvew5', [72.5, 90]), ('pointw1', [72.5, 90, 112.5, 120]), ('kreisw1', [120, 120, 7.5]), ('pointw3', [112.5, 120, 120, 77.5]), ('kreisw3', [120, 70, 7.5]), ('kurvew3', [112.5, 70]), ('pointw6', [112.5, 70, 80, 37.5]), ('kreisw6', [80, 30, 7.5]), ('kurvew6', [72.5, 30]), ('start_point90', [80, 22.5, 80, 10]), ('start_point', [80, 10, 10, 10])]
-merged_sorted =[('w4', [30, 30, 'RED']), ('w2', [40, 50, 'RED']), ('w5', [65, 90, 'BLUE']), ('w1', [120, 120, 'BLUE']), ('w3', [120, 70, 'RED']), ('w6', [80, 30, 'RED'])]
 
+planned_trajectory =[('pointw2', [10, 10, 40, 42.5]), ('kreisw2', [40, 50, 7.5]), ('kurvew2', [47.5, 50]), ('pointw5', [47.5, 50, 65, 82.5]), ('kreisw5', [65, 90, 7.5]), ('kurvew5', [57.5, 90]), ('pointw4', [57.5, 90, 30, 122.5]), ('kreisw4', [30, 130, 7.5]), ('kurvew4', [37.5, 130]), ('pointw1', [37.5, 130, 112.5, 120]), ('kreisw1', [120, 120, 7.5]), ('pointw3', [112.5, 120, 120, 77.5]), ('kreisw3', [120, 70, 7.5]), ('kurvew3', [112.5, 70]), ('pointw6', [112.5, 70, 80, 37.5]), ('kreisw6', [80, 30, 7.5]), ('kurvew6', [72.5, 30]), ('start_point90', [80, 22.5, 80, 10]), ('start_point', [80, 10, 10, 10])]
+merged_sorted =[('w2', [40, 50, 'RED']), ('w5', [65, 90, 'BLUE']), ('w4', [30, 130, 'RED']), ('w1', [120, 120, 'BLUE']), ('w3', [120, 70, 'RED']), ('w6', [80, 30, 'RED'])]
 
 pos_real = []
-next_next_ob= 0
+next_next_ob= 00,
 jetbot_motor = MotorControllerWaveshare()
 for j in merged_sorted:
     next_next_ob = next_next_ob +1
@@ -154,7 +154,11 @@ for j in merged_sorted:
             #print("opposite: ", opposite)
             #print("adjacent: ", adjacent)
             #end = [object_position[0], object_position[1]]
-            linear_motion(jetbot_motor, o2)
+            for p in  range(7):
+                flage = linear_motion_with_desired_time(jetbot_motor, o2, 5)
+                if flage == True:
+                    break
+            #linear_motion(jetbot_motor, o2)
             print("Ziel_punkt:", o2)
 
 
@@ -205,7 +209,9 @@ for j in merged_sorted:
         if i[0] == "kurv" + j[0]:
             position, orientation = apriltag.get_apriltag()
             pos_real.append(position[0:2])
-            o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
+            #o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
+            o2 = [merged_sorted[j][1][0], merged_sorted[j][1][1]]
+
             """            
             # Sides of the triangle
             a = planned_trajectory[i][1] - position[1]
@@ -281,7 +287,7 @@ planned_trajectory=
 {'pointw2': [10, 10, 22, 12.5], 'kreisw2': [22, 20, 7.5], 'kurvew2': [29.5, 20], 'pointw5': [29.5, 20, 65, 82.5], 'kreisw5': [65, 90, 7.5], 'kurvew5': [72.5, 90], 'pointw3': [72.5, 90, 112.5, 120], 'kreisw3': [120, 120, 7.5], 'pointw4': [112.5, 120, 120, 77.5], 'kreisw4': [120, 70, 7.5], 'kurvew4': [112.5, 70], 'pointw6': [112.5, 70, 80, 67.5], 'kreisw6': [80, 60, 7.5], 'kurvew6': [87.5, 60], 'pointw1': [87.5, 60, 120, 52.5], 'kreisw1': [120, 45, 7.5], 'kurvew1': [112.5, 45], 'start_point90': [120, 37.5, 120, 10], 'start_point': [120, 10, 10, 10]}
 
 """
-print(planned_trajectory)
+print(pos_real)
 # Set plot
 # plt.xlim(0, 149.5)
 # plt.ylim(0, 149.5)
