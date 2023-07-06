@@ -314,10 +314,18 @@ turn_to_direction(jetbot_motor, direction)
 turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
 
 o2=[planned_trajectory[-2][1][2], planned_trajectory[-2][1][3]]
-linear_motion(jetbot_motor, o2)
+for p in range(7):
+    flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+    if flag:
+        print("i bin hier ")
+        break
 pos_real.append(position[0:2])
 o2=[planned_trajectory[-1][1][2], planned_trajectory[-1][1][3]]
-linear_motion(jetbot_motor, o2)
+for p in range(7):
+    flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+    if flag:
+        print("i bin hier ")
+        break
 pos_real.append(position[0:2])
 
 
