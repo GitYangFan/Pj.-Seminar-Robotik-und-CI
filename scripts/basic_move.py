@@ -21,11 +21,13 @@ def stop(jetbot_motor):
     Returns
     ------------
     """
+    print('stopped! ')
     jetbot_motor.set_speed(0, 0)
     rospy.sleep(0.5)
 
 # simple shake turning
 def shake_turn(jetbot_motor):
+    print('shake_turn...')
     jetbot_motor.set_speed(-0.1, 0.1)
     time.sleep(0.1)
     stop(jetbot_motor)
@@ -33,6 +35,7 @@ def shake_turn(jetbot_motor):
 
 # turn 180 degree
 def turn_back(jetbot_motor):
+    print('turn_back...')
     jetbot_motor.set_speed(-0.1, 0.1)
     time.sleep(2)
     stop(jetbot_motor)
