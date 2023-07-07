@@ -4,11 +4,10 @@ import numpy as np
 from matplotlib import pyplot as plt, patches
 from basic_move import linear_motion
 from basic_move import *
-from basic_move import stop
 from motors_waveshare import MotorControllerWaveshare
 from detection_results import get_detection
 from object_localization  import *
-import apriltag
+import basic_move
 
 #save a list in text data
 def save_list(liste, dateiname):
@@ -128,7 +127,7 @@ for j in range(len(merged_sorted)):
             #print(planned_trajectory[i][2])
             #print(planned_trajectory[i][3])
 
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
             o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
 
@@ -170,7 +169,7 @@ for j in range(len(merged_sorted)):
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
                 object_name, _, object_position, _ = get_object_position()
-                position, orientation = get_apriltag(jetbot_motor)
+                position, orientation = basic_move.get_apriltag(jetbot_motor)
                 pos_real.append(position[0:2])
                 if  object_name == "ball":
 
@@ -185,7 +184,7 @@ for j in range(len(merged_sorted)):
                         turn_to_direction(jetbot_motor, direction)
                         turn_to_direction(jetbot_motor, direction)
                         flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
-                        position, orientation = get_apriltag(jetbot_motor)
+                        position, orientation = basic_move.get_apriltag(jetbot_motor)
                         pos_real.append(position[0:2])
                         if flag:
                             print("i bin hier ")
@@ -196,7 +195,7 @@ for j in range(len(merged_sorted)):
                     turn_to_direction(jetbot_motor, direction)
                     turn_to_direction(jetbot_motor, direction)
                     flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
-                    position, orientation = get_apriltag(jetbot_motor)
+                    position, orientation = basic_move.get_apriltag(jetbot_motor)
                     pos_real.append(position[0:2])
                     if flag:
                         print("i bin hier ")
@@ -204,13 +203,13 @@ for j in range(len(merged_sorted)):
             #linear_motion(jetbot_motor, o2)
             print("Ziel_punkt:", o2)
 
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
 
         if planned_trajectory[i][0] == "kreis" + merged_sorted[j][0]:
 
             #orientation[2]
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
             o2 = [planned_trajectory[i][1][0], planned_trajectory[i][1][1]]
 
@@ -241,11 +240,11 @@ for j in range(len(merged_sorted)):
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
 
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation =basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
 
         if planned_trajectory[i][0] == "kurve" + merged_sorted[j][0]:
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
             #o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
             o2 = [merged_sorted[j][1][0], merged_sorted[j][1][1]]
@@ -276,11 +275,11 @@ for j in range(len(merged_sorted)):
                 else:
                     turn_counterclockwise(jetbot_motor, np.pi/ 2)
 
-            position, orientation = get_apriltag(jetbot_motor)
+            position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
 
 
-position, orientation = get_apriltag(jetbot_motor)
+position, orientation = basic_move.get_apriltag(jetbot_motor)
 pos_real.append(position[0:2])
 #o2=[merged_sorted[-1][1][0], merged_sorted[-1][1][1]]
 #
@@ -312,7 +311,7 @@ for p in range(7):
         break
 
 
-position, orientation = get_apriltag(jetbot_motor)
+position, orientation = basic_move.get_apriltag(jetbot_motor)
 pos_real.append(position[0:2])
 o2=[planned_trajectory[-1][1][2], planned_trajectory[-1][1][3]]
 for p in range(7):
@@ -320,7 +319,7 @@ for p in range(7):
     if flag:
         print("i bin hier ")
         break
-position, orientation = get_apriltag(jetbot_motor)
+position, orientation = basic_move.get_apriltag(jetbot_motor)
 pos_real.append(position[0:2])
 
 """
