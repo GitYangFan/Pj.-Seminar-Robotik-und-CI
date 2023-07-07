@@ -31,6 +31,12 @@ def shake_turn(jetbot_motor):
     stop(jetbot_motor)
 
 
+# turn 180 degree
+def turn_back(jetbot_motor):
+    jetbot_motor.set_speed(-0.1, 0.1)
+    time.sleep(2)
+    stop(jetbot_motor)
+
 # let jetbot circle around the object clockwise with the specific angle in front of it
 def turn_clockwise(jetbot_motor, angle):  # add angel (unit: radian)
     """
