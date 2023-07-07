@@ -16,6 +16,9 @@ def save_list(liste, dateiname):
         for element in liste:
             datei.write(str(element) + '\n')
 
+
+
+
 def go_to_destination_with_obstacle_avoid(jetbot_motor, destination, cube_pushed=None):
     """
     Go to the destination and avoid obstacle automatically
