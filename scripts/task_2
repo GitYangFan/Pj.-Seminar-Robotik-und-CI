@@ -270,10 +270,15 @@ for j in range(len(merged_sorted)):
             object_name, object_score, object_center, object_size =get_detection()
             if object_name == "cube_blue" :
                 turn_counterclockwise(jetbot_motor, np.pi *2  )
-                cube_color_real.append("cube_blue", [planned_trajectory[i][1][0], planned_trajectory[i][1][1]] )
+                cube_color_real.append("cube_red")
+                cube_color_real.append( planned_trajectory[i][1][0])
+                cube_color_real.append( planned_trajectory[i][1][1])
+
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
-                cube_color_real.append("cube_red",  [planned_trajectory[i][1][0], planned_trajectory[i][1][1]])
+                cube_color_real.append("cube_red")
+                cube_color_real.append( planned_trajectory[i][1][0])
+                cube_color_real.append( planned_trajectory[i][1][1])
 
             position, orientation = apriltag.get_apriltag()
             pos_real.append(position[0:2])
