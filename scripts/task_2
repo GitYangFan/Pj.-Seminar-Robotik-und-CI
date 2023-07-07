@@ -132,7 +132,10 @@ def intersection_point(point, line):
 merged_sorted =[('w2', [0.4, 0.4, 'RED']), ('w5', [0.65, 0.9, 'BLUE']), ('w1', [0.4, 1.2, 'BLUE']), ('w4', [1.2, 1.1, 'RED']), ('w3', [1.2, 0.7, 'RED']), ('w6', [0.8, 0.3, 'RED'])]
 planned_trajectory =[('pointw2', [0.1, 0.1, 0.4, 0.3]), ('kreisw2', [0.4, 0.4, 0.1]), ('kurvew2', [0.5, 0.4]), ('pointw5', [0.5, 0.4, 0.65, 0.8]), ('kreisw5', [0.65, 0.9, 0.1]), ('kurvew5', [0.55, 0.9]), ('pointw1', [0.55, 0.9, 0.4, 1.1]), ('kreisw1', [0.4, 1.2, 0.1]), ('kurvew1', [0.5, 1.2]), ('pointw4', [0.5, 1.2, 1.1, 1.1]), ('kreisw4', [1.2, 1.1, 0.1]), ('pointw3', [1.1, 1.1, 1.2, 0.8]), ('kreisw3', [1.2, 0.7, 0.1]), ('kurvew3', [1.1, 0.7]), ('pointw6', [1.1, 0.7, 0.8, 0.4]), ('kreisw6', [0.8, 0.3, 0.1]), ('kurvew6', [0.7, 0.3]), ('start_point90', [0.8, 0.2, 0.8, 0.1]), ('start_point', [0.8, 0.1, 0.1, 0.1])]
 
+
+
 pos_real = []
+cube_color_real = []
 next_next_ob= 0
 jetbot_motor = MotorControllerWaveshare()
 
@@ -192,15 +195,23 @@ for j in range(len(merged_sorted)):
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
                 object_name, _, object_position, _ = get_object_position()
+                position, orientation = apriltag.get_apriltag()
+                pos_real.append(position[0:2])
                 if  object_name == "ball":
 
                     gg = distance_point_line(planned_trajectory[i][1][2],  planned_trajectory[i][1][3], object_position)
+                    #die distance zwischen dem Jetbot und die Kugel recchnen und vergleichen ob es Kleiner als 20 cm oder nicht
                     if gg <= 0.08:
                         turn_to_direction(jetbot_motor, direction)
                         turn_to_direction(jetbot_motor, direction)
 
                         avoid_obstacle(jetbot_motor, 0)
+
+                        turn_to_direction(jetbot_motor, direction)
+                        turn_to_direction(jetbot_motor, direction)
                         flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+                        position, orientation = apriltag.get_apriltag()
+                        pos_real.append(position[0:2])
                         if flag:
                             print("i bin hier ")
                             break
@@ -210,11 +221,16 @@ for j in range(len(merged_sorted)):
                     turn_to_direction(jetbot_motor, direction)
                     turn_to_direction(jetbot_motor, direction)
                     flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+                    position, orientation = apriltag.get_apriltag()
+                    pos_real.append(position[0:2])
                     if flag:
                         print("i bin hier ")
                         break
             #linear_motion(jetbot_motor, o2)
             print("Ziel_punkt:", o2)
+
+            position, orientation = apriltag.get_apriltag()
+            pos_real.append(position[0:2])
 
 
 
@@ -225,14 +241,7 @@ for j in range(len(merged_sorted)):
             position, orientation = apriltag.get_apriltag()
             pos_real.append(position[0:2])
             o2 = [planned_trajectory[i][1][0], planned_trajectory[i][1][1]]
-            """            
-            # Sides of the triangle
-            a = planned_trajectory[i][1] - position[1]
-            b = planned_trajectory[i][0] - position[0]
 
-            # calculate the angel for the Cube orientation
-            angle_a, angle_b, angle_c = calculate_angles(a, b, distance_ob_total)
-            """
             #
             start = position[0:2]
             ##
@@ -256,11 +265,14 @@ for j in range(len(merged_sorted)):
             turn_to_direction(jetbot_motor, direction)
             object_name, object_score, object_center, object_size =get_detection()
             if object_name == "cube_blue" :
-                #wir muessen entweder das Zentrum der Kreis eingeben !!!
                 turn_counterclockwise(jetbot_motor, np.pi *2  )
-
+                cube_color_real.append("cube_blue", [planned_trajectory[i][1][0], planned_trajectory[i][1][1]] )
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
+                cube_color_real.append("cube_red",  [planned_trajectory[i][1][0], planned_trajectory[i][1][1]])
+
+            position, orientation = apriltag.get_apriltag()
+            pos_real.append(position[0:2])
 
         if planned_trajectory[i][0] == "kurve" + merged_sorted[j][0]:
             position, orientation = apriltag.get_apriltag()
@@ -268,15 +280,6 @@ for j in range(len(merged_sorted)):
             #o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
             o2 = [merged_sorted[j][1][0], merged_sorted[j][1][1]]
 
-            """            
-            # Sides of the triangle
-            a = planned_trajectory[i][1] - position[1]
-            b = planned_trajectory[i][0] - position[0]
-
-            # calculate the angel for the Cube orientation
-            #radian und in der anderer Richtung
-            angle_a, angle_b, angle_c = calculate_angles(a, b, distance_ob_total)
-            """
             start = position[0:2]
             ##
             # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
@@ -303,16 +306,15 @@ for j in range(len(merged_sorted)):
                 else:
                     turn_counterclockwise(jetbot_motor, np.pi/ 2)
 
+            position, orientation = apriltag.get_apriltag()
+            pos_real.append(position[0:2])
 
-
-
-
-            #linear_motion( jetbot_motor, planned_trajectory[i][2],planned_trajectory[i][3]  )
 
 
 position, orientation = apriltag.get_apriltag()
 pos_real.append(position[0:2])
-o2=[merged_sorted[-1][1][0], merged_sorted[-1][1][1]]
+#o2=[merged_sorted[-1][1][0], merged_sorted[-1][1][1]]
+o2=[planned_trajectory[-2][1][2], planned_trajectory[-2][1][3]]
 start = position[0:2]
 ##
 # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
@@ -331,7 +333,6 @@ else:
 
 turn_to_direction(jetbot_motor, direction)
 turn_to_direction(jetbot_motor, direction)
-turn_counterclockwise(jetbot_motor, (3*np.pi)/2)
 
 o2=[planned_trajectory[-2][1][2], planned_trajectory[-2][1][3]]
 for p in range(7):
@@ -339,6 +340,8 @@ for p in range(7):
     if flag:
         print("i bin hier ")
         break
+
+position, orientation = apriltag.get_apriltag()
 pos_real.append(position[0:2])
 o2=[planned_trajectory[-1][1][2], planned_trajectory[-1][1][3]]
 for p in range(7):
@@ -346,6 +349,7 @@ for p in range(7):
     if flag:
         print("i bin hier ")
         break
+position, orientation = apriltag.get_apriltag()
 pos_real.append(position[0:2])
 
 
@@ -355,6 +359,7 @@ planned_trajectory=
 
 """
 print(pos_real)
+print(cube_color_real)
 # Set plot
 # plt.xlim(0, 149.5)
 # plt.ylim(0, 149.5)
