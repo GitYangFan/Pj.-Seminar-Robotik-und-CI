@@ -2,8 +2,22 @@ import numpy as np
 import rospy
 import math
 from apriltag_ros.msg import AprilTagDetectionArray
+import pickle
+from basic_move import *
+from motors_waveshare import MotorControllerWaveshare
 
 apriltag = []
+jetbot_motor = MotorControllerWaveshare()
+
+
+def save_variable(var, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(var, f)
+
+def load_variable(filename):
+    with open(filename, 'rb') as f:
+        var = pickle.load(f)
+    return var
 
 
 def euler_from_quaternion(quaternion):
@@ -67,6 +81,10 @@ def get_apriltag():
     # rospy.init_node('apriltag_listener')
     rospy.Subscriber('/tag_detections', AprilTagDetectionArray, tag_callback)
 
+    # get previous position and time
+    time_pre = load_variable('time.pkl')
+    position = load_variable('position.pkl')
+
     # Loop waiting to receive data
     while not rospy.is_shutdown():
         if apriltag != []:
@@ -77,8 +95,14 @@ def get_apriltag():
             orientation = euler_from_quaternion(quaternion)
             position = transformation(orientation, position_relative)
             # print('position_relative:', position_relative, 'quaternion:',quaternion)
-            if (0 < position[0] < 1.485) and (0 < position[1] < 1.485):
+            if (0 < position[0] < 1.485) and (0 < position[1] < 1.485) and ():
+                timestamp = rospy.Time.now()
+                save_variable(timestamp, 'time.pkl')
+                save_variable(position, 'position.pkl')
                 return position, orientation
+        if (rospy.Time.now()-time_pre) > 2:     # when the apriltag doesn't come for more than 2 seconds, then shake and test again
+            shake_turn(jetbot_motor)
+            time_pre = rospy.Time.now()
         rospy.sleep(0.1)
 
 

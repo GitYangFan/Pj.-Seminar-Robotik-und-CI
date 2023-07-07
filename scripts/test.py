@@ -1,6 +1,7 @@
 import numpy as np
 import tf
 import math
+import pickle
 
 """
 def test():
@@ -199,22 +200,41 @@ for i in range(len(tag_position)):
     print("Filtered Position:", filtered_position)
 """
 
-test = [0,1,2,3]
-idx = [0,1]
-# length = len(test)
-# for i in range(len(test)):
-#     if i >= length:
-#             break
-#     if test[i] in idx:
-#         test.pop(i)
-#         length = len(test)
-#         print(length)
-#
-# print(test)
-ret=[]
-for i in test:
-    if i not in idx:
-        ret.append(i)
-print('test',test)
-print('idx',idx)
-print('ret',ret)
+# test = [0,1,2,3]
+# idx = [0,1]
+# # length = len(test)
+# # for i in range(len(test)):
+# #     if i >= length:
+# #             break
+# #     if test[i] in idx:
+# #         test.pop(i)
+# #         length = len(test)
+# #         print(length)
+# #
+# # print(test)
+# ret=[]
+# for i in test:
+#     if i not in idx:
+#         ret.append(i)
+# print('test',test)
+# print('idx',idx)
+# print('ret',ret)
+
+def save_variable(var, filename):
+    with open(filename, 'wb') as f:
+        pickle.dump(var, f)
+
+def load_variable(filename):
+    with open(filename, 'rb') as f:
+        var = pickle.load(f)
+    return var
+
+my_variable = "Value"
+v2 = [1,2]
+save_variable(my_variable, 'data.pkl')
+save_variable(v2, 'position.pkl')
+
+loaded_variable = load_variable('data.pkl')
+loaded_v2 = load_variable('position.pkl')
+print(loaded_variable)
+print(loaded_v2)

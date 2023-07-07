@@ -142,7 +142,7 @@ def get_object_position():
                 break
         if flag:
             continue
-        if object_score[i] < 0.7:
+        if object_score[i] < 0.4:
             print('score is too low!',object_score[i])
             idx_cube_remove.append(i)
             continue
@@ -150,7 +150,7 @@ def get_object_position():
             print('It is not a cube!',object_size[i])
             idx_cube_remove.append(i)
             continue
-        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][0] > 1.485):
+        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][1] > 1.485):
             print('Object is outside the Arena!', object_position[i])
             idx_cube_remove.append(i)
             continue
@@ -195,7 +195,7 @@ def get_objects():
                 break
         if flag:
             continue
-        if object_score[i] < 0.7:
+        if object_score[i] < 0.4:
             print('score is too low!',object_score[i])
             idx_cube_remove.append(i)
             continue
@@ -203,7 +203,7 @@ def get_objects():
             print('It is not a cube',object_size[i])
             idx_cube_remove.append(i)
             continue
-        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][0] > 1.485):
+        if (object_position[i][0] < 0 or object_position[i][0] > 1.485 or object_position[i][1] < 0 or object_position[i][1] > 1.485):
             print('Object is outside the Arena!', object_position[i])
             idx_cube_remove.append(i)
             continue
