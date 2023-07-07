@@ -10,6 +10,11 @@ from detection_results import get_detection
 from object_localization  import *
 import apriltag
 
+#save a list in text data
+def save_list(liste, dateiname):
+    with open(dateiname, 'w') as datei:
+        for element in liste:
+            datei.write(str(element) + '\n')
 
 def go_to_destination_with_obstacle_avoid(jetbot_motor, destination, cube_pushed=None):
     """
@@ -360,6 +365,12 @@ planned_trajectory=
 """
 print(pos_real)
 print(cube_color_real)
+
+dateiname = 'pos_real.txt'
+save_list(pos_real, dateiname)
+
+dateiname = 'cube_color_real.txt'
+save_list(cube_color_real, dateiname)
 # Set plot
 # plt.xlim(0, 149.5)
 # plt.ylim(0, 149.5)
