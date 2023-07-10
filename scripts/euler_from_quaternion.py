@@ -26,7 +26,4 @@ def euler_from_quaternion(x, y, z, w):
         t4 = +1.0 - 2.0 * (y * y + z * z)
         yaw_z = math.atan2(t3, t4)
      
-        return roll_x, pitch_y, yaw_z # in radians
-
-test = euler_from_quaternion(-0.724,0.28,-0.228,0.585)
-print(test)
+        return roll_x, pitch_y, yaw_z
