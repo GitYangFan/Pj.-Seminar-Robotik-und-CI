@@ -32,6 +32,12 @@ def shake_turn(jetbot_motor):
     time.sleep(0.1)
     stop(jetbot_motor)
 
+def get_apriltag(jetbot_motor):
+    position, orientation = apriltag.get_apriltag()
+    while position is None:
+        shake_turn(jetbot_motor)
+        position, orientation = apriltag.get_apriltag()
+    return position, orientation
 
 # turn 180 degree
 def turn_back(jetbot_motor):
@@ -121,7 +127,7 @@ def turn_to_direction(jetbot_motor, direction):  # add apriltag (not for now)
     """
     # direction: desired gradient angle
     print('turn_to_direction...')
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
@@ -152,7 +158,7 @@ def turn_to_direction_with_cube(jetbot_motor, direction):
     """
     # direction: desired gradient angle
     print('turn_to_direction_with_cube...')
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
@@ -187,7 +193,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
     print('turn_to_direction_advanced...')
     rate = rospy.Rate(50)
     # direction: desired gradient angle (from y-axis counterclockwise)
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     print('position:', position, 'orientation:', orientation[2] / np.pi * 180)
     difference_cache = (direction - orientation[2])
     difference = ((2 * np.pi) - difference_cache) % (2 * np.pi)
@@ -196,7 +202,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
             jetbot_motor.set_speed(0.1, -0.1)  # rotate clockwise
             time.sleep(1 / 3)
             stop(jetbot_motor)
-            position, orientation = apriltag.get_apriltag()
+            position, orientation = get_apriltag(jetbot_motor)
             difference_cache = (direction - orientation[2])
             difference_current = ((2 * np.pi) - difference_cache) % (
                     2 * np.pi)  # current difference compared to desired direction
@@ -212,7 +218,7 @@ def turn_to_direction_advanced(jetbot_motor, direction):  # add apriltag to impr
             jetbot_motor.set_speed(-0.1, 0.1)  # rotate clockwise
             time.sleep(1 / 3)
             stop(jetbot_motor)
-            position, orientation = apriltag.get_apriltag()
+            position, orientation = get_apriltag(jetbot_motor)
             difference_cache = (direction - orientation[2])
             difference_current = ((2 * np.pi) - difference_cache) % (
                     2 * np.pi)  # current difference compared to desired direction
@@ -344,7 +350,7 @@ def linear_motion(jetbot_motor, end):
     """
     print('linear_motion...')
     print('Going to:', end)
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
     v1 = end - start
@@ -385,7 +391,7 @@ def linear_motion(jetbot_motor, end):
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
         rospy.sleep(0.1)
-        position, orientation = apriltag.get_apriltag()
+        position, orientation = get_apriltag(jetbot_motor)
         v2 = position[0:2] - start
         # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]  # Calculate the cross product
@@ -424,10 +430,10 @@ def linear_motion(jetbot_motor, end):
 
 
 # linear motion mode with a PID controller and a desired time
-def linear_motion_with_desired_time(jetbot_motor, end, t):
+def linear_motion_with_desired_time(jetbot_motor, end, t=20):
     print('linear_motion_with_desired_time...')
     print('Going to:', end, 'with desired time:', t)
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
     v1 = end - start
@@ -464,14 +470,14 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
     k_left = 0
     k_right = 0
     safe_width = 0.1
-    MAX_TIME = 10
+    MAX_TIME = 20
     if t > MAX_TIME:
         t = MAX_TIME
     time_init = time.time()
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
         rospy.sleep(0.1)
-        position, orientation = apriltag.get_apriltag()
+        position, orientation = get_apriltag(jetbot_motor)
         v2 = position[0:2] - start
         # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]  # Calculate the cross product
@@ -519,7 +525,7 @@ def linear_motion_with_desired_time(jetbot_motor, end, t):
 def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
     print('linear_motion_with_desired_time...')
     print('Going to:', end, 'with desired time:', t)
-    position, orientation = apriltag.get_apriltag()
+    position, orientation = get_apriltag(jetbot_motor)
     start = position[0:2]
     # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
     v1 = end - start
@@ -563,7 +569,7 @@ def linear_motion_with_desired_time_with_cube(jetbot_motor, end, t):
     while 1:
         jetbot_motor.set_speed(0.1 + k_left, 0.1 + k_right)  # go ahead!
         rospy.sleep(0.1)
-        position, orientation = apriltag.get_apriltag()
+        position, orientation = get_apriltag(jetbot_motor)
         v2 = position[0:2] - start
         # PID controller (currently only P was considered)
         cross_product = v1[0] * v2[1] - v1[1] * v2[0]  # Calculate the cross product
@@ -649,3 +655,4 @@ if __name__ == '__main__':
     stop(jetbot_motor)
     
 """
+

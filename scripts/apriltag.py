@@ -4,10 +4,8 @@ import math
 from apriltag_ros.msg import AprilTagDetectionArray
 import pickle
 from basic_move import *
-from motors_waveshare import MotorControllerWaveshare
 
 apriltag = []
-jetbot_motor = MotorControllerWaveshare()
 
 
 def save_variable(var, filename):
@@ -95,21 +93,23 @@ def get_apriltag():
             orientation = euler_from_quaternion(quaternion)
             position = transformation(orientation, position_relative)
             # print('position_relative:', position_relative, 'quaternion:',quaternion)
-            difference_time = rospy.Time.now()-time_pre
+            difference_time = rospy.Time.now().to_sec()-time_pre
             displacement = math.sqrt((position[0] - position_pre[0]) ** 2 + (position[1] - position_pre[1]) ** 2)
             if (0 < position[0] < 1.485) and (0 < position[1] < 1.485) and (displacement < (difference_time * 0.2)):
-                timestamp = rospy.Time.now()
+                timestamp = rospy.Time.now().to_sec()
                 save_variable(timestamp, 'time.pkl')
                 save_variable(position, 'position.pkl')
                 return position, orientation
             else:
-                print('----------- False apriltag! detect again! ------------------')
-                shake_turn(jetbot_motor)
+                # print('----------- False apriltag! detect again! ------------------')
                 continue
-        if (rospy.Time.now()-time_pre) > 2:     # when the apriltag doesn't come for more than 2 seconds, then shake and test again
+        if (rospy.Time.now().to_sec()-time_pre) > 2:     # when the apriltag doesn't come for more than 2 seconds, then shake and test again
             print('----------- no apriltag! detect again! ------------------')
-            shake_turn(jetbot_motor)
-            time_pre = rospy.Time.now()
+            timestamp = rospy.Time.now().to_sec()
+            save_variable(timestamp, 'time.pkl')
+            position = None
+            orientation = None
+            return position, orientation
         rospy.sleep(0.1)
 
 
@@ -119,3 +119,4 @@ def get_apriltag():
 
 # position, orientation = get_apriltag()
 # print('position:', position, 'orientation:',orientation)
+
