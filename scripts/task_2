@@ -242,9 +242,9 @@ for j in range(len(merged_sorted)):
                 if planned_trajectory[i - 2][1][2] > planned_trajectory[i + 1][1][2]:
                     #turn_clockwise(jetbot_motor, np.pi / 2)
                     if position[1] <= (planned_trajectory[i][1][1] ) :
-                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) - 12,5]
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) - 0.125]
                     else:
-                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 12, 5]
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 0.125]
 
 
                     start = position[0:2]
@@ -280,9 +280,9 @@ for j in range(len(merged_sorted)):
                 else:
                     #turn_counterclockwise(jetbot_motor, np.pi/ 2)
                     if position[1] <= (planned_trajectory[i][1][1] ) :
-                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) - 12,5]
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) - 0.125]
                     else:
-                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 12, 5]
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 0.125]
 
                     start = position[0:2]
                     ##
@@ -318,9 +318,9 @@ for j in range(len(merged_sorted)):
             else:
                 # turn_counterclockwise(jetbot_motor, np.pi/ 2)
                 if position[1] <= (planned_trajectory[i][1][1]):
-                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) - 12, 5]
+                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) - 0.125]
                 else:
-                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 12, 5]
+                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 0.125]
 
                 start = position[0:2]
                 ##
