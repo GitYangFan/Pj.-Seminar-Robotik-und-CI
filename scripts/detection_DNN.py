@@ -2,7 +2,11 @@ from jetson_inference import detectNet
 from jetson_utils import videoSource, videoOutput
 from image_capture import get_image
 
-net = detectNet(model="model/ssd-mobilenet.onnx", labels="model/labels.txt",
+#net = detectNet(model="model/ssd-mobilenet.onnx", labels="model/labels.txt",
+#                 input_blob="input_0", output_cvg="scores", output_bbox="boxes",
+#                 threshold=0.5)
+
+net = detectNet(model="/home/jetbot/workspace/jetson-inference/python/training/detection/ssd/models/arena/ssd-mobilenet.onnx", labels="/home/jetbot/workspace/jetson-inference/python/training/detection/ssd/models/arena/labels.txt",
                 input_blob="input_0", output_cvg="scores", output_bbox="boxes",
                 threshold=0.5)
 camera = videoSource("csi://0")  # '/dev/video0' for V4L2
@@ -11,8 +15,8 @@ display = videoOutput("display://0")  # 'my_video.mp4' for file
 # initialization of object list
 
 while display.IsStreaming():
-    # img = camera.Capture()
-    img = get_image()
+    img = camera.Capture()
+    # img = get_image()
 
     if img is None:  # capture timeout
         continue

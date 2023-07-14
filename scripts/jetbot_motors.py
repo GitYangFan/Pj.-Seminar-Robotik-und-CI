@@ -51,17 +51,17 @@ def on_cmd_str(msg):
 	rospy.loginfo(rospy.get_caller_id() + ' cmd_str=%s', msg.data)
 
 	if msg.data.lower() == "left":
-		set_speed(motor_left_ID,  -1.0)
-		set_speed(motor_right_ID,  1.0) 
+		set_speed(motor_left_ID,  -0.3)
+		set_speed(motor_right_ID,  0.3) 
 	elif msg.data.lower() == "right":
-		set_speed(motor_left_ID,   1.0)
-		set_speed(motor_right_ID, -1.0) 
+		set_speed(motor_left_ID,   0.3)
+		set_speed(motor_right_ID, -0.3) 
 	elif msg.data.lower() == "forward":
-		set_speed(motor_left_ID,   1.0)
-		set_speed(motor_right_ID,  1.0)
+		set_speed(motor_left_ID,   0.3)
+		set_speed(motor_right_ID,  0.3)
 	elif msg.data.lower() == "backward":
-		set_speed(motor_left_ID,  -1.0)
-		set_speed(motor_right_ID, -1.0)  
+		set_speed(motor_left_ID,  -0.3)
+		set_speed(motor_right_ID, -0.3)  
 	elif msg.data.lower() == "stop":
 		all_stop()
 	else:

@@ -19,27 +19,33 @@ def load_variable(filename):
 
 
 def euler_from_quaternion(quaternion):
+    """
+    Convert a quaternion into euler angles (roll, pitch, yaw)
+    roll is rotation around x in radians (counterclockwise)
+    pitch is rotation around y in radians (counterclockwise)
+    yaw is rotation around z in radians (counterclockwise)
+    """
     x = quaternion[0]
     y = quaternion[1]
     z = quaternion[2]
     w = -quaternion[3]
     t0 = +2.0 * (w * x + y * z)
     t1 = +1.0 - 2.0 * (x * x + y * y)
-    roll = math.atan2(t0, t1)
+    roll_x = math.atan2(t0, t1)
 
     t2 = +2.0 * (w * y - z * x)
     t2 = +1.0 if t2 > +1.0 else t2
     t2 = -1.0 if t2 < -1.0 else t2
-    pitch = math.asin(t2)
+    pitch_y = math.asin(t2)
 
     t3 = +2.0 * (w * z + x * y)
     t4 = +1.0 - 2.0 * (y * y + z * z)
-    yaw = math.atan2(t3, t4)
-    if yaw < 0:  # Adjust the yaw angle range to [0,2*pi]
-        yaw = 2 * np.pi + yaw
+    yaw_z = math.atan2(t3, t4)
+    if yaw_z < 0:  # Adjust the yaw angle range to [0,2*pi]
+        yaw_z = 2 * np.pi + yaw_z
 
-    euler = [roll, pitch, yaw]
-    return euler
+    euler = [roll_x, pitch_y, yaw_z]
+    return euler  # in radians
 
 
 def transformation(euler, position_relativ):
@@ -67,6 +73,8 @@ def tag_callback(data):
         # print(apriltag.position.x)
         # print(data.detections[0].pose.pose.pose
         # print('detection:',data.detections)
+    else:
+        apriltag = []
 
 
 def get_apriltag():
@@ -96,6 +104,11 @@ def get_apriltag():
                 return position, orientation
             else:
                 # print('----------- False apriltag! detect again! ------------------')
+                if (rospy.Time.now().to_sec()-time_pre) > 5:
+                    print('-------------- False apriltag for 5 sencond! -----------------')
+                    position = None
+                    orientation = None
+                    return position, orientation
                 continue
         if (rospy.Time.now().to_sec()-time_pre) > 2:     # when the apriltag doesn't come for more than 2 seconds, then shake and test again
             print('----------- no apriltag! detect again! ------------------')

@@ -14,6 +14,7 @@ class MotorControllerWaveshare(MotorController):
     """
     MOTOR_LEFT = 1      # left motor ID
     MOTOR_RIGHT = 2     # right motor ID
+    max_pwm = 255
     
     def __init__(self):
         super(MotorControllerWaveshare, self).__init__()

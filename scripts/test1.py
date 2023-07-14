@@ -58,7 +58,7 @@ a[3]=[0.3,0.9]
 a[4]=[1.2,0.9]
 a[5]=[1.2,1.2]
 a[6]=[0.3,1.2]
-a[7]=[0.1,0.1]
+a[7]=[0.2,0.2]
 
 plot_position=[]
 plot_name=[]
@@ -70,11 +70,11 @@ save_variable(timestamp, 'time.pkl')
 save_variable([0.1, 0.1], 'position.pkl')
 
 turn_to_direction(jetbot_motor, 3*np.pi/2)
-end=[0.3,0.3]
+end=[0.2,0.3]
 linear_motion(jetbot_motor, end)
 turn_to_direction(jetbot_motor, 3*np.pi/2)
 position, _ = get_apriltag(jetbot_motor)
-objects= get_objects()
+objects= get_objects(jetbot_motor)
 if objects!=[]:
     nearest_object= find_nearest_cube(objects)
     object_distance =  nearest_object.distance
@@ -87,7 +87,7 @@ for i in range(8):
         if position[0] > 1.35 and position[0] < 0.08:
             position, _ = get_apriltag(jetbot_motor)
         else:
-            objects = get_objects()
+            objects = get_objects(jetbot_motor)
             object_angle= find_object()
             if objects !=[]:
                 nearest_object = find_nearest_cube(objects)
@@ -97,8 +97,12 @@ for i in range(8):
                 object_position = nearest_object.position
                 distance = distance_point_line(position, a[i], object_position)
                 name=nearest_object.name
-                if object_distance <0.3:
-                    if name not in plot_name:
+                if object_distance <0.35:
+                    if name == 'ball':
+                        plot_name.append(nearest_object.name)
+                        plot_position.append(nearest_object.position)
+                        print("************************plot_name", plot_name)
+                    elif name not in plot_name:
                         plot_name.append(nearest_object.name)
                         print("************************plot_name", plot_name)
 
@@ -113,14 +117,19 @@ for i in range(8):
                        #     file.write(line)
 
 
-                if object_distance<0.2 and distance< 0.1 and ((object_position[0] > 0.2 and object_position[0] < 1.15) and  (object_position[1]>0.2 and object_position[1]<1.15)):
+                if object_distance<0.2 and distance< 0.1 and ((object_position[0] > 0.3 and object_position[0] < 1.2) and  (object_position[1]>0.2 and object_position[1]<1.2)):
                     print("*********************start avoid obstacle***************************")
                     object_angle = nearest_object.horizon_angle
                     print("*******************************object_angle:", object_angle)
-                    if (object_position[0] > 1.1 or object_position[0]<0.3):
+                    if (object_position[0] > 1.1 or object_position[0]<0.4) and i<7 :
+                
                         break
+                   # elif i in [1, 3, 5]:
+                    #    print("*********************in Y_Richtung***************************")
+                     #   if object_position[0] > 1.15 or object_position[0]<0.4:
+                      #      break
 
-                    elif object_angle > 5:
+                    elif object_angle > 0.1745:
                         if i%2==0:
                             end = [object_position[0],object_position[1]-0.15]
                             linear_motion(jetbot_motor,end)
@@ -135,7 +144,7 @@ for i in range(8):
                             end=[object_position[0],object_position[1]+0.15]
                             linear_motion(jetbot_motor, end)
                         else:
-                            end =[object_position[0]-0.15,object_position[1]]
+                            end =[object_position[1]-0.15,object_position[1]]
                             linear_motion(jetbot_motor, end)
                             continue
 
@@ -153,7 +162,14 @@ for i in range(8):
                 distance_to_destination = math.sqrt((position[0] - a[i][0]) ** 2 + (position[1] - a[i][1]) ** 2)
 
 
+turn_to_direction(jetbot_motor,3*np.pi/4)
+forwards_distance(jetbot_motor,0.15)
+
 file_list_position="./list_position.npy"
+if os.path.exists(file_list_position):
+    os.remove(file_list_position)
 np.save(file_list_position,plot_position)
 file_list_name = "./list_name.npy"
+if os.path.exists(file_list_name):
+    os.remove(file_list_name)
 np.save(file_list_name,plot_name)

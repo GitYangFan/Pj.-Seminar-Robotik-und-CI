@@ -6,7 +6,7 @@ from motors_waveshare import MotorControllerWaveshare
 jetbot_motor = MotorControllerWaveshare()
 #rospy.init_node('object_localization')
 object_name, object_score, object_position, object_distance_horizon = get_object_position()
-destination = [object_position[0][0], object_position[0][1]+0.1]
+destination = [object_position[0][0]+0.1, object_position[0][1]]
 flag = False
 while not flag:
     flag = linear_motion(jetbot_motor, destination)

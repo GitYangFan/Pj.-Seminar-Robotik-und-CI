@@ -9,6 +9,13 @@ from detection_results import get_detection
 from object_localization  import *
 import basic_move
 
+
+
+planned_trajectory =[('pointw1', [0.1, 0.1, 0.5, 0.475]), ('kreisw1', [0.5, 0.6, 0.125]), ('kurvew1', [0.375, 0.6]), ('pointw3', [0.375, 0.6, 0.4, 0.975]), ('kreisw3', [0.4, 1.1, 0.125]), ('kurvew3', [0.525, 1.1]), ('pointw6', [0.525, 1.1, 0.975, 1.1]), ('kreisw6', [1.1, 1.1, 0.125]), ('pointw2', [0.975, 1.1, 1.0, 0.825]), ('kreisw2', [1.0, 0.7, 0.125]), ('kurvew2', [1.125, 0.7]), ('pointw5', [1.125, 0.7, 1.2, 0.425]), ('kreisw5', [1.2, 0.3, 0.125]), ('kurvew5', [1.075, 0.3]), ('pointw4', [1.075, 0.3, 0.8, 0.425]), ('kreisw4', [0.8, 0.3, 0.125]), ('kurvew4', [0.675, 0.3]), ('start_point90', [0.675, 0.3, 0.675, 0.1]), ('start_point', [0.675, 0.1, 0.1, 0.1])]
+
+
+merged_sorted =[('w1', [0.5, 0.6, 'BLUE']), ('w3', [0.4, 1.1, 'BLUE']), ('w6', [1.1, 1.1, 'RED']), ('w2', [1.0, 0.7, 'BLUE']), ('w5', [1.2, 0.3, 'RED']), ('w4', [0.8, 0.3, 'RED'])]
+
 #save a list in text data
 def save_list(liste, dateiname):
     with open(dateiname, 'w') as datei:
@@ -94,18 +101,6 @@ def intersection_point(point, line):
     return intersection_x, intersection_y
 
 
-#planned_trajectory = [('pointw2', [10, 10, 40, 42.5]), ('kreisw2', [40, 50, 7.5]), ('kurvew2', [47.5, 50]), ('pointw5', [47.5, 50, 65, 82.5]), ('kreisw5', [65, 90, 7.5]), ('kurvew5', [72.5, 90]), ('pointw3', [72.5, 90, 112.5, 120]), ('kreisw3', [120, 120, 7.5]), ('pointw4', [112.5, 120, 120, 77.5]), ('kreisw4', [120, 70, 7.5]), ('kurvew4', [112.5, 70]), ('pointw6', [112.5, 70, 80, 67.5]), ('kreisw6', [80, 60, 7.5]), ('kurvew6', [87.5, 60]), ('pointw1', [87.5, 60, 120, 52.5]), ('kreisw1', [120, 45, 7.5]), ('kurvew1', [112.5, 45]), ('start_point90', [120, 37.5, 120, 10]), ('start_point', [120, 10, 10, 10])]
-#planned_trajectory = [('pointw2', [0.1, 0.1, 0.4, 0.425]), ('kreisw2', [0.4, 0.5, 0.75]), ('kurvew2', [0.475, 0.50]), ('pointw5', [0.475, 0.50, 0.65, 0.825]), ('kreisw5', [0.65, 0.90, 0.1]), ('kurvew5', [0.725, 0.90]), ('pointw3', [0.725, 0.90, 1.125, 1.20]), ('kreisw3', [1.20, 1.20, 0.1]), ('pointw4', [1.125, 1.20, 1.20, 0.775]), ('kreisw4', [1.20, 0.70, 0.1]), ('kurvew4', [1.125, 0.70]), ('pointw6', [1.125, 0.70, 0.80, 0.675]), ('kreisw6', [0.80, 0.60, 0.1]), ('kurvew6', [0.875, 0.60]), ('pointw1', [0.875, 0.60, 1.20, 0.525]), ('kreisw1', [1.20, 0.45, 0.1]), ('kurvew1', [1.125, 0.45]), ('start_point90', [1.20, 0.375, 1.20, 0.10]), ('start_point', [1.20, 0.10, 0.10, 0.10])]
-
-#merged_sorted =[('w2', [0.40, 0.50]), ('w5', [0.65, 0.90]), ('w3', [1.20, 1.20]), ('w4', [1.20, 0.70]), ('w6', [0.80, 0.60]), ('w1', [1.20, 0.45])]
-
-
-#planned_trajectory = [('pointw2', [0.15, 0.15, 0.4, 0.425]), ('kreisw2', [0.4, 0.5, 0.75]), ('kurvew2', [0.40, 0.50]), ('pointw5', [0.475, 0.50, 0.65, 0.825]), ('kreisw5', [0.65, 0.90, 0.1]), ('kurvew5', [0.65, 0.90]), ('pointw3', [0.725, 0.90, 1.125, 1.20]), ('kreisw3', [1.20, 1.20, 0.1]), ('pointw4', [1.125, 1.20, 1.20, 0.775]), ('kreisw4', [1.20, 0.70, 0.1]), ('kurvew4', [1.20, 0.70]), ('pointw6', [1.125, 0.70, 0.80, 0.675]), ('kreisw6', [0.80, 0.60, 0.1]), ('kurvew6', [0.80, 0.60]), ('pointw1', [0.875, 0.60, 1.20, 0.525]), ('kreisw1', [1.20, 0.45, 0.1]), ('kurvew1', [1.20, 0.45]), ('start_point90', [1.20, 0.375, 1.20, 0.15]), ('start_point', [1.20, 0.15, 0.15, 0.15])]
-
-#merged_sorted =[('w2', [0.40, 0.50]), ('w5', [0.65, 0.90]), ('w3', [1.20, 1.20]), ('w4', [1.20, 0.70]), ('w6', [0.80, 0.60]), ('w1', [1.20, 0.45])]
-
-planned_trajectory =[('pointw2', [0.1, 0.1, 0.4, 0.375]), ('kreisw2', [0.4, 0.5, 0.125]), ('kurvew2', [0.275, 0.5]), ('pointw1', [0.275, 0.5, 0.4, 1.075]), ('kreisw1', [0.4, 1.2, 0.125]), ('kurvew1', [0.525, 1.2]), ('pointw4', [0.525, 1.2, 1.075, 1.1]), ('kreisw4', [1.2, 1.1, 0.125]), ('pointw5', [1.075, 1.1, 0.8, 1.025]), ('kreisw5', [0.8, 0.9, 0.125]), ('kurvew5', [0.925, 0.9]), ('pointw3', [0.925, 0.9, 1.2, 0.825]), ('kreisw3', [1.2, 0.7, 0.125]), ('kurvew3', [1.075, 0.7]), ('pointw6', [1.075, 0.7, 0.9, 0.425]), ('kreisw6', [0.9, 0.3, 0.125]), ('start_point90', [0.775, 0.3, 0.775, 0.1]), ('start_point', [0.775, 0.1, 0.1, 0.1])]
-merged_sorted =[('w2', [0.4, 0.5, 'RED']), ('w1', [0.4, 1.2, 'BLUE']), ('w4', [1.2, 1.1, 'RED']), ('w5', [0.8, 0.9, 'BLUE']), ('w3', [1.2, 0.7, 'RED']), ('w6', [0.9, 0.3, 'RED'])]
 
 pos_real = []
 cube_color_real = []
@@ -134,14 +129,7 @@ for j in range(len(merged_sorted)):
             #distance_ob_total = calculate_distance(position[0:2], o2)
             #pos_stop= distance_ob_total/0.2
             #rounded_pos_stop = math.ceil(pos_stop)
-            """
-            # Sides of the triangle
-            a = planned_trajectory[i][3] - position[1]
-            b = planned_trajectory[i][2] - position[0]
 
-            # calculate the angel for the Cube orientation
-            angle_a, angle_b, angle_c = calculate_angles(a, b, distance_ob_total)
-            """
             start = position[0:2]
             ##
             # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
@@ -161,16 +149,16 @@ for j in range(len(merged_sorted)):
             turn_to_direction(jetbot_motor, direction)
             #detektion ob eine Kugel da ist
             #get_detection()
-            object_name,_, object_position,_ = get_object_position()
+            object_name,_, object_position,_ = get_object_position(jetbot_motor)
             #adjacent, opposite = calculate_sides(0.30, direction)
             #print("opposite: ", opposite)
             #print("adjacent: ", adjacent)
             #end = [object_position[0], object_position[1]]
             for p in  range(7):
-                object_name, _, object_position, _ = get_object_position()
+                object_name, _, object_position, _ = get_object_position(jetbot_motor)
                 position, orientation = basic_move.get_apriltag(jetbot_motor)
                 pos_real.append(position[0:2])
-                if  object_name == "ball":
+                if  object_name == "balll":
 
                     gg = distance_point_line(planned_trajectory[i][1][2],  planned_trajectory[i][1][3], object_position)
                     #die distance zwischen dem Jetbot und die Kugel recchnen und vergleichen ob es Kleiner als 20 cm oder nicht
@@ -229,7 +217,6 @@ for j in range(len(merged_sorted)):
                     direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
             ####
             # get the angel?
-            #oder machen wir die Richtung einfach 90 grad ?
 
             turn_to_direction(jetbot_motor,direction)
             turn_to_direction(jetbot_motor, direction)
@@ -239,6 +226,9 @@ for j in range(len(merged_sorted)):
             else:
                 turn_clockwise(jetbot_motor, np.pi *2 )
 
+
+
+
             position, orientation =basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
 
@@ -246,35 +236,124 @@ for j in range(len(merged_sorted)):
             position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
             #o2=[planned_trajectory[i][1][2], planned_trajectory[i][1][3]]
-            o2 = [merged_sorted[j][1][0], merged_sorted[j][1][1]]
-
-            start = position[0:2]
-            ##
-            # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
-            v1 = o2 - start
-            if v1[0] < 0:
-                if v1[1] > 0:
-                    direction = np.arctan(-v1[0] / v1[1])  # first quadrant
-                else:
-                    direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
-            else:
-                if v1[1] < 0:
-                    direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
-                else:
-                    direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
-            ####
-
-            turn_to_direction(jetbot_motor, direction)
-            turn_to_direction(jetbot_motor, direction)
+            #o2 = [merged_sorted[j][1][0], merged_sorted[j][1][1]]
 
             # mit Uhrzeigesin oder gegen!
             if i != range(len(planned_trajectory))[-1]:
                 if planned_trajectory[i - 2][1][2] > planned_trajectory[i + 1][1][2]:
-                    turn_clockwise(jetbot_motor, np.pi / 2)
+                    #turn_clockwise(jetbot_motor, np.pi / 2)
+                    if position[1] <= (planned_trajectory[i][1][1] ) :
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) - 0.125]
+                    else:
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 0.125]
+
+
+                    start = position[0:2]
+                    ##
+                    # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+                    v1 = o2 - start
+                    if v1[0] < 0:
+                        if v1[1] > 0:
+                            direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+                        else:
+                            direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+                    else:
+                        if v1[1] < 0:
+                            direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+                        else:
+                            direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+                    ####
+
+                    turn_to_direction(jetbot_motor, direction)
+                    turn_to_direction(jetbot_motor, direction)
+                    for p in range(7):
+                        object_name, _, object_position, _ = get_object_position(jetbot_motor)
+                        position, orientation = basic_move.get_apriltag(jetbot_motor)
+                        pos_real.append(position[0:2])
+                        turn_to_direction(jetbot_motor, direction)
+                        turn_to_direction(jetbot_motor, direction)
+                        flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+                        position, orientation = basic_move.get_apriltag(jetbot_motor)
+                        pos_real.append(position[0:2])
+                        if flag:
+                            print("i bin hier ")
+                            break
                 else:
-                    turn_counterclockwise(jetbot_motor, np.pi/ 2)
+                    #turn_counterclockwise(jetbot_motor, np.pi/ 2)
+                    if position[1] <= (planned_trajectory[i][1][1] ) :
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1] ) -0.125]
+                    else:
+                        o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) +0.125]
+
+                    start = position[0:2]
+                    ##
+                    # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+                    v1 = o2 - start
+                    if v1[0] < 0:
+                        if v1[1] > 0:
+                            direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+                        else:
+                            direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+                    else:
+                        if v1[1] < 0:
+                            direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+                        else:
+                            direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+                    ####
+
+                    turn_to_direction(jetbot_motor, direction)
+                    turn_to_direction(jetbot_motor, direction)
+
+                    for p in range(7):
+                        object_name, _, object_position, _ = get_object_position(jetbot_motor)
+                        position, orientation = basic_move.get_apriltag(jetbot_motor)
+                        pos_real.append(position[0:2])
+                        turn_to_direction(jetbot_motor, direction)
+                        turn_to_direction(jetbot_motor, direction)
+                        flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+                        position, orientation = basic_move.get_apriltag(jetbot_motor)
+                        pos_real.append(position[0:2])
+                        if flag:
+                            print("i bin hier ")
+                            break
             else:
-                turn_counterclockwise(jetbot_motor, np.pi / 2)
+                # turn_counterclockwise(jetbot_motor, np.pi/ 2)
+                if position[1] <= (planned_trajectory[i][1][1]):
+                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) -0.125]
+                else:
+                    o2 = [planned_trajectory[i][1][0], (planned_trajectory[i][1][1]) + 0.125]
+
+                start = position[0:2]
+                ##
+                # start: [x1, y1]   , end: [x2, y2]  , position: [x3, y3]
+                v1 = o2 - start
+                if v1[0] < 0:
+                    if v1[1] > 0:
+                        direction = np.arctan(-v1[0] / v1[1])  # first quadrant
+                    else:
+                        direction = np.pi - np.arctan(v1[0] / v1[1])  # second quadrant
+                else:
+                    if v1[1] < 0:
+                        direction = np.pi + np.arctan(-v1[0] / v1[1])  # third quadrant
+                    else:
+                        direction = 2 * np.pi - np.arctan(v1[0] / v1[1])  # fourth quadrant
+                ####
+
+                turn_to_direction(jetbot_motor, direction)
+                turn_to_direction(jetbot_motor, direction)
+                #turn_counterclockwise(jetbot_motor, np.pi / 2)
+                for p in range(7):
+                    object_name, _, object_position, _ = get_object_position(jetbot_motor)
+                    position, orientation = basic_move.get_apriltag(jetbot_motor)
+                    pos_real.append(position[0:2])
+                    turn_to_direction(jetbot_motor, direction)
+                    turn_to_direction(jetbot_motor, direction)
+                    flag = linear_motion_with_desired_time(jetbot_motor, o2, 2)
+                    position, orientation = basic_move.get_apriltag(jetbot_motor)
+                    pos_real.append(position[0:2])
+                    if flag:
+                        print("i bin hier ")
+                        break
             position, orientation = basic_move.get_apriltag(jetbot_motor)
             pos_real.append(position[0:2])
 

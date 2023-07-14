@@ -21,7 +21,7 @@ def stop(jetbot_motor):
     Returns
     ------------
     """
-    print('stopped! ')
+    #print('stopped! ')
     jetbot_motor.set_speed(0, 0)
     rospy.sleep(0.5)
 
@@ -93,6 +93,14 @@ def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
     stop(jetbot_motor)
     rospy.sleep(0.5)
 
+def forwards_distance(jetbot_motor, distance):
+    print('forwards_distance...')
+    velocity = 0.1  # wheel velocity (unit: m/s)
+    duration = distance / velocity
+    jetbot_motor.set_speed(velocity, velocity)  # go backwards!
+    time.sleep(duration)
+    stop(jetbot_motor)
+    rospy.sleep(0.5)
 
 # let the jetbot simple go backwards without controller
 def backwards_distance(jetbot_motor, distance):  # distance (unit: m)

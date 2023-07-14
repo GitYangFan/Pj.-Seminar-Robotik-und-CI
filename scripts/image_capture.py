@@ -1,16 +1,16 @@
 import rospy
 from sensor_msgs.msg import Image
 import numpy as np
-#from cv_bridge import CvBridge
+from cv_bridge import CvBridge
 import jetson_utils
 
 img = None
-#bridge = CvBridge()
+bridge = CvBridge()
 
 def image_callback(msg):
     global img
-    # img_cv = bridge.imgmsg_to_cv2(msg, "bgr8")
-    img_cv = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
+    img_cv = bridge.imgmsg_to_cv2(msg, "rgb8")
+    #img_cv = np.frombuffer(msg.data, dtype=np.uint8).reshape(msg.height, msg.width, -1)
     img = jetson_utils.cudaFromNumpy(img_cv)
 
 

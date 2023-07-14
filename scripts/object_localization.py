@@ -1,8 +1,9 @@
 import rospy
 import numpy as np
 from detection_results import get_detection
-from apriltag import get_apriltag
+#from apriltag import get_apriltag
 import math
+from basic_move import get_apriltag
 
 
 class ObjecT:
@@ -104,7 +105,7 @@ def find_object():
     return object_name, object_score, object_distance, object_angle, object_size
 
 
-def get_object_position():
+def get_object_position(jetbot_motor):
     """
     Parameters
     ------------
@@ -116,7 +117,7 @@ def get_object_position():
     object_position: The position of object in the Arena coordinate: [x, y] (unit: m)
     object_distance: The Linear distance from object to jetbot (unit: m)
     """
-    position_jetbot, orientation_jetbot = get_apriltag()
+    position_jetbot, orientation_jetbot = get_apriltag(jetbot_motor)
     print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
     object_name, object_score, object_distance, object_angle, object_size = find_object()
     length = len(object_name)
@@ -167,8 +168,8 @@ def get_object_position():
     return object_name, object_score, object_position, object_distance_horizon
 
 
-def get_objects():
-    position_jetbot, orientation_jetbot = get_apriltag()
+def get_objects(jetbot_motor):
+    position_jetbot, orientation_jetbot = get_apriltag(jetbot_motor)
     print('position_jetbot:', position_jetbot, 'orientation_jetbot', orientation_jetbot[2] / np.pi * 180)
     object_name, object_score, object_distance, object_angle, object_size = find_object()
     length = len(object_name)
