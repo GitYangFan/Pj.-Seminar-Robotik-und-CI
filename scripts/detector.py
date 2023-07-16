@@ -3,6 +3,7 @@ import cv2
 import collections
 import math
 
+# define color threshold
 color_dict = collections.defaultdict(list)
 lower_red1 = np.array([0, 43, 46])
 upper_red1 = np.array([10, 255, 255])
@@ -64,7 +65,6 @@ class Cube:
     """
     def __init__(self, approx, color):
         self.approx = approx
-        # self.mc = mc
         self.color = color
 
 class Ball:
@@ -335,41 +335,43 @@ def drawBalls(src, balls):
 ------------ test of detector -----------------
 """
 
-path = "./data/detection_real/1_cut.jpg"
-window_name = "image"
+if __name__ == "__main__":
 
-src = cv2.imread(path)
-# cvImshow(window_name, src)
-blurred = cv2.GaussianBlur(src, (5, 5), 0)
+    path = "./data/detection_real/1_cut.jpg"
+    window_name = "image"
 
-# test some functions
-# hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
-# cvImshow(window_name, src)
-# hsv = increaseContrast(hsv, 1.22, 50)
-# hsv = increaseBrightness(hsv, 30)
-# hsv = decreaseBrightness(hsv, 30)
-# bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
-# cvImshow(window_name, bgr)
+    src = cv2.imread(path)
+    # cvImshow(window_name, src)
+    blurred = cv2.GaussianBlur(src, (5, 5), 0)
 
-kernel = np.ones((5, 5), np.uint8)
-opened = cv2.morphologyEx(blurred,cv2.MORPH_OPEN,kernel,iterations=1)
+    # test some functions
+    # hsv = cv2.cvtColor(blurred, cv2.COLOR_BGR2HSV)
+    # cvImshow(window_name, src)
+    # hsv = increaseContrast(hsv, 1.22, 50)
+    # hsv = increaseBrightness(hsv, 30)
+    # hsv = decreaseBrightness(hsv, 30)
+    # bgr = cv2.cvtColor(hsv, cv2.COLOR_HSV2BGR)
+    # cvImshow(window_name, bgr)
 
-# img = cv2.cvtColor(opened, cv2.COLOR_BGR2HSV)
+    kernel = np.ones((5, 5), np.uint8)
+    opened = cv2.morphologyEx(blurred,cv2.MORPH_OPEN,kernel,iterations=1)
 
-cubes = cubeDetection(opened, color_dict)
-balls = ballDetection(opened)
+    # img = cv2.cvtColor(opened, cv2.COLOR_BGR2HSV)
 
-print("number of cubes: ", len(cubes))
-for cube in cubes:
-    print("approx: \n", cube.approx)
-    print("color: ", cube.color, '\n')
-print("number of balls: ", len(balls))
-for ball in balls:
-    print("center: ", ball.center)
-    print("radius: ", ball.radius, '\n')
+    cubes = cubeDetection(opened, color_dict)
+    balls = ballDetection(opened)
 
-drawCubes(src, cubes)
-drawBalls(src, balls)
+    print("number of cubes: ", len(cubes))
+    for cube in cubes:
+        print("approx: \n", cube.approx)
+        print("color: ", cube.color, '\n')
+    print("number of balls: ", len(balls))
+    for ball in balls:
+        print("center: ", ball.center)
+        print("radius: ", ball.radius, '\n')
 
-cvImshow(window_name, src)
-cvImshow(window_name, img)
+    drawCubes(src, cubes)
+    drawBalls(src, balls)
+
+    cvImshow(window_name, src)
+    cvImshow(window_name, img)

@@ -29,13 +29,12 @@ def find_nearest_cube(cubes):
 
     return cubes[min_index]
 
-# def turning_detection(jetbot_motor, excepted_cubes):
 def turning_detection(jetbot_motor):
     """
     Turning in the current position and try to find the next cube at the same time, which not lies on the base
 
     Args:
-        excepted_cubes (list of ObjecT): the cubes, which have been pushed to the corresponding base.
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
 
     Returns:
         next_cube (ObjecT): the next cube need to be pushed
@@ -58,8 +57,8 @@ def go_to_next_cube(jetbot_motor, next_cube):
     Go to the next cube and get its position again to improve accuracy, call the function when next_cube.distance > 0.2
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         next_cube (ObjecT): the next_cube
-        excepted_cubes (list of ObjecT): the cubes, which have been pushed to the corresponding base.
 
     Returns:
         cube_will_be_pushed (ObjecT): the cube will be pushed
@@ -81,8 +80,9 @@ def go_to_destination(jetbot_motor, destination, tolerance=0.03):
     Go to the destination
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         destination ([float, float]): the destination
-        cube_pushed (ObjecT): the cube, which is being pushed
+        tolerance (float): the tolerance of the destination
     """
     position, _ = get_apriltag(jetbot_motor)
     distance_to_destination = math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)
@@ -96,10 +96,12 @@ def go_to_destination(jetbot_motor, destination, tolerance=0.03):
 
 def go_to_destination_with_cube(jetbot_motor, destination, tolerance=0.03):
     """
-    Go to the destination
+    Go to the destination with cube
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         destination ([float, float]): the destination
+        tolerance (float): the tolerance of the destination
     """
     position, _ = get_apriltag(jetbot_motor)
     distance_to_destination = math.sqrt((position[0] - destination[0]) ** 2 + (position[1] - destination[1]) ** 2)
@@ -116,7 +118,9 @@ def go_to_destination_with_obstacle_avoid(jetbot_motor, destination, tolerance=0
     Go to the destination and avoid obstacle automatically
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         destination ([float, float]): the destination
+        tolerance (float): the tolerance of the destination
         cube_pushed (ObjecT): the cube, which is being pushed
     """
     position, _ = get_apriltag(jetbot_motor)
@@ -156,6 +160,7 @@ def go_to_start_push_position(jetbot_motor, base_position, object_position):
     Go to the position, on there the next push should be started
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         base_position ([float, float]): the position of the corresponding base
         object_position ([float, float]): the position of the object need to be pushed
     Return:
@@ -182,6 +187,7 @@ def approach_obstacle(jetbot_motor, obstacle_position):
     Approach the obstacle for avoiding
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         obstacle_position ([float, float]): the position of the obstacle need to avoid
     """
     DISTANCE_TO_OBSTACLE = 0.10
@@ -197,6 +203,10 @@ def approach_obstacle(jetbot_motor, obstacle_position):
 def my_obstacle_avoid(jetbot_motor):
     """
     Choose the side automatically. Only for obstacles not in the corner #TODO
+
+    Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
+
     """
     position, orientation = get_apriltag(jetbot_motor)
     position = position[0:2]
@@ -287,6 +297,7 @@ def push_cube(jetbot_motor, base_position, cube):
     Push a cube to the corresponding base position, start from start_push_position
 
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         base_position ([float, float]): the position of the corresponding base
         cube (ObjecT): the cube, which will be pushed
     """
@@ -304,8 +315,8 @@ def go_back_to_path(jetbot_motor, path):
     After pushing a cube, go back to center or end of the predefined path and search for next_cube at the same time
 
     Args:
-        path_start ([float, float]): the start point of the path
-        path_end ([float, float]): the end point of the path
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
+        path (Path): the path jetbot should go back to
 
     Returns:
         arrive_end (bool): arrive the path_end or not
@@ -334,6 +345,7 @@ def follow_path(jetbot_motor, path_end):
     Call the function after go_back_to_path and let Jetbot follow the path.
     
     Args:
+        jetbot_motor (MotorControllerWaveshare): controller jetbot's motor
         path_end ([float, float]): the end point of the path
 
     Returns:
@@ -424,7 +436,6 @@ def main():
     # print('timestamp:',timestamp)
     save_variable(timestamp, 'time.pkl')
     save_variable([0.1, 0.1], 'position.pkl')
-    excepted_cubes = [] # cubes which have been pushed to the corresponding base
     paths = define_paths()
 
     # move to paths[0].start
@@ -467,24 +478,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-"""
-jetbot_motor = MotorControllerWaveshare()
-paths = define_paths()
-excepted_cubes = []
-paths = define_paths()
-
-# move to paths[0].start
-# basic_move.linear_motion_with_desired_time(jetbot_motor, paths[0].start, 5)
-next_cube = turning_detection(jetbot_motor, excepted_cubes)
-if next_cube is not None:
-    cube_will_be_pushed = go_to_next_cube(jetbot_motor, next_cube, excepted_cubes)
-    print("cube_will_be_pushed: ", cube_will_be_pushed.name, cube_will_be_pushed.position)
-    base_position = get_base_position(cube_will_be_pushed.name)
-    print("base_position: ", base_position)
-    print("go to start push position")
-    go_to_start_push_position(jetbot_motor, base_position, cube_will_be_pushed.position)
-    print("start push", cube_will_be_pushed.name)
-    push_cube(jetbot_motor, base_position, cube_will_be_pushed)
-    excepted_cubes.append(cube_will_be_pushed)
-    """
