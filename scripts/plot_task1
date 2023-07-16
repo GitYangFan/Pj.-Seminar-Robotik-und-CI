@@ -1,0 +1,45 @@
+import matplotlib.pyplot as plt
+
+def plot(position, color, marker):
+    # Create a new figure and axes
+    fig, ax = plt.subplots(figsize=(6, 6))
+    # Set the limits of the x and y axes
+    ax.set_xlim(0, 1.485)
+    ax.set_ylim(0, 1.485)
+    # Set the title and labels for the plot
+    ax.set_title('Objects')
+    ax.set_xlabel('X')
+    ax.set_ylabel('Y')
+    # Iterate over the position, color, and marker lists simultaneously
+    for pos, color, marker in zip(position, color, marker):
+        x, y = pos
+        # Scatter plot the current position with the specified color and marker
+        ax.scatter(x, y, color=color, marker=marker)
+    # Display the plot
+    plt.show()
+
+# Define the positions of the objects on the plot
+plot_position = [(0.73424, 0.423423), (1.153434, 0.424324), (0.42424, 0.954645), (1.43366221, 0.8996393), (0.11370952, 0.58338034)]
+# Define the names of the objects
+name = ['cube_yellow', 'cube_green', 'cube_purple', 'ball', 'cube_green']
+
+# Initialize empty lists to store object colors and markers
+object_color = []
+marker = []
+
+# Classify detected objects by color and shape
+b = len(name)
+for i in range(b):
+    # Check if the object name contains 'cube'
+    if 'cube' in name[i]:
+        # If it's a cube, use a square marker and extract the color from the name
+        marker.append('s')
+        object_color.append(name[i][5:])  # Extract color by removing the 'cube_' prefix
+        print(object_color[i])  # Print the extracted color
+    elif 'ball' in name[i]:
+        # If it's a ball, use a circular marker and assign it a gray color
+        marker.append('o')
+        object_color.append('gray')
+
+# Call the plot function with the positions, colors, and markers
+plot(plot_position, object_color, marker)
