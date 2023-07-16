@@ -32,10 +32,11 @@ def shake_turn(jetbot_motor):
     time.sleep(0.1)
     stop(jetbot_motor)
 
+# get_apriltag with the function of "shake it"
 def get_apriltag(jetbot_motor):
     position, orientation = apriltag.get_apriltag()
     while position is None:
-        shake_turn(jetbot_motor)
+        shake_turn(jetbot_motor)    # shake it, if result is false
         position, orientation = apriltag.get_apriltag()
     return position, orientation
 
@@ -94,6 +95,15 @@ def turn_counterclockwise(jetbot_motor, angle):  # add angel (unit: radian)
     rospy.sleep(0.5)
 
 def forwards_distance(jetbot_motor, distance):
+    """
+    Parameters
+    ------------
+    jetbot_motor: the Motor class from motors_waveshare
+    distance: The distance you want the Jetbot go forwards: (unit: m)
+
+    Returns
+    ------------
+    """
     print('forwards_distance...')
     velocity = 0.1  # wheel velocity (unit: m/s)
     duration = distance / velocity
