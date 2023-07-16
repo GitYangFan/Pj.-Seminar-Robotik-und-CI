@@ -1,8 +1,7 @@
-import math
 import numpy as np
 from matplotlib import pyplot as plt, patches
 
-# mal * 100
+# multiply a list with 100
 def mult_100(list):
     ll = []
     for i in range(len(list)):
@@ -10,34 +9,17 @@ def mult_100(list):
 
     return ll
 
-#Read a text Data
-def Read_text_data(dateiname):
-    liste = []
-    list = []
-    with open(dateiname, 'r') as datei:
-        for zeile in datei:
-            werte = zeile.strip().split()
-            for wert in werte:
-                try:
-                    liste.append(float(wert))
-                except ValueError:
-                    pass
 
-        for i in range(0, len(liste), 2):
-
-            wert1 = float(liste[i])
-            wert2 = float(liste[i+1])
-            list.append([wert1, wert2])
-
-    return list
-#save a list in text data
+# save a list in text data
 def save_list(liste, dateiname):
     with open(dateiname, 'w') as datei:
         for element in liste:
             datei.write(str(element) + '\n')
 
+# merge two dict
 def merge_dicts(dict1, dict2):
-    merged_dict = dict1.copy()  # Create a copy of dict1
+    # Create a copy of dict1
+    merged_dict = dict1.copy()
 
     for key, value in dict2.items():
         if key in merged_dict:
@@ -55,7 +37,7 @@ def merge_dicts(dict1, dict2):
 x1, y1 = [-1, 12], [1, 4]
 x2, y2 = [1, 10], [3, 2]
 
-
+# Cube's positions and color
 cubes_rot_blue = {
     "w1": [50 , 60 , "BLUE"],
     "w2": [100  , 70, "BLUE"],
@@ -66,7 +48,7 @@ cubes_rot_blue = {
 
 }
 
-#find out which cubes's positions are smaler aer bigger than 75
+# find out which cubes's positions are smaler aer bigger than 75
 x_smaller75 = []
 x_bigger75 = []
 
@@ -89,30 +71,27 @@ for ob, value in cubes_rot_blue.items():
         x_bigger75_d[ob] = value
 
 # sort based on the first digits then on the second digits
-#smaller than or equal 75
+# smaller than or equal 75
 sorted_x_smaller75_d = dict(sorted(x_smaller75_d.items(), key=lambda x: int(str(x[1][0]))))
 sorted_y_smaller75_d = dict(sorted(sorted_x_smaller75_d.items(), key=lambda x: int(str(x[1][1]))))
 
-#bigger than 75
+# bigger than 75
 sorted_x_bigger75_d = dict(sorted(x_bigger75_d.items(), key=lambda x: int(str(x[1][0])), reverse=True))
 sorted_y_bigger75_d = dict(sorted(sorted_x_bigger75_d.items(), key=lambda x: int(str(x[1][1])),reverse=True))
 
-#merge the two dict together
-#merged_sorted = {**sorted_y_smaller75_d, **sorted_y_bigger75_d}
+# merge the two dict together
 merged_sorted = merge_dicts(sorted_y_smaller75_d, sorted_y_bigger75_d)
 x1 = [0 , 1]
 x2 = [0, 6]
 
-#current_postion
+# current_postion
 r=10
 b=10
 
-#next_postion
-
-#dict for the planned and "driven" trajectory
+# dict for the planned and "driven" trajectory
 planned_trajectory = {}
 
-
+# Set plot
 fig = plt.figure()
 ax = fig.add_subplot()
 
@@ -122,7 +101,7 @@ width = 2
 height = 2
 for k in cubes_rot_blue:
     f = cubes_rot_blue[k]
-    # Berechnung der Eckpunkte des Rechtecks
+    # Calculation of the vertices of the rectangle
     left = f[0] - width/2
     right = f[0]  + width/2
     bottom = f[1]  - height/2
@@ -139,7 +118,7 @@ for k in cubes_rot_blue:
         plt.plot([left, right, right, left, left], [bottom, bottom, top, top, bottom], color='blue')
         plt.fill([left, right, right, left, left], [bottom, bottom, top, top, bottom], color='blue', alpha=0.3)
 
-
+# plot the planned trajectory
 g=0
 for i in merged_sorted:
     g = g + 1
@@ -157,10 +136,10 @@ for i in merged_sorted:
 
     jj = merged_sorted[gg]
 
-    # -7.5 damit der JetBot am Kreis haelt und einen Kreis Faefrt und dann den Kreis verlaesst
-
+    # circle radius around the cube
     radius = 12.5
 
+    # calculate the current position depending on the position of the next cube
     if i in x_smaller75_d:
         #from the start point
         if r in range(10, 20) and b in range(10, 20):
@@ -222,15 +201,6 @@ for i in merged_sorted:
                 r = j[0] + radius
                 b = j[1]
 
-        #elif i ==last_ob_x_bigger75_d:
-        #    x1 = [r, j[0] ]
-        #    x2 = [b, j[1] + radius ]
-
-            # current postion
-        #    r = j[0]
-        #    b = j[1]- radius
-
-
         else:
             x1 = [r, j[0] ]
             x2 = [b, j[1] + radius ]
@@ -246,7 +216,7 @@ for i in merged_sorted:
                 b = j[1]
 
 
-
+    # plot a circle around the cube
     circle2 = plt.Circle((j[0], j[1]), radius, fill=False  , edgecolor='black', facecolor='yellow')
 
     planned_trajectory['point'+ i] = []
@@ -254,6 +224,7 @@ for i in merged_sorted:
     planned_trajectory["point" + i] += [x1[1], x2[1]]
     planned_trajectory['kreis' + i] = [j[0], j[1], radius ]
 
+    # if the jetbot should drive a curve before it go to the next cube
     if x1[1] != r and x2[1] != b:
         planned_trajectory['kurve' + i] = [r, b]
 
@@ -273,7 +244,8 @@ for i in merged_sorted:
 
 
 
-
+    # after the last cube we  have to go back to the start point
+    # calculate the path to the start point
     if i == last_ob:
         x1 = [j[0]- radius,j[0]- radius]
         x2 = [j[1], 10]
@@ -298,14 +270,6 @@ for i in merged_sorted:
 
 
 # Read the real position to plot the real Path
-#dateiname = 'pos_real.txt'
-#t_pos_real = Read_text_data(dateiname)
-
-#t_pos_real = mult_100(t_pos_real)
-# Liste der Trajektorie
-#t_pos_real= [[13.158985000000001, 15.440338], [15.438499, 13.011807000000001], [32.989996999999995, 12.967989999999999], [32.989996999999995, 12.967989999999999], [40.368067, 36.297913], [40.368067, 36.297913], [29.930975999999998, 39.017629], [29.930975999999998, 39.017629], [29.930975999999998, 39.017629], [32.509121, 47.661659], [32.509121, 47.661659], [62.861005999999996, 36.688861], [62.861005999999996, 36.688861], [56.453892, 39.364759], [62.507729999999995, 68.85332], [62.507729999999995, 68.85332], [54.289337, 73.84623099999999], [54.289337, 73.84623099999999], [60.81860100000001, 78.686155], [60.81860100000001, 78.686155], [45.688602, 97.10982200000001], [45.688602, 97.10982200000001], [38.394224, 108.14814], [38.394224, 108.14814], [38.394224, 108.14814], [51.28135700000001, 105.913174], [51.28135700000001, 105.913174], [39.14327, 129.484127], [39.14327, 129.484127], [50.088072, 124.30224199999999], [70.921434, 119.12391600000001], [70.921434, 119.12391600000001], [145.73676799999998, 146.572958], [145.73676799999998, 146.572958], [107.170949, 108.927975], [107.170949, 108.927975], [107.173024, 108.929502], [102.427786, 120.393873], [102.427786, 120.393873], [96.272192, 112.039519], [79.588519, 102.580241], [79.588519, 102.580241], [79.588519, 102.580241], [81.638734, 97.645633], [81.638734, 97.645633], [73.153473, 79.550208], [73.153473, 79.550208], [78.76659099999999, 85.841144], [100.62335300000001, 82.82868], [100.62335300000001, 82.82868], [121.391293, 82.293913], [121.391293, 82.293913], [121.391293, 82.293913], [124.009592, 77.766755], [124.009592, 77.766755], [119.40481700000001, 51.996971], [119.40481700000001, 51.996971], [115.88224600000001, 53.995093000000004], [97.318553, 47.903939], [97.318553, 47.903939], [92.019661, 38.776517], [92.019661, 38.776517], [92.019661, 38.776517], [103.926249, 43.142956999999996], [103.926249, 43.142956999999996], [76.72797700000001, 8.605307], [10.412435, 9.408408999999999]]
-
-#print("positon real",t_pos_real)
 f = open("pos_real.txt", "r")
 ids = []
 for i in f.readlines():
@@ -314,8 +278,6 @@ for i in f.readlines():
     l = i[2:7]
     k =  i[14:19]
 
-    #sub_id = list(map(float,l))
-    #sub_id_k = list(map(float, k.split(",")))
     ids.append(float(l))
     ids.append(float (k))
 
@@ -329,9 +291,6 @@ t_pos_real = mult_100(new_list)
 for k in merged_sorted :
     a = merged_sorted[k]
     circle2 = plt.Circle((a[0], a[1]), 10, fill=False, edgecolor='black', facecolor='yellow')
-# Koordinaten extrahieren
-# x_coords = [coord[0] for coord in t_pos_real]
-# y_coords = [coord[1] for coord in t_pos_real]
 
 
 for h in t_pos_real:
@@ -340,12 +299,11 @@ for h in t_pos_real:
 for j in t_pos_real:
     y_coords = j[1]
 
-# Pfeile zeichnen
+# draw arrows
 for i in range(len(t_pos_real) - 1):
         dx = t_pos_real[i + 1][0] - t_pos_real[i][0]
         dy = t_pos_real[i + 1][1] - t_pos_real[i][1]
         plt.arrow(t_pos_real[i][0], t_pos_real[i][1], dx, dy, length_includes_head=True, head_width=1, color='red')
-        #plt.plot(t_pos_real[i][0], t_pos_real[i][1], marker='o', color='red')
 
 plt.arrow(10, 10, 1, 1 ,length_includes_head=True, head_width=1, color='red',label='Real_Trajectory')
 
@@ -355,23 +313,26 @@ merged_sorted_list = merged_sorted.items()
 
 
 
-
+# cm to m
 merged_sorted_result = [(key, [value / 100 if isinstance(value, float  ) else value for value in values]) for key, values in merged_sorted_list]
 merged_sorted_result = [(key, [value / 100 if isinstance(value, int  ) else value for value in values]) for key, values in merged_sorted_result]
 planned_trajectory_result = [(key, [value / 100 if isinstance(value, float) else value for value in values]) for key, values in planned_trajectory_list]
 planned_trajectory_result = [(key, [value / 100 if isinstance(value, int) else value for value in values]) for key, values in planned_trajectory_result]
 
-
+print("planned cubes in order their position in cm")
 print(merged_sorted_list)
+print("planned cubes in order their position in m")
 print(merged_sorted_result)
+print("planned trajectory in order, positions in cm")
 print(planned_trajectory_list)
+print("planned trajectory in order, positions in m")
 print(planned_trajectory_result)
 
-
+# save the planned cube in order
 dateiname = 'merged_sorted_result.txt'
 save_list(merged_sorted_result, dateiname)
 
-
+# save the planned trajectory
 dateiname = 'planned_trajectory_result.txt'
 save_list(planned_trajectory_result, dateiname)
 
@@ -386,4 +347,3 @@ plt.legend()
 plt.grid()
 
 plt.show()
-
