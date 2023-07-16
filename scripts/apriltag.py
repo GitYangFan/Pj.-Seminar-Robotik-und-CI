@@ -21,9 +21,6 @@ def load_variable(filename):
 def euler_from_quaternion(quaternion):
     """
     Convert a quaternion into euler angles (roll, pitch, yaw)
-    roll is rotation around x in radians (counterclockwise)
-    pitch is rotation around y in radians (counterclockwise)
-    yaw is rotation around z in radians (counterclockwise)
     """
     x = quaternion[0]
     y = quaternion[1]
@@ -49,7 +46,9 @@ def euler_from_quaternion(quaternion):
 
 
 def transformation(euler, position_relativ):
-    # euler = euler_from_quaternion(quaternion)
+    """
+    Coordinate System Transformation to Arena coordinate
+    """
     euler = [euler[0] / 3.14 * 180, euler[1] / 3.14 * 180, euler[2] / 3.14 * 180]
     angle_x = np.deg2rad(euler[0])
     angle_y = np.deg2rad(euler[1])
@@ -67,6 +66,9 @@ def transformation(euler, position_relativ):
 
 
 def tag_callback(data):
+    """
+    the callback function of apriltag subcriber
+    """
     global apriltag
     if data.detections != []:
         apriltag = data.detections[0].pose.pose.pose
@@ -78,6 +80,9 @@ def tag_callback(data):
 
 
 def get_apriltag():
+    """
+    apriltag subcriber
+    """
     # rospy.init_node('apriltag_listener')
     rospy.Subscriber('/tag_detections', AprilTagDetectionArray, tag_callback)
 
@@ -97,14 +102,14 @@ def get_apriltag():
             # print('position_relative:', position_relative, 'quaternion:',quaternion)
             difference_time = rospy.Time.now().to_sec()-time_pre
             displacement = math.sqrt((position[0] - position_pre[0]) ** 2 + (position[1] - position_pre[1]) ** 2)
-            if (0 < position[0] < 1.485) and (0 < position[1] < 1.485) and (displacement < (difference_time * 0.2)):
+            if (0 < position[0] < 1.485) and (0 < position[1] < 1.485) and (displacement < (difference_time * 0.2)):    # remove the result if it is outside the Arena or illogical
                 timestamp = rospy.Time.now().to_sec()
-                save_variable(timestamp, 'time.pkl')
-                save_variable(position, 'position.pkl')
+                save_variable(timestamp, 'time.pkl')    # record the current time to file
+                save_variable(position, 'position.pkl')    # record the current position to file
                 return position, orientation
             else:
                 # print('----------- False apriltag! detect again! ------------------')
-                if (rospy.Time.now().to_sec()-time_pre) > 5:
+                if (rospy.Time.now().to_sec()-time_pre) > 5:    # if the result is always false, detect again
                     print('-------------- False apriltag for 5 sencond! -----------------')
                     position = None
                     orientation = None
